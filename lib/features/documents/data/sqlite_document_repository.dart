@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:docloom/core/db/app_database.dart';
 import 'package:docloom/core/errors/app_exception.dart';
 import 'package:docloom/core/ids/id_generator.dart';
@@ -9,6 +10,7 @@ import '../domain/document_summary.dart';
 import '../domain/new_page.dart';
 import '../domain/scan_page.dart';
 import 'document_page_operations.dart';
+import 'document_sql.dart';
 
 class SqliteDocumentRepository implements DocumentRepository {
   SqliteDocumentRepository(
@@ -24,6 +26,11 @@ class SqliteDocumentRepository implements DocumentRepository {
   Future<void> _assertFolderActive(String folderId) async {
     final folder = await db.db.query('folders', where: 'id = ? AND deleted_at IS NULL', whereArgs: [folderId]);
     if (folder.isEmpty) throw const ValidationException('Folder does not exist or is in trash');
+  }
+
+  Future<void> _assertDocActive(DatabaseExecutor executor, String id) async {
+    final rows = await executor.rawQuery(DocumentSql.selectActiveById, [id]);
+    if (rows.isEmpty) throw const NotFoundException('Document not found or trashed');
   }
 
   @override
@@ -49,31 +56,21 @@ class SqliteDocumentRepository implements DocumentRepository {
 
   @override
   Future<Document?> getById(String id) async {
-    final rows = await db.db.query('documents', where: 'id = ? AND deleted_at IS NULL', whereArgs: [id]);
+    final rows = await db.db.rawQuery(DocumentSql.selectActiveDocById, [id]);
     return rows.isEmpty ? null : Document.fromMap(rows.first);
   }
 
   @override
   Future<List<ScanPage>> getPages(String documentId) async {
+    final active = await db.db.rawQuery(DocumentSql.selectActiveById, [documentId]);
+    if (active.isEmpty) return const [];
     final rows = await db.db.query('pages', where: 'document_id = ?', whereArgs: [documentId], orderBy: 'position ASC');
     return rows.map(ScanPage.fromMap).toList();
   }
 
   @override
   Future<List<DocumentSummary>> listInFolder({String? folderId, DocumentSort sort = DocumentSort.modifiedDesc}) async {
-    final order = switch (sort) {
-      DocumentSort.modifiedDesc => 'd.updated_at DESC',
-      DocumentSort.modifiedAsc => 'd.updated_at ASC',
-      DocumentSort.nameAsc => 'd.name COLLATE NOCASE ASC',
-      DocumentSort.nameDesc => 'd.name COLLATE NOCASE DESC',
-    };
-    final sql = '''
-SELECT d.*,
-  (SELECT COUNT(*) FROM pages p WHERE p.document_id = d.id) AS page_count,
-  (SELECT COALESCE(p.edited_path, p.original_path) FROM pages p WHERE p.document_id = d.id AND p.position = 0) AS cover_path
-FROM documents d
-WHERE d.deleted_at IS NULL AND ${folderId == null ? 'd.folder_id IS NULL' : 'd.folder_id = ?'}
-ORDER BY $order;''';
+    final sql = DocumentSql.listInFolder(isRoot: folderId == null, sort: sort);
     final rows = await db.db.rawQuery(sql, folderId == null ? const [] : [folderId]);
     return rows.map((r) => DocumentSummary(
       document: Document.fromMap(r),
@@ -86,35 +83,34 @@ ORDER BY $order;''';
   Future<void> rename(String id, String name) async {
     final trimmed = name.trim();
     if (trimmed.isEmpty) throw const ValidationException('Document name cannot be empty');
-    final rows = await db.db.update('documents', {'name': trimmed, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ? AND deleted_at IS NULL', whereArgs: [id]);
-    if (rows == 0) throw const NotFoundException('Document not found or trashed');
+    await _assertDocActive(db.db, id);
+    await db.db.update('documents', {'name': trimmed, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ?', whereArgs: [id]);
   }
 
   @override
   Future<void> setFavorite(String id, bool value) async {
-    final rows = await db.db.update('documents', {'is_favorite': value ? 1 : 0, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ? AND deleted_at IS NULL', whereArgs: [id]);
-    if (rows == 0) throw const NotFoundException('Document not found or trashed');
+    await _assertDocActive(db.db, id);
+    await db.db.update('documents', {'is_favorite': value ? 1 : 0, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ?', whereArgs: [id]);
   }
 
   @override
   Future<void> setNote(String id, String? note) async {
-    final rows = await db.db.update('documents', {'note': note, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ? AND deleted_at IS NULL', whereArgs: [id]);
-    if (rows == 0) throw const NotFoundException('Document not found or trashed');
+    await _assertDocActive(db.db, id);
+    await db.db.update('documents', {'note': note, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ?', whereArgs: [id]);
   }
 
   @override
   Future<void> moveToFolder(String id, String? folderId) async {
     if (folderId != null) await _assertFolderActive(folderId);
-    final rows = await db.db.update('documents', {'folder_id': folderId, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ? AND deleted_at IS NULL', whereArgs: [id]);
-    if (rows == 0) throw const NotFoundException('Document not found or trashed');
+    await _assertDocActive(db.db, id);
+    await db.db.update('documents', {'folder_id': folderId, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ?', whereArgs: [id]);
   }
 
   @override
   Future<void> addPages(String documentId, List<NewPage> pages) async {
     if (pages.isEmpty) return;
     await db.db.transaction((txn) async {
-      final doc = await txn.query('documents', where: 'id = ? AND deleted_at IS NULL', whereArgs: [documentId]);
-      if (doc.isEmpty) throw const NotFoundException('Document not found or trashed');
+      await _assertDocActive(txn, documentId);
       final maxResult = await txn.rawQuery('SELECT MAX(position) AS max_pos FROM pages WHERE document_id = ?;', [documentId]);
       final maxPos = maxResult.first['max_pos'] as int?;
       final startPos = maxPos != null ? maxPos + 1 : 0;
@@ -125,21 +121,27 @@ ORDER BY $order;''';
   }
 
   @override
-  Future<ScanPage> deletePage(String pageId) => db.db.transaction((txn) => _pageOps.deletePage(txn, pageId: pageId, updatedAt: clock()));
+  Future<ScanPage> deletePage(String pageId) => db.db.transaction((txn) async {
+    final pageRows = await txn.query('pages', where: 'id = ?', whereArgs: [pageId]);
+    if (pageRows.isEmpty) throw const NotFoundException('Page not found');
+    await _assertDocActive(txn, pageRows.first['document_id'] as String);
+    return _pageOps.deletePage(txn, pageId: pageId, updatedAt: clock());
+  });
 
   @override
   Future<void> reorderPages(String documentId, List<String> orderedPageIds) async {
     await db.db.transaction((txn) async {
-      final doc = await txn.query('documents', where: 'id = ? AND deleted_at IS NULL', whereArgs: [documentId]);
-      if (doc.isEmpty) throw const NotFoundException('Document not found or trashed');
+      await _assertDocActive(txn, documentId);
       await _pageOps.reorderPages(txn, documentId: documentId, orderedPageIds: orderedPageIds, updatedAt: clock());
     });
   }
 
   @override
   Future<void> moveToTrash(String id) async {
+    final doc = await db.db.query('documents', columns: ['id', 'deleted_at'], where: 'id = ?', whereArgs: [id]);
+    if (doc.isEmpty) throw const NotFoundException('Document not found');
+    if (doc.first['deleted_at'] != null) return;
     final now = clock();
-    final count = await db.db.update('documents', {'deleted_at': now.millisecondsSinceEpoch, 'updated_at': now.millisecondsSinceEpoch}, where: 'id = ? AND deleted_at IS NULL', whereArgs: [id]);
-    if (count == 0) throw const NotFoundException('Document not found or already trashed');
+    await db.db.update('documents', {'deleted_at': now.millisecondsSinceEpoch, 'updated_at': now.millisecondsSinceEpoch}, where: 'id = ? AND deleted_at IS NULL', whereArgs: [id]);
   }
 }

@@ -52,6 +52,9 @@ class _DbCheckScreenState extends ConsumerState<DbCheckScreen> {
     try {
       await action();
       await _refreshCounts();
+    } catch (e, st) {
+      _addLog('Error: $e');
+      debugPrint('DB_CHECK ACTION ERROR: $e\n$st');
     } finally {
       if (mounted) setState(() => _busy = false);
     }

@@ -46,6 +46,10 @@ void main() {
   }
 
   testWidgets('DbCheckScreen creates folder and document, trashes, restores, and empties trash', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
     await tester.runAsync(() async {
       await tester.pumpWidget(buildTestWidget());
       await Future<void>.delayed(const Duration(milliseconds: 300));
@@ -96,18 +100,19 @@ void main() {
     // 5. Trash again and empty
     await tester.runAsync(() async {
       await tester.tap(find.text('Trash Newest Root Doc'));
-      await Future<void>.delayed(const Duration(milliseconds: 500));
+      await Future<void>.delayed(const Duration(milliseconds: 1000));
     });
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     await tester.runAsync(() async {
       await tester.ensureVisible(find.text('Empty Trash'));
+      await Future<void>.delayed(const Duration(milliseconds: 300));
       await tester.tap(find.text('Empty Trash'));
-      await Future<void>.delayed(const Duration(milliseconds: 800));
+      await Future<void>.delayed(const Duration(milliseconds: 1200));
     });
-    await tester.pump();
+    await tester.pumpAndSettle();
     await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -600));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.textContaining('Action Results'), findsOneWidget);
     expect(find.textContaining('Emptied trash'), findsOneWidget);

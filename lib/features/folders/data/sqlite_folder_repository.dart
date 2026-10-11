@@ -92,8 +92,18 @@ ORDER BY f.name COLLATE NOCASE ASC;
 
   @override
   Future<void> moveToTrash(String id) async {
+    final folder = await db.db.query(
+      'folders',
+      columns: ['id', 'deleted_at'],
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (folder.isEmpty) {
+      throw const NotFoundException('Folder not found');
+    }
+    if (folder.first['deleted_at'] != null) return;
     final now = clock();
-    final count = await db.db.update(
+    await db.db.update(
       'folders',
       {
         'deleted_at': now.millisecondsSinceEpoch,
@@ -102,8 +112,5 @@ ORDER BY f.name COLLATE NOCASE ASC;
       where: 'id = ? AND deleted_at IS NULL',
       whereArgs: [id],
     );
-    if (count == 0) {
-      throw const NotFoundException('Folder not found or already trashed');
-    }
   }
 }

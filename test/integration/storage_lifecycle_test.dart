@@ -92,6 +92,7 @@ void main() {
 
     expect(await fileStore.resolve(p1).exists(), isTrue);
 
+    await folderRepo.moveToTrash(folder.id);
     await trashService.deleteFolderForever(folder.id);
 
     expect(await folderRepo.getById(folder.id), isNull);

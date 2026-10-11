@@ -8,6 +8,7 @@ import 'package:docloom/features/folders/domain/folder.dart';
 import 'package:docloom/features/folders/domain/folder_summary.dart';
 import '../domain/restore_result.dart';
 import '../domain/trash_repository.dart';
+import 'trash_sql.dart';
 
 class SqliteTrashRepository implements TrashRepository {
   SqliteTrashRepository(
@@ -21,14 +22,7 @@ class SqliteTrashRepository implements TrashRepository {
 
   @override
   Future<List<DocumentSummary>> listTrashedDocuments() async {
-    const sql = '''
-SELECT d.*,
-  (SELECT COUNT(*) FROM pages p WHERE p.document_id = d.id) AS page_count,
-  (SELECT COALESCE(p.edited_path, p.original_path) FROM pages p WHERE p.document_id = d.id AND p.position = 0) AS cover_path
-FROM documents d
-WHERE d.deleted_at IS NOT NULL
-ORDER BY d.deleted_at DESC;''';
-    final rows = await db.db.rawQuery(sql);
+    final rows = await db.db.rawQuery(TrashSql.listTrashedDocuments);
     return rows.map((r) => DocumentSummary(
       document: Document.fromMap(r),
       pageCount: r['page_count'] as int,
@@ -38,13 +32,7 @@ ORDER BY d.deleted_at DESC;''';
 
   @override
   Future<List<FolderSummary>> listTrashedFolders() async {
-    const sql = '''
-SELECT f.*,
-  (SELECT COUNT(*) FROM documents d WHERE d.folder_id = f.id) AS item_count
-FROM folders f
-WHERE f.deleted_at IS NOT NULL
-ORDER BY f.deleted_at DESC;''';
-    final rows = await db.db.rawQuery(sql);
+    final rows = await db.db.rawQuery(TrashSql.listTrashedFolders);
     return rows.map((r) => FolderSummary(
       folder: Folder.fromMap(r),
       itemCount: r['item_count'] as int,
@@ -53,9 +41,12 @@ ORDER BY f.deleted_at DESC;''';
 
   @override
   Future<RestoreResult> restoreDocument(String id) async {
-    final docRows = await db.db.query('documents', where: 'id = ? AND deleted_at IS NOT NULL', whereArgs: [id]);
+    final docRows = await db.db.query('documents', where: 'id = ?', whereArgs: [id]);
     if (docRows.isEmpty) throw const NotFoundException('Document not found in trash');
-    final folderId = docRows.first['folder_id'] as String?;
+    final doc = docRows.first;
+    if (doc['deleted_at'] == null) return const RestoreResult(restoredToRoot: false);
+
+    final folderId = doc['folder_id'] as String?;
     final now = clock().millisecondsSinceEpoch;
     var restoredToRoot = false;
 
@@ -81,9 +72,9 @@ ORDER BY f.deleted_at DESC;''';
   @override
   Future<List<String>> deleteDocumentForever(String id) async {
     return db.db.transaction((txn) async {
-      final rows = await txn.query('documents', columns: ['id'], where: 'id = ?', whereArgs: [id]);
+      final rows = await txn.query('documents', columns: ['id'], where: 'id = ? AND deleted_at IS NOT NULL', whereArgs: [id]);
       if (rows.isEmpty) return const [];
-      await txn.delete('documents', where: 'id = ?', whereArgs: [id]);
+      await txn.delete('documents', where: 'id = ? AND deleted_at IS NOT NULL', whereArgs: [id]);
       return [id];
     });
   }
@@ -91,10 +82,12 @@ ORDER BY f.deleted_at DESC;''';
   @override
   Future<List<String>> deleteFolderForever(String id) async {
     return db.db.transaction((txn) async {
+      final folderRows = await txn.query('folders', columns: ['id'], where: 'id = ? AND deleted_at IS NOT NULL', whereArgs: [id]);
+      if (folderRows.isEmpty) return const [];
       final docRows = await txn.query('documents', columns: ['id'], where: 'folder_id = ?', whereArgs: [id]);
       final docIds = docRows.map((r) => r['id'] as String).toList();
       await txn.delete('documents', where: 'folder_id = ?', whereArgs: [id]);
-      await txn.delete('folders', where: 'id = ?', whereArgs: [id]);
+      await txn.delete('folders', where: 'id = ? AND deleted_at IS NOT NULL', whereArgs: [id]);
       return docIds;
     });
   }

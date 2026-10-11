@@ -1,3 +1,5 @@
+import 'package:docloom/features/documents/domain/document_sort.dart';
+
 abstract final class DocumentSql {
   static const String joinFolder = 'LEFT JOIN folders f ON d.folder_id = f.id';
 
@@ -18,9 +20,16 @@ $joinFolder
 WHERE d.id = ? AND $activeWhere;
 ''';
 
+  static String orderClause(DocumentSort sort) => switch (sort) {
+    DocumentSort.modifiedDesc => 'd.updated_at DESC',
+    DocumentSort.modifiedAsc => 'd.updated_at ASC',
+    DocumentSort.nameAsc => 'd.name COLLATE NOCASE ASC',
+    DocumentSort.nameDesc => 'd.name COLLATE NOCASE DESC',
+  };
+
   static String listInFolder({
     required bool isRoot,
-    required String orderBy,
+    required DocumentSort sort,
   }) {
     final folderClause = isRoot ? 'd.folder_id IS NULL' : 'd.folder_id = ?';
     return '''
@@ -30,7 +39,7 @@ SELECT d.*,
 FROM documents d
 $joinFolder
 WHERE $activeWhere AND $folderClause
-ORDER BY $orderBy;
+ORDER BY ${orderClause(sort)};
 ''';
   }
 }
