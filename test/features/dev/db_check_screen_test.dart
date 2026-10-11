@@ -48,7 +48,7 @@ void main() {
   testWidgets('DbCheckScreen creates folder and document, trashes, restores, and empties trash', (tester) async {
     await tester.runAsync(() async {
       await tester.pumpWidget(buildTestWidget());
-      await Future<void>.delayed(const Duration(milliseconds: 50));
+      await Future<void>.delayed(const Duration(milliseconds: 300));
     });
     await tester.pump();
 
@@ -101,11 +101,12 @@ void main() {
     await tester.pump();
 
     await tester.runAsync(() async {
+      await tester.ensureVisible(find.text('Empty Trash'));
       await tester.tap(find.text('Empty Trash'));
-      await Future<void>.delayed(const Duration(milliseconds: 500));
+      await Future<void>.delayed(const Duration(milliseconds: 800));
     });
     await tester.pump();
-    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -500));
+    await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -600));
     await tester.pump();
 
     expect(find.textContaining('Action Results'), findsOneWidget);

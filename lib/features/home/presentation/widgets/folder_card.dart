@@ -35,11 +35,11 @@ class FolderCard extends StatelessWidget {
     return AppCard(
       onTap: onTap ?? () {},
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
+        horizontal: AppSpacing.md,
         vertical: AppSpacing.md,
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
@@ -67,7 +67,7 @@ class FolderCard extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
             textAlign: TextAlign.center,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: AppSpacing.xs / 2),

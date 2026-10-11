@@ -20,11 +20,6 @@ const _sampleFolders = [
     itemCountAndDate: '8 items - 04 Oct',
     color: AppColors.folderOrange,
   ),
-  FolderItem(
-    name: 'Personal IDs',
-    itemCountAndDate: '3 items - 28 Sep',
-    color: AppColors.folderGreen,
-  ),
 ];
 
 const _sampleDocuments = [
@@ -98,18 +93,20 @@ class HomeScreen extends StatelessWidget {
               bottom: AppSpacing.xxl * 4,
             ),
             children: [
-              const SectionHeader(title: 'Folders', count: 3),
+              const SectionHeader(title: 'Folders', count: 2),
               const SizedBox(height: AppSpacing.sm),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (int i = 0; i < _sampleFolders.length; i++) ...[
-                    if (i > 0) const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: FolderCard(item: _sampleFolders[i]),
-                    ),
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (int i = 0; i < _sampleFolders.length; i++) ...[
+                      if (i > 0) const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: FolderCard(item: _sampleFolders[i]),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
               const SizedBox(height: AppSpacing.xxl),
               const SectionHeader(title: 'Documents', count: 4),

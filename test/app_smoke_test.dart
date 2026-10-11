@@ -8,7 +8,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('docLoom'), findsOneWidget);
-    expect(find.text('Folders (3)'), findsOneWidget);
+    expect(find.text('Folders (2)'), findsOneWidget);
     expect(find.text('Documents (4)'), findsOneWidget);
   });
 }
