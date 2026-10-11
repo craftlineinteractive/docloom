@@ -1,0 +1,924 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>docLoom - Settings Suite (6 Frames)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0c0f17;
+    color: #1E2340;
+    margin: 0;
+    padding: 32px;
+  }
+  .app-screen {
+    width: 390px;
+    height: 844px;
+    background-color: #F4F6FA;
+    position: relative;
+    border-radius: 28px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .sub-frame {
+    width: 190px;
+    height: 844px;
+    background-color: #F4F6FA;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  /* Custom scrollbar hide */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Header Banner -->
+  <div class="max-w-[2600px] mx-auto mb-8 px-4 flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-3 mb-2">
+        <span class="px-3 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-semibold rounded-full uppercase tracking-wider">docLoom Design System</span>
+        <span class="text-xs text-slate-400">Android 390×844 • Light Mode • Inter Typography</span>
+      </div>
+      <h1 class="text-3xl font-bold text-white tracking-tight">Settings Screen Suite (6 Frames)</h1>
+      <p class="text-sm text-slate-400 mt-1">Full interaction states: Top, Middle, Bottom, Radio Selection Dialogs, Picker Dialogs, and Confirmation &amp; Hint States.</p>
+    </div>
+    <div class="flex items-center gap-6 bg-slate-900/80 px-6 py-3 rounded-2xl border border-slate-800 text-xs">
+      <div class="flex items-center gap-2">
+        <div class="w-3 h-3 rounded-full bg-[#4F46E5]"></div>
+        <span class="text-slate-300">Primary: <span class="font-mono text-white">#4F46E5</span></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-3 h-3 rounded-full bg-[#EEF0FF] border border-indigo-200"></div>
+        <span class="text-slate-300">Pill Tint: <span class="font-mono text-white">#EEF0FF</span></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="w-3 h-3 rounded-full bg-[#E5484D]"></div>
+        <span class="text-slate-300">Destructive: <span class="font-mono text-white">#E5484D</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frames Row -->
+  <div class="flex gap-8 overflow-x-auto pb-12 pt-2 px-4 no-scrollbar items-start" style="display: flex; flex-direction: row; gap: 32px; overflow-x: auto; padding: 24px 32px 48px; align-items: flex-start;">
+
+    <!-- ========================================== -->
+    <!-- FRAME 1: Settings - top -->
+    <!-- ========================================== -->
+    <div class="flex flex-col items-center flex-shrink-0">
+      <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-indigo-400 flex items-center justify-center text-[10px] font-bold">1</span>
+        SETTINGS - TOP
+      </div>
+      <div class="app-screen flex flex-col">
+        <!-- Top App Bar (56px) -->
+        <div class="h-14 bg-white flex items-center px-4 border-b border-slate-100 flex-shrink-0 z-10 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+          <button class="w-10 h-10 -ml-2 rounded-full flex items-center justify-center text-[#1E2340] active:bg-slate-100">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path></svg>
+          </button>
+          <h2 class="text-[17px] font-semibold text-[#1E2340] ml-2">Settings</h2>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto no-scrollbar pb-8">
+          <!-- SECTION: BACKUP & SYNC -->
+          <div class="px-5 pt-6 pb-2 text-[12px] font-semibold tracking-wider text-[#4F46E5] uppercase">BACKUP &amp; SYNC</div>
+          <div class="mx-4 bg-white rounded-2xl shadow-[0_2px_8px_rgba(30,35,64,0.04)] border border-slate-100/80 overflow-hidden divide-y divide-slate-100">
+            <!-- Row 1 -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Auto Local Backup and Restore</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Protect your data from accidental loss</div>
+                </div>
+              </div>
+              <svg class="w-5 h-5 text-[#8A90A6] flex-shrink-0 ml-2" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+            </div>
+            <!-- Row 2 -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Cloud Sync</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Back up documents to Google Drive</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                <span class="text-[14px] font-medium text-[#4F46E5]">Off</span>
+                <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION: APPEARANCE & HOME -->
+          <div class="px-5 pt-6 pb-2 text-[12px] font-semibold tracking-wider text-[#4F46E5] uppercase">APPEARANCE &amp; HOME</div>
+          <div class="mx-4 bg-white rounded-2xl shadow-[0_2px_8px_rgba(30,35,64,0.04)] border border-slate-100/80 overflow-hidden divide-y divide-slate-100">
+            <!-- Theme -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Theme</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Choose how docLoom looks</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                <span class="text-[14px] font-medium text-[#4F46E5]">Light</span>
+                <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+              </div>
+            </div>
+            <!-- Date and Time Format -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Date and Time Format</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Used for folders, documents and images</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                <span class="text-[13px] font-medium text-[#4F46E5]">10 Oct 2026, 12-hr</span>
+                <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+              </div>
+            </div>
+            <!-- Tools Shortcut -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Tools Shortcut</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Show tools on home screen</div>
+                </div>
+              </div>
+              <!-- Toggle ON -->
+              <div class="w-11 h-6 bg-[#4F46E5] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow transform translate-x-5 transition"></div>
+              </div>
+            </div>
+            <!-- Tags -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Tags</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Show tags on home screen</div>
+                </div>
+              </div>
+              <!-- Toggle OFF -->
+              <div class="w-11 h-6 bg-[#D1D5DB] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow transform translate-x-0 transition"></div>
+              </div>
+            </div>
+            <!-- Favourite Documents (DISABLED) -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between opacity-40">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Favourite Documents</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Show favourites on home screen</div>
+                </div>
+              </div>
+              <div class="w-11 h-6 bg-[#D1D5DB] rounded-full flex items-center p-0.5">
+                <div class="w-5 h-5 bg-white rounded-full shadow"></div>
+              </div>
+            </div>
+            <!-- Recent Documents -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Recent Documents</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Show recent documents on home screen</div>
+                </div>
+              </div>
+              <div class="w-11 h-6 bg-[#4F46E5] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow transform translate-x-5 transition"></div>
+              </div>
+            </div>
+            <!-- Recent Documents on Home -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Recent Documents on Home</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">How many to show</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                <span class="text-[14px] font-medium text-[#4F46E5]">50</span>
+                <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- FRAME 2: Settings - middle -->
+    <!-- ========================================== -->
+    <div class="flex flex-col items-center flex-shrink-0">
+      <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-indigo-400 flex items-center justify-center text-[10px] font-bold">2</span>
+        SETTINGS - MIDDLE
+      </div>
+      <div class="app-screen flex flex-col">
+        <!-- Top App Bar -->
+        <div class="h-14 bg-white flex items-center px-4 border-b border-slate-100 flex-shrink-0 z-10 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+          <button class="w-10 h-10 -ml-2 rounded-full flex items-center justify-center text-[#1E2340]">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path></svg>
+          </button>
+          <h2 class="text-[17px] font-semibold text-[#1E2340] ml-2">Settings</h2>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto no-scrollbar pb-8">
+          <!-- SECTION: PDF -->
+          <div class="px-5 pt-6 pb-2 text-[12px] font-semibold tracking-wider text-[#4F46E5] uppercase">PDF</div>
+          <div class="mx-4 bg-white rounded-2xl shadow-[0_2px_8px_rgba(30,35,64,0.04)] border border-slate-100/80 overflow-hidden divide-y divide-slate-100">
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">PDF Settings</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Page size, orientation, margins</div>
+                </div>
+              </div>
+              <svg class="w-5 h-5 text-[#8A90A6] flex-shrink-0 ml-2" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+            </div>
+          </div>
+
+          <!-- SECTION: DOCUMENT -->
+          <div class="px-5 pt-6 pb-2 text-[12px] font-semibold tracking-wider text-[#4F46E5] uppercase">DOCUMENT</div>
+          <div class="mx-4 bg-white rounded-2xl shadow-[0_2px_8px_rgba(30,35,64,0.04)] border border-slate-100/80 overflow-hidden divide-y divide-slate-100">
+            <!-- Row 1: Document Import and Export -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 16.5v-2.25m-18 0l3.75-3.75m-3.75 3.75l3.75 3.75m12-3.75l-3.75-3.75m3.75 3.75l-3.75 3.75"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Document Import and Export</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Import and export documents to local storage</div>
+                </div>
+              </div>
+              <svg class="w-5 h-5 text-[#8A90A6] flex-shrink-0 ml-2" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+            </div>
+            <!-- Row 2: New Document Name Format -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">New Document Name Format</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Template for auto-naming new documents</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0 ml-2 text-right">
+                <span class="text-[12px] font-medium text-[#4F46E5] max-w-[90px] truncate">docLoom {date} {time}</span>
+                <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+              </div>
+            </div>
+            <!-- Row 3: Scan Quality -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Scan Quality</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Export quality</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                <span class="text-[14px] font-medium text-[#4F46E5]">High</span>
+                <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+              </div>
+            </div>
+            <!-- Row 4: Default Color Filter -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Default Color Filter</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Applied to new scans</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                <span class="text-[14px] font-medium text-[#4F46E5]">Vivid Light</span>
+                <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+              </div>
+            </div>
+            <!-- Row 5: Protect Document -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Protect Document</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">App lock with PIN or fingerprint</div>
+                </div>
+              </div>
+              <svg class="w-5 h-5 text-[#8A90A6] flex-shrink-0 ml-2" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+            </div>
+            <!-- Row 6: Auto Save to Gallery -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Auto Save to Gallery</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Save new scans into your gallery</div>
+                </div>
+              </div>
+              <div class="w-11 h-6 bg-[#D1D5DB] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow transform translate-x-0 transition"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION: OCR -->
+          <div class="px-5 pt-6 pb-2 text-[12px] font-semibold tracking-wider text-[#4F46E5] uppercase">OCR</div>
+          <div class="mx-4 bg-white rounded-2xl shadow-[0_2px_8px_rgba(30,35,64,0.04)] border border-slate-100/80 overflow-hidden divide-y divide-slate-100">
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18a2.25 2.25 0 01-2.25 2.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M9 10.5h6m-3-3v9"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">OCR Settings</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Language and text recognition</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                <span class="text-[14px] font-medium text-[#4F46E5]">English</span>
+                <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- FRAME 3: Settings - bottom -->
+    <!-- ========================================== -->
+    <div class="flex flex-col items-center flex-shrink-0">
+      <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-indigo-400 flex items-center justify-center text-[10px] font-bold">3</span>
+        SETTINGS - BOTTOM
+      </div>
+      <div class="app-screen flex flex-col">
+        <!-- Top App Bar -->
+        <div class="h-14 bg-white flex items-center px-4 border-b border-slate-100 flex-shrink-0 z-10 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+          <button class="w-10 h-10 -ml-2 rounded-full flex items-center justify-center text-[#1E2340]">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path></svg>
+          </button>
+          <h2 class="text-[17px] font-semibold text-[#1E2340] ml-2">Settings</h2>
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto no-scrollbar pb-8">
+          <!-- SECTION: CAMERA -->
+          <div class="px-5 pt-6 pb-2 text-[12px] font-semibold tracking-wider text-[#4F46E5] uppercase">CAMERA</div>
+          <div class="mx-4 bg-white rounded-2xl shadow-[0_2px_8px_rgba(30,35,64,0.04)] border border-slate-100/80 overflow-hidden divide-y divide-slate-100">
+            <!-- System Camera -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">System Camera</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Capture a single document only</div>
+                </div>
+              </div>
+              <div class="w-11 h-6 bg-[#D1D5DB] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow"></div>
+              </div>
+            </div>
+            <!-- Set Camera as Home -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Set Camera as Home</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Open the camera on launch</div>
+                </div>
+              </div>
+              <div class="w-11 h-6 bg-[#D1D5DB] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow"></div>
+              </div>
+            </div>
+            <!-- Capture Sound -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.757 3.63 8.25 4.51 8.25H6.75z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Capture Sound</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Play a sound when capturing</div>
+                </div>
+              </div>
+              <div class="w-11 h-6 bg-[#4F46E5] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow transform translate-x-5 transition"></div>
+              </div>
+            </div>
+            <!-- Volume Buttons to Capture -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Volume Buttons to Capture</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Use volume keys as the shutter</div>
+                </div>
+              </div>
+              <div class="w-11 h-6 bg-[#D1D5DB] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION: APP -->
+          <div class="px-5 pt-6 pb-2 text-[12px] font-semibold tracking-wider text-[#4F46E5] uppercase">APP</div>
+          <div class="mx-4 bg-white rounded-2xl shadow-[0_2px_8px_rgba(30,35,64,0.04)] border border-slate-100/80 overflow-hidden divide-y divide-slate-100">
+            <!-- Language -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Language</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">App language</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 flex-shrink-0 ml-2">
+                <span class="text-[14px] font-medium text-[#4F46E5]">Auto select</span>
+                <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+              </div>
+            </div>
+            <!-- Analytics -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Analytics</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Help improve docLoom with anonymous usage data</div>
+                </div>
+              </div>
+              <div class="w-11 h-6 bg-[#D1D5DB] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow"></div>
+              </div>
+            </div>
+            <!-- Send to Email -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Send to Email</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Add or delete saved email addresses</div>
+                </div>
+              </div>
+              <svg class="w-5 h-5 text-[#8A90A6] flex-shrink-0 ml-2" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+            </div>
+            <!-- Enable System Gallery -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Enable System Gallery</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Use the system gallery as default picker</div>
+                </div>
+              </div>
+              <div class="w-11 h-6 bg-[#D1D5DB] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow"></div>
+              </div>
+            </div>
+            <!-- Folder Navigation Path -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Folder Navigation Path</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Show the folder path in the app</div>
+                </div>
+              </div>
+              <div class="w-11 h-6 bg-[#4F46E5] rounded-full flex items-center p-0.5 cursor-pointer shadow-inner">
+                <div class="w-5 h-5 bg-white rounded-full shadow transform translate-x-5 transition"></div>
+              </div>
+            </div>
+            <!-- Reset Settings -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-red-50/30 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-red-50 text-[#E5484D] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#E5484D] leading-snug">Reset Settings</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Reset all saved settings. Documents are not deleted.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION: ABOUT -->
+          <div class="px-5 pt-6 pb-2 text-[12px] font-semibold tracking-wider text-[#4F46E5] uppercase">ABOUT</div>
+          <div class="mx-4 bg-white rounded-2xl shadow-[0_2px_8px_rgba(30,35,64,0.04)] border border-slate-100/80 overflow-hidden divide-y divide-slate-100">
+            <!-- Send Feedback by Email -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Send Feedback by Email</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Help us improve docLoom</div>
+                </div>
+              </div>
+              <svg class="w-5 h-5 text-[#8A90A6] flex-shrink-0 ml-2" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+            </div>
+            <!-- Privacy Policy -->
+            <div class="min-h-[64px] px-4 py-3 flex items-center justify-between hover:bg-slate-50/50 cursor-pointer">
+              <div class="flex items-center gap-3.5">
+                <div class="w-9 h-9 rounded-full bg-[#EEF0FF] text-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"></path></svg>
+                </div>
+                <div>
+                  <div class="text-[15px] font-medium text-[#1E2340] leading-snug">Privacy Policy</div>
+                  <div class="text-[13px] text-[#8A90A6] leading-tight">Read our privacy terms</div>
+                </div>
+              </div>
+              <svg class="w-5 h-5 text-[#8A90A6] flex-shrink-0 ml-2" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path></svg>
+            </div>
+          </div>
+
+          <!-- Version Footer -->
+          <div class="text-center text-[12px] text-[#8A90A6] font-medium pt-8 pb-4">
+            docLoom version 1.0.0
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- FRAME 4: Radio dialogs (2 sub-frames) -->
+    <!-- ========================================== -->
+    <div class="flex flex-col items-center flex-shrink-0">
+      <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-indigo-400 flex items-center justify-center text-[10px] font-bold">4</span>
+        RADIO DIALOGS
+      </div>
+      <div class="flex gap-2 bg-slate-900/60 p-2 rounded-[32px] border border-slate-800">
+        <!-- Sub-frame 4A: Theme Dialog -->
+        <div class="sub-frame rounded-[24px]">
+          <!-- Background: Dimmed Frame 1 -->
+          <div class="absolute inset-0 opacity-40 filter blur-[0.5px] pointer-events-none">
+            <div class="h-14 bg-white flex items-center px-4 border-b border-slate-100">
+              <span class="text-[15px] font-semibold text-[#1E2340]">Settings</span>
+            </div>
+            <div class="px-5 pt-6 pb-2 text-[10px] font-semibold text-[#4F46E5]">APPEARANCE &amp; HOME</div>
+            <div class="mx-3 bg-white rounded-xl p-3 border border-slate-100 space-y-3">
+              <div class="h-6 bg-slate-100 rounded"></div>
+              <div class="h-6 bg-slate-100 rounded"></div>
+            </div>
+          </div>
+          <!-- Dark 50% overlay -->
+          <div class="absolute inset-0 bg-slate-950/50 backdrop-blur-[1px]"></div>
+
+          <!-- Dialog Centered -->
+          <div class="absolute inset-x-3.5 top-1/2 -translate-y-1/2 bg-white rounded-[20px] p-5 shadow-2xl z-20 border border-slate-100">
+            <h3 class="text-[17px] font-semibold text-[#1E2340] mb-3">Theme</h3>
+            <div class="space-y-1">
+              <!-- Option: System default -->
+              <div class="h-12 flex items-center justify-between px-1 rounded-lg cursor-pointer hover:bg-slate-50">
+                <span class="text-[14px] text-[#1E2340]">System default</span>
+                <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center"></div>
+              </div>
+              <!-- Option: Light (Selected) -->
+              <div class="h-12 flex items-center justify-between px-1 rounded-lg cursor-pointer bg-[#EEF0FF]/40">
+                <span class="text-[14px] font-medium text-[#4F46E5]">Light</span>
+                <div class="w-5 h-5 rounded-full border-2 border-[#4F46E5] flex items-center justify-center">
+                  <div class="w-2.5 h-2.5 bg-[#4F46E5] rounded-full"></div>
+                </div>
+              </div>
+              <!-- Option: Dark -->
+              <div class="h-12 flex items-center justify-between px-1 rounded-lg cursor-pointer hover:bg-slate-50">
+                <span class="text-[14px] text-[#1E2340]">Dark</span>
+                <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center"></div>
+              </div>
+            </div>
+            <!-- Buttons -->
+            <div class="flex items-center justify-end gap-3 mt-4 pt-2">
+              <button class="px-3 py-1.5 text-[14px] font-medium text-[#8A90A6]">Cancel</button>
+              <button class="px-4 py-1.5 bg-[#4F46E5] text-white text-[14px] font-medium rounded-lg shadow-sm">OK</button>
+            </div>
+          </div>
+          <div class="absolute bottom-3 inset-x-0 text-center text-[10px] font-bold text-white/70 uppercase tracking-wider">THEME DIALOG</div>
+        </div>
+
+        <!-- Sub-frame 4B: Scan quality Dialog -->
+        <div class="sub-frame rounded-[24px]">
+          <!-- Background: Dimmed Frame 1 -->
+          <div class="absolute inset-0 opacity-40 filter blur-[0.5px] pointer-events-none">
+            <div class="h-14 bg-white flex items-center px-4 border-b border-slate-100">
+              <span class="text-[15px] font-semibold text-[#1E2340]">Settings</span>
+            </div>
+            <div class="px-5 pt-6 pb-2 text-[10px] font-semibold text-[#4F46E5]">DOCUMENT</div>
+            <div class="mx-3 bg-white rounded-xl p-3 border border-slate-100 space-y-3">
+              <div class="h-6 bg-slate-100 rounded"></div>
+              <div class="h-6 bg-slate-100 rounded"></div>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-slate-950/50 backdrop-blur-[1px]"></div>
+
+          <!-- Dialog Centered -->
+          <div class="absolute inset-x-3.5 top-1/2 -translate-y-1/2 bg-white rounded-[20px] p-5 shadow-2xl z-20 border border-slate-100">
+            <h3 class="text-[17px] font-semibold text-[#1E2340] mb-2">Scan quality</h3>
+            <div class="space-y-1">
+              <!-- Option: Standard -->
+              <div class="h-12 flex items-center justify-between px-1 rounded-lg cursor-pointer hover:bg-slate-50">
+                <div>
+                  <div class="text-[14px] text-[#1E2340] leading-tight">Standard</div>
+                  <div class="text-[11px] text-[#8A90A6]">Smaller files</div>
+                </div>
+                <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center"></div>
+              </div>
+              <!-- Option: High (Selected) -->
+              <div class="h-12 flex items-center justify-between px-1 rounded-lg cursor-pointer bg-[#EEF0FF]/40">
+                <div>
+                  <div class="text-[14px] font-medium text-[#4F46E5] leading-tight">High</div>
+                  <div class="text-[11px] text-[#4F46E5]/80 font-medium">Recommended</div>
+                </div>
+                <div class="w-5 h-5 rounded-full border-2 border-[#4F46E5] flex items-center justify-center">
+                  <div class="w-2.5 h-2.5 bg-[#4F46E5] rounded-full"></div>
+                </div>
+              </div>
+              <!-- Option: Original -->
+              <div class="h-12 flex items-center justify-between px-1 rounded-lg cursor-pointer hover:bg-slate-50">
+                <div>
+                  <div class="text-[14px] text-[#1E2340] leading-tight">Original</div>
+                  <div class="text-[11px] text-[#8A90A6]">Largest files</div>
+                </div>
+                <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center"></div>
+              </div>
+            </div>
+            <!-- Buttons -->
+            <div class="flex items-center justify-end gap-3 mt-4 pt-2">
+              <button class="px-3 py-1.5 text-[14px] font-medium text-[#8A90A6]">Cancel</button>
+              <button class="px-4 py-1.5 bg-[#4F46E5] text-white text-[14px] font-medium rounded-lg shadow-sm">OK</button>
+            </div>
+          </div>
+          <div class="absolute bottom-3 inset-x-0 text-center text-[10px] font-bold text-white/70 uppercase tracking-wider">SCAN QUALITY DIALOG</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- FRAME 5: Picker dialogs (2 sub-frames) -->
+    <!-- ========================================== -->
+    <div class="flex flex-col items-center flex-shrink-0">
+      <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-indigo-400 flex items-center justify-center text-[10px] font-bold">5</span>
+        PICKER DIALOGS
+      </div>
+      <div class="flex gap-2 bg-slate-900/60 p-2 rounded-[32px] border border-slate-800">
+        <!-- Sub-frame 5A: Recent Documents on Home -->
+        <div class="sub-frame rounded-[24px]">
+          <!-- Background: Dimmed Frame 1 -->
+          <div class="absolute inset-0 opacity-40 filter blur-[0.5px] pointer-events-none">
+            <div class="h-14 bg-white flex items-center px-4 border-b border-slate-100">
+              <span class="text-[15px] font-semibold text-[#1E2340]">Settings</span>
+            </div>
+            <div class="px-5 pt-6 pb-2 text-[10px] font-semibold text-[#4F46E5]">APPEARANCE &amp; HOME</div>
+            <div class="mx-3 bg-white rounded-xl p-3 border border-slate-100 space-y-3">
+              <div class="h-6 bg-slate-100 rounded"></div>
+              <div class="h-6 bg-slate-100 rounded"></div>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-slate-950/50 backdrop-blur-[1px]"></div>
+
+          <!-- Dialog Centered -->
+          <div class="absolute inset-x-3 top-1/2 -translate-y-1/2 bg-white rounded-[20px] p-4 shadow-2xl z-20 border border-slate-100">
+            <h3 class="text-[15px] font-semibold text-[#1E2340] mb-2 leading-snug">Recent documents on home</h3>
+            <div class="space-y-0.5">
+              <!-- 10 -->
+              <div class="h-11 flex items-center justify-between px-1 rounded-lg cursor-pointer hover:bg-slate-50">
+                <span class="text-[14px] text-[#1E2340]">10</span>
+                <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center"></div>
+              </div>
+              <!-- 25 -->
+              <div class="h-11 flex items-center justify-between px-1 rounded-lg cursor-pointer hover:bg-slate-50">
+                <span class="text-[14px] text-[#1E2340]">25</span>
+                <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center"></div>
+              </div>
+              <!-- 50 (Selected) -->
+              <div class="h-11 flex items-center justify-between px-1 rounded-lg cursor-pointer bg-[#EEF0FF]/40">
+                <span class="text-[14px] font-medium text-[#4F46E5]">50</span>
+                <div class="w-5 h-5 rounded-full border-2 border-[#4F46E5] flex items-center justify-center">
+                  <div class="w-2.5 h-2.5 bg-[#4F46E5] rounded-full"></div>
+                </div>
+              </div>
+              <!-- 100 -->
+              <div class="h-11 flex items-center justify-between px-1 rounded-lg cursor-pointer hover:bg-slate-50">
+                <span class="text-[14px] text-[#1E2340]">100</span>
+                <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center"></div>
+              </div>
+            </div>
+            <!-- Buttons -->
+            <div class="flex items-center justify-end gap-3 mt-3 pt-2">
+              <button class="px-2.5 py-1 text-[13px] font-medium text-[#8A90A6]">Cancel</button>
+              <button class="px-3.5 py-1 bg-[#4F46E5] text-white text-[13px] font-medium rounded-lg shadow-sm">OK</button>
+            </div>
+          </div>
+          <div class="absolute bottom-3 inset-x-0 text-center text-[10px] font-bold text-white/70 uppercase tracking-wider">COUNT PICKER</div>
+        </div>
+
+        <!-- Sub-frame 5B: Date and Time format -->
+        <div class="sub-frame rounded-[24px]">
+          <!-- Background: Dimmed Frame 1 -->
+          <div class="absolute inset-0 opacity-40 filter blur-[0.5px] pointer-events-none">
+            <div class="h-14 bg-white flex items-center px-4 border-b border-slate-100">
+              <span class="text-[15px] font-semibold text-[#1E2340]">Settings</span>
+            </div>
+            <div class="px-5 pt-6 pb-2 text-[10px] font-semibold text-[#4F46E5]">APPEARANCE &amp; HOME</div>
+            <div class="mx-3 bg-white rounded-xl p-3 border border-slate-100 space-y-3">
+              <div class="h-6 bg-slate-100 rounded"></div>
+              <div class="h-6 bg-slate-100 rounded"></div>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-slate-950/50 backdrop-blur-[1px]"></div>
+
+          <!-- Dialog Centered -->
+          <div class="absolute inset-x-3 top-1/2 -translate-y-1/2 bg-white rounded-[20px] p-4 shadow-2xl z-20 border border-slate-100">
+            <h3 class="text-[15px] font-semibold text-[#1E2340] mb-2 leading-snug">Date and time format</h3>
+            <div class="space-y-0.5">
+              <!-- Option 1: 10 Oct 2026, 12-hr (Selected) -->
+              <div class="h-11 flex items-center justify-between px-1 rounded-lg cursor-pointer bg-[#EEF0FF]/40">
+                <span class="text-[13px] font-medium text-[#4F46E5]">10 Oct 2026, 12-hr</span>
+                <div class="w-5 h-5 rounded-full border-2 border-[#4F46E5] flex items-center justify-center flex-shrink-0">
+                  <div class="w-2.5 h-2.5 bg-[#4F46E5] rounded-full"></div>
+                </div>
+              </div>
+              <!-- Option 2: 10/10/2026, 24-hr -->
+              <div class="h-11 flex items-center justify-between px-1 rounded-lg cursor-pointer hover:bg-slate-50">
+                <span class="text-[13px] text-[#1E2340]">10/10/2026, 24-hr</span>
+                <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0"></div>
+              </div>
+              <!-- Option 3: 2026-10-10, 24-hr -->
+              <div class="h-11 flex items-center justify-between px-1 rounded-lg cursor-pointer hover:bg-slate-50">
+                <span class="text-[13px] text-[#1E2340]">2026-10-10, 24-hr</span>
+                <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0"></div>
+              </div>
+              <!-- Option 4: Oct 10, 2026, 12-hr -->
+              <div class="h-11 flex items-center justify-between px-1 rounded-lg cursor-pointer hover:bg-slate-50">
+                <span class="text-[13px] text-[#1E2340]">Oct 10, 2026, 12-hr</span>
+                <div class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center flex-shrink-0"></div>
+              </div>
+            </div>
+            <!-- Buttons -->
+            <div class="flex items-center justify-end gap-3 mt-3 pt-2">
+              <button class="px-2.5 py-1 text-[13px] font-medium text-[#8A90A6]">Cancel</button>
+              <button class="px-3.5 py-1 bg-[#4F46E5] text-white text-[13px] font-medium rounded-lg shadow-sm">OK</button>
+            </div>
+          </div>
+          <div class="absolute bottom-3 inset-x-0 text-center text-[10px] font-bold text-white/70 uppercase tracking-wider">DATE FORMAT PICKER</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- FRAME 6: Confirm and hint states (2 sub-frames) -->
+    <!-- ========================================== -->
+    <div class="flex flex-col items-center flex-shrink-0">
+      <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+        <span class="w-5 h-5 rounded-full bg-slate-800 text-indigo-400 flex items-center justify-center text-[10px] font-bold">6</span>
+        CONFIRM &amp; HINT STATES
+      </div>
+      <div class="flex gap-2 bg-slate-900/60 p-2 rounded-[32px] border border-slate-800">
+        <!-- Sub-frame 6A: Reset Confirmation Dialog -->
+        <div class="sub-frame rounded-[24px]">
+          <!-- Background: Dimmed Frame 3 -->
+          <div class="absolute inset-0 opacity-40 filter blur-[0.5px] pointer-events-none">
+            <div class="h-14 bg-white flex items-center px-4 border-b border-slate-100">
+              <span class="text-[15px] font-semibold text-[#1E2340]">Settings</span>
+            </div>
+            <div class="px-5 pt-6 pb-2 text-[10px] font-semibold text-[#4F46E5]">APP</div>
+            <div class="mx-3 bg-white rounded-xl p-3 border border-slate-100 space-y-3">
+              <div class="h-6 bg-red-50 rounded"></div>
+              <div class="h-6 bg-slate-100 rounded"></div>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-slate-950/50 backdrop-blur-[1px]"></div>
+
+          <!-- Dialog Centered -->
+          <div class="absolute inset-x-3.5 top-1/2 -translate-y-1/2 bg-white rounded-[20px] p-5 shadow-2xl z-20 border border-slate-100">
+            <div class="w-10 h-10 rounded-full bg-red-50 text-[#E5484D] flex items-center justify-center mb-3">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"></path></svg>
+            </div>
+            <h3 class="text-[17px] font-semibold text-[#1E2340] mb-1">Reset all settings?</h3>
+            <p class="text-[13px] text-[#8A90A6] leading-relaxed mb-5">Your documents will not be deleted.</p>
+            <div class="flex items-center justify-end gap-3 pt-1">
+              <button class="px-3.5 py-1.5 text-[14px] font-medium text-[#8A90A6]">Cancel</button>
+              <button class="px-4 py-1.5 bg-[#E5484D] text-white text-[14px] font-medium rounded-lg shadow-sm">Reset</button>
+            </div>
+          </div>
+          <div class="absolute bottom-3 inset-x-0 text-center text-[10px] font-bold text-white/70 uppercase tracking-wider">RESET DIALOG</div>
+        </div>
+
+        <!-- Sub-frame 6B: Hint Toast State -->
+        <div class="sub-frame rounded-[24px]">
+          <!-- Background: Frame 1 normal state with toast overlay -->
+          <div class="absolute inset-0 bg-[#F4F6FA] flex flex-col">
+            <div class="h-14 bg-white flex items-center px-4 border-b border-slate-100 flex-shrink-0">
+              <svg class="w-5 h-5 text-[#1E2340]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path></svg>
+              <span class="text-[15px] font-semibold text-[#1E2340] ml-2">Settings</span>
+            </div>
+            <div class="px-4 pt-4 pb-1 text-[11px] font-semibold text-[#4F46E5] uppercase">APPEARANCE &amp; HOME</div>
+            <div class="mx-3 bg-white rounded-xl border border-slate-100 divide-y divide-slate-100 text-[12px]">
+              <div class="p-2.5 flex items-center justify-between">
+                <span class="text-[#1E2340] font-medium">Tags</span>
+                <div class="w-8 h-4 bg-[#D1D5DB] rounded-full flex items-center p-0.5"><div class="w-3 h-3 bg-white rounded-full"></div></div>
+              </div>
+              <div class="p-2.5 flex items-center justify-between opacity-50 bg-indigo-50/20">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[#1E2340] font-medium">Favourite Docs</span>
+                </div>
+                <div class="w-8 h-4 bg-[#D1D5DB] rounded-full flex items-center p-0.5"><div class="w-3 h-3 bg-white rounded-full"></div></div>
+              </div>
+              <div class="p-2.5 flex items-center justify-between">
+                <span class="text-[#1E2340] font-medium">Recent Docs</span>
+                <div class="w-8 h-4 bg-[#4F46E5] rounded-full flex items-center p-0.5"><div class="w-3 h-3 bg-white rounded-full translate-x-4"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dark Toast at Bottom -->
+          <div class="absolute bottom-16 inset-x-2.5 z-30">
+            <div class="bg-[#1E2340]/95 text-white text-[12px] font-medium px-3.5 py-2.5 rounded-full shadow-lg border border-white/10 flex items-center gap-2 backdrop-blur-sm">
+              <svg class="w-4 h-4 text-indigo-300 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"></path></svg>
+              <span class="leading-tight text-[11px]">Turn on Tags to use Favourite Documents</span>
+            </div>
+          </div>
+          <div class="absolute bottom-3 inset-x-0 text-center text-[10px] font-bold text-slate-500 uppercase tracking-wider">HINT TOAST STATE</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+
+
+</body></html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>docLoom - Navigation Drawer (Tools & Other Expanded)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F4F6FA;
+      color: #1E2340;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="w-[390px] h-[844px] overflow-hidden relative mx-auto bg-[#F4F6FA] select-none">
+  <!-- Dimmed Background Home Screen Simulation -->
+  <div class="absolute inset-0 w-full h-full filter blur-[1px] opacity-70 pointer-events-none">
+    <div class="h-14 bg-white flex items-center justify-between px-4 border-b border-gray-100">
+      <div class="flex items-center gap-3">
+        <div class="w-6 h-5 flex flex-col justify-between py-1">
+          <div class="w-5 h-0.5 bg-[#1E2340]"></div>
+          <div class="w-5 h-0.5 bg-[#1E2340]"></div>
+          <div class="w-5 h-0.5 bg-[#1E2340]"></div>
+        </div>
+        <span class="font-bold text-xl text-[#1E2340]">docLoom</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="bg-amber-100 text-amber-700 text-xs px-2 py-0.5 rounded font-bold">PRO</span>
+        <div class="w-5 h-5 rounded-full bg-gray-200"></div>
+        <div class="w-5 h-5 rounded-full bg-gray-200"></div>
+      </div>
+    </div>
+    <div class="p-4">
+      <div class="bg-white h-11 rounded-xl border border-gray-200 px-4 flex items-center text-sm text-gray-400">Search scanned docs...</div>
+    </div>
+    <div class="px-4">
+      <div class="text-sm font-semibold mb-3 text-gray-500">Folders (3)</div>
+      <div class="grid grid-cols-3 gap-2.5">
+        <div class="bg-white p-3 rounded-2xl h-24 border border-gray-100"></div>
+        <div class="bg-white p-3 rounded-2xl h-24 border border-gray-100"></div>
+        <div class="bg-white p-3 rounded-2xl h-24 border border-gray-100"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dark 40% Backdrop Overlay -->
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-[0.5px] z-10"></div>
+
+  <!-- NAVIGATION DRAWER -->
+  <aside class="absolute left-0 top-0 bottom-0 w-[312px] bg-white z-20 rounded-r-[24px] shadow-2xl flex flex-col overflow-hidden">
+    
+    <!-- SECTION 1: ACCOUNT HEADER -->
+    <div class="bg-[#EEF0FF] rounded-b-[20px] pt-7 pb-5 px-5 shrink-0 border-b border-indigo-100/60 shadow-[0_2px_8px_rgba(79,70,229,0.04)]">
+      <div class="flex items-start gap-3.5">
+        <div class="relative shrink-0">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYnTCGPJ9MECWXNGe0zmCINmqPGM_VA0FielhjGKzCHrFugCshD_o60kFpRHJgS8IDVZKCsSbuqFNi_HiS_yArUmQn5o8x9JKnn4AulkscMpYFrwbLyxdg82In_2YIJF0Gcd14HeXG0F06UGjmfnNN9c2Jeb7IuqcQ1xUbDn6ApxzrBnxBJrxEbzub3exk1DNgWFYhEoH81DyYlO6_u993NXH722cuosfViA_FJRZL07bAB3qge29B" alt="Prince Patel" class="w-14 h-14 rounded-full object-cover ring-2 ring-white shadow-sm" />
+          <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white"></div>
+        </div>
+        <div class="flex-1 min-w-0 pt-0.5">
+          <h2 class="font-semibold text-[17px] text-[#1E2340] leading-tight truncate">Prince Patel</h2>
+          <p class="text-[12.5px] text-[#8A90A6] mt-0.5 truncate font-normal">patelprince2598@gmail.com</p>
+          <div class="flex items-center gap-1.5 mt-2">
+            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none">
+              <path d="M4.5 15.5L8.5 8.5H15.5L11.5 15.5H4.5Z" fill="#4F46E5" fill-opacity="0.8"/>
+              <path d="M8.5 8.5L12 2.5L19 14.5L15.5 14.5L8.5 8.5Z" fill="#3B82F6"/>
+              <path d="M12 15.5L15.5 21.5H8.5L5 15.5H12Z" fill="#6366F1"/>
+            </svg>
+            <span class="text-[12px] font-medium text-[#4F46E5] tracking-tight">Google Drive</span>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3.5 pt-2.5 border-t border-indigo-100/70 flex items-center justify-between">
+        <span class="text-[12px] text-[#8A90A6]">Backup size: 589 MB</span>
+        <span class="text-[11px] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/50">Synced</span>
+      </div>
+    </div>
+
+    <!-- DRAWER SCROLLABLE BODY -->
+    <div class="flex-1 overflow-y-auto custom-scroll px-5 py-4 space-y-4">
+      
+      <!-- SECTION 2: PREMIUM BANNER -->
+      <div class="bg-[#FFF6DD] border border-[#F5B301]/40 rounded-[16px] p-3.5 flex items-center gap-3.5 shadow-sm active:scale-[0.99] transition-transform cursor-pointer">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#F5B301]/25 to-[#F5B301]/10 flex items-center justify-center shrink-0 border border-[#F5B301]/30">
+          <svg class="w-5 h-5 text-[#D99B00]" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19C19 19.5523 18.5523 20 18 20H6C5.44772 20 5 19.5523 5 19V17H19V19Z"/>
+          </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-[14px] text-[#1E2340] leading-tight">Upgrade to Premium</div>
+          <div class="text-[11.5px] text-[#8A90A6] mt-0.5 leading-tight">Unlock all features, no ads</div>
+        </div>
+        <svg class="w-4 h-4 text-[#8A90A6] shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </div>
+
+      <!-- SECTION 3: MENU GROUPS -->
+      <div class="space-y-3.5 pb-6">
+
+        <!-- 1. GENERAL (COLLAPSED in Frame 2) -->
+        <div class="space-y-1">
+          <div class="flex items-center justify-between py-1 px-1 cursor-pointer">
+            <span class="text-[11px] font-bold tracking-wider text-[#8A90A6] uppercase">GENERAL</span>
+            <!-- Chevron Down (collapsed) -->
+            <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="h-px bg-slate-100 my-2"></div>
+
+        <!-- 2. TOOLS (EXPANDED in Frame 2) -->
+        <div class="space-y-1">
+          <div class="flex items-center justify-between py-1 px-1 cursor-pointer">
+            <span class="text-[11px] font-bold tracking-wider text-[#4F46E5] uppercase">TOOLS</span>
+            <!-- Chevron Up (expanded) -->
+            <svg class="w-4 h-4 text-[#4F46E5]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+            </svg>
+          </div>
+
+          <!-- PDF Tools (toolbox icon) -->
+          <div class="h-[52px] flex items-center gap-3.5 px-1.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center shrink-0">
+              <svg class="w-[18px] h-[18px] text-[#4F46E5]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v1.069m7.5 0c.976.096 1.942.22 2.898.371m-10.796 0A48.544 48.544 0 0112 6.75c1.026 0 2.037.052 3.033.153" />
+              </svg>
+            </div>
+            <span class="text-[14px] font-medium text-[#1E2340]">PDF Tools</span>
+          </div>
+
+          <!-- Edit / Create PDF (pencil-document icon) -->
+          <div class="h-[52px] flex items-center gap-3.5 px-1.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-full bg-violet-50 flex items-center justify-center shrink-0">
+              <svg class="w-[18px] h-[18px] text-violet-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+              </svg>
+            </div>
+            <span class="text-[14px] font-medium text-[#1E2340]">Edit / Create PDF</span>
+          </div>
+
+          <!-- Signature (pen-signature icon) -->
+          <div class="h-[52px] flex items-center gap-3.5 px-1.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+              <svg class="w-[18px] h-[18px] text-emerald-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" />
+              </svg>
+            </div>
+            <span class="text-[14px] font-medium text-[#1E2340]">Signature</span>
+          </div>
+
+          <!-- QR Scanner (QR scan icon) -->
+          <div class="h-[52px] flex items-center gap-3.5 px-1.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+              <svg class="w-[18px] h-[18px] text-blue-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 6.75h.008v.008H6.75V6.75zM6.75 16.5h.008v.008H6.75V16.5zM16.5 6.75h.008v.008H16.5V6.75zM13.5 13.5h3.75v3.75H13.5V13.5zM17.25 17.25h3v3h-3v-3z" />
+              </svg>
+            </div>
+            <span class="text-[14px] font-medium text-[#1E2340]">QR Scanner</span>
+          </div>
+
+          <!-- QR Generator (QR code icon) -->
+          <div class="h-[52px] flex items-center gap-3.5 px-1.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-full bg-cyan-50 flex items-center justify-center shrink-0">
+              <svg class="w-[18px] h-[18px] text-cyan-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                <circle cx="12" cy="12" r="9" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <span class="text-[14px] font-medium text-[#1E2340]">QR Generator</span>
+          </div>
+        </div>
+
+        <div class="h-px bg-slate-100 my-2"></div>
+
+        <!-- 3. OTHER (EXPANDED in Frame 2) -->
+        <div class="space-y-1">
+          <div class="flex items-center justify-between py-1 px-1 cursor-pointer">
+            <span class="text-[11px] font-bold tracking-wider text-[#4F46E5] uppercase">OTHER</span>
+            <!-- Chevron Up (expanded) -->
+            <svg class="w-4 h-4 text-[#4F46E5]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+            </svg>
+          </div>
+
+          <!-- Help & FAQ -->
+          <div class="h-[52px] flex items-center gap-3.5 px-1.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
+              <svg class="w-[18px] h-[18px] text-amber-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M12 18h.008v.008H12V18zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <span class="text-[14px] font-medium text-[#1E2340]">Help & FAQ</span>
+          </div>
+
+          <!-- Contact Us -->
+          <div class="h-[52px] flex items-center gap-3.5 px-1.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <div class="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center shrink-0">
+              <svg class="w-[18px] h-[18px] text-[#4F46E5]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+              </svg>
+            </div>
+            <span class="text-[14px] font-medium text-[#1E2340]">Contact Us</span>
+          </div>
+
+          <!-- Report a Bug (smaller bug icon, smaller grey text, placed under Contact Us) -->
+          <div class="flex items-center gap-3.5 pl-5 pr-2 py-1.5 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer">
+            <div class="w-7 h-7 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+              <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.516 0c.85.493 1.508 1.333 1.508 2.316V18" />
+              </svg>
+            </div>
+            <span class="text-[12.5px] font-medium text-[#8A90A6]">Report a Bug</span>
+          </div>
+        </div>
+
+        <div class="h-px bg-slate-100 my-2"></div>
+
+        <!-- 4. ABOUT US (SINGLE ROW) -->
+        <div class="h-[52px] flex items-center gap-3.5 px-1.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+          <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+            <svg class="w-[18px] h-[18px] text-blue-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
+          </div>
+          <span class="text-[14px] font-medium text-[#1E2340]">About Us</span>
+        </div>
+
+        <div class="h-px bg-slate-100 my-2"></div>
+
+        <!-- 5. MORE (COLLAPSED) -->
+        <div class="space-y-1">
+          <div class="flex items-center justify-between py-1.5 px-1 cursor-pointer">
+            <span class="text-[11px] font-bold tracking-wider text-[#8A90A6] uppercase">MORE</span>
+            <svg class="w-4 h-4 text-[#8A90A6]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Minimal Drawer Footer note -->
+    <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-[#8A90A6] bg-slate-50/50">
+      <span>docLoom v2.4.1</span>
+      <span>Build 2026.09</span>
+    </div>
+
+  </aside>
+</body>
+</html>

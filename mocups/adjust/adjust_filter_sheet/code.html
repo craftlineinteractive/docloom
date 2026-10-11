@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>docLoom - Frame 3: Filter Bottom Sheet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0F1220;
+      color: #FFFFFF;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+</head>
+<body class="flex justify-center items-center min-h-screen bg-[#070913]">
+
+  <!-- Mobile Screen Container 390x844 -->
+  <div class="w-[390px] h-[844px] bg-[#0F1220] flex flex-col relative overflow-hidden select-none shadow-2xl">
+
+    <!-- Background Frame 1 (Dimmed 50%) -->
+    <div class="absolute inset-0 flex flex-col pointer-events-none opacity-40">
+      <!-- Top App Bar -->
+      <div class="h-14 px-4 flex items-center justify-between">
+        <div class="w-10 h-10 flex items-center justify-center text-white/90">
+          <svg class="w-6 h-6 stroke-[1.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
+          </svg>
+        </div>
+        <span class="text-[17px] font-semibold text-white">Adjust</span>
+        <span class="text-xs font-medium text-white/70 bg-white/10 px-2 py-0.5 rounded-full">1/1</span>
+      </div>
+
+      <!-- Preview Image Area -->
+      <div class="flex-1 px-4 flex flex-col justify-center items-center">
+        <div class="w-full h-[360px] bg-[#171B2F] rounded-2xl relative border border-white/5 flex items-center justify-center">
+          <div class="w-[240px] h-[300px] bg-[#F8F9FA] rounded-[3px] shadow-2xl rotate-[-2deg] p-4">
+            <div class="w-16 h-2 bg-neutral-800 rounded-sm mb-2"></div>
+            <div class="w-full h-1.5 bg-neutral-300 rounded-sm mb-1"></div>
+            <div class="w-3/4 h-1.5 bg-neutral-300 rounded-sm mb-1"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fake controls in background -->
+      <div class="px-4 pb-4 space-y-3">
+        <div class="h-6"></div>
+        <div class="h-10 border-y border-white/10"></div>
+        <div class="h-6"></div>
+        <div class="h-[52px]"></div>
+      </div>
+    </div>
+
+    <!-- 50% Dark Overlay -->
+    <div class="absolute inset-0 bg-black/50 z-20"></div>
+
+    <!-- White Bottom Sheet (24px top radius, pure white, soft shadow) -->
+    <div class="absolute bottom-0 inset-x-0 bg-white rounded-t-[24px] shadow-2xl z-30 pt-3 pb-8 px-5 flex flex-col text-[#1E2340] animate-in slide-in-from-bottom duration-200">
+      
+      <!-- Drag handle bar -->
+      <div class="w-10 h-1.5 bg-neutral-200 rounded-full mx-auto mb-4"></div>
+
+      <!-- Bottom Sheet Header -->
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-lg font-semibold text-[#1E2340] tracking-tight">Filters</h2>
+        <span class="text-xs text-[#8A90A6]">5 Presets</span>
+      </div>
+
+      <!-- Horizontal row of 5 square thumbnail cards (72px, 12px radius) -->
+      <div class="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
+        
+        <!-- 1. Original -->
+        <div class="flex flex-col items-center gap-2 shrink-0 cursor-pointer group">
+          <div class="w-[72px] h-[72px] rounded-xl border border-neutral-200 bg-neutral-100 overflow-hidden relative shadow-sm group-hover:border-neutral-300 transition-colors flex items-center justify-center">
+            <!-- Thumbnail preview of paper with neutral tone -->
+            <div class="w-11 h-14 bg-[#FAF9F6] rounded-[2px] shadow-sm p-1 flex flex-col justify-between rotate-[-1deg]">
+              <div class="w-6 h-1 bg-neutral-700 rounded-[1px]"></div>
+              <div class="space-y-0.5">
+                <div class="w-full h-0.5 bg-neutral-400"></div>
+                <div class="w-3/4 h-0.5 bg-neutral-400"></div>
+              </div>
+              <div class="w-4 h-0.5 bg-neutral-400"></div>
+            </div>
+          </div>
+          <span class="text-[11px] font-medium text-[#8A90A6]">Original</span>
+        </div>
+
+        <!-- 2. Auto Enhance -->
+        <div class="flex flex-col items-center gap-2 shrink-0 cursor-pointer group">
+          <div class="w-[72px] h-[72px] rounded-xl border border-neutral-200 bg-blue-50/50 overflow-hidden relative shadow-sm group-hover:border-neutral-300 transition-colors flex items-center justify-center">
+            <!-- Thumbnail preview slightly balanced -->
+            <div class="w-11 h-14 bg-white rounded-[2px] shadow-sm p-1 flex flex-col justify-between rotate-[-1deg]">
+              <div class="w-6 h-1 bg-indigo-900 rounded-[1px]"></div>
+              <div class="space-y-0.5">
+                <div class="w-full h-0.5 bg-neutral-500"></div>
+                <div class="w-3/4 h-0.5 bg-neutral-500"></div>
+              </div>
+              <div class="w-4 h-0.5 bg-neutral-400"></div>
+            </div>
+          </div>
+          <span class="text-[11px] font-medium text-[#8A90A6]">Auto Enhance</span>
+        </div>
+
+        <!-- 3. Vivid Light (Selected: 2px indigo border + indigo label) -->
+        <div class="flex flex-col items-center gap-2 shrink-0 cursor-pointer">
+          <div class="w-[72px] h-[72px] rounded-xl border-2 border-[#4F46E5] bg-indigo-50/40 overflow-hidden relative shadow-md flex items-center justify-center ring-2 ring-indigo-500/20">
+            <!-- Crisp high contrast bright paper -->
+            <div class="w-11 h-14 bg-white rounded-[2px] shadow-md p-1 flex flex-col justify-between rotate-[-1deg] ring-1 ring-black/5">
+              <div class="w-6 h-1 bg-neutral-900 rounded-[1px]"></div>
+              <div class="space-y-0.5">
+                <div class="w-full h-0.5 bg-neutral-800"></div>
+                <div class="w-3/4 h-0.5 bg-neutral-800"></div>
+              </div>
+              <div class="w-4 h-0.5 bg-neutral-700"></div>
+            </div>
+            <!-- Checkmark badge -->
+            <div class="absolute top-1 right-1 w-4 h-4 bg-[#4F46E5] rounded-full flex items-center justify-center shadow">
+              <svg class="w-2.5 h-2.5 text-white stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+              </svg>
+            </div>
+          </div>
+          <span class="text-[11px] font-semibold text-[#4F46E5]">Vivid Light</span>
+        </div>
+
+        <!-- 4. Grayscale -->
+        <div class="flex flex-col items-center gap-2 shrink-0 cursor-pointer group">
+          <div class="w-[72px] h-[72px] rounded-xl border border-neutral-200 bg-neutral-100 overflow-hidden relative shadow-sm group-hover:border-neutral-300 transition-colors flex items-center justify-center grayscale">
+            <div class="w-11 h-14 bg-neutral-200 rounded-[2px] shadow-sm p-1 flex flex-col justify-between rotate-[-1deg]">
+              <div class="w-6 h-1 bg-neutral-800 rounded-[1px]"></div>
+              <div class="space-y-0.5">
+                <div class="w-full h-0.5 bg-neutral-500"></div>
+                <div class="w-3/4 h-0.5 bg-neutral-500"></div>
+              </div>
+              <div class="w-4 h-0.5 bg-neutral-400"></div>
+            </div>
+          </div>
+          <span class="text-[11px] font-medium text-[#8A90A6]">Grayscale</span>
+        </div>
+
+        <!-- 5. Black & White -->
+        <div class="flex flex-col items-center gap-2 shrink-0 cursor-pointer group">
+          <div class="w-[72px] h-[72px] rounded-xl border border-neutral-200 bg-neutral-100 overflow-hidden relative shadow-sm group-hover:border-neutral-300 transition-colors flex items-center justify-center">
+            <div class="w-11 h-14 bg-white rounded-[2px] shadow-sm p-1 flex flex-col justify-between rotate-[-1deg] border border-black/10">
+              <div class="w-6 h-1 bg-black rounded-[1px]"></div>
+              <div class="space-y-0.5">
+                <div class="w-full h-0.5 bg-black"></div>
+                <div class="w-3/4 h-0.5 bg-black"></div>
+              </div>
+              <div class="w-4 h-0.5 bg-black"></div>
+            </div>
+          </div>
+          <span class="text-[11px] font-medium text-[#8A90A6]">Black & White</span>
+        </div>
+
+      </div>
+
+      <!-- Done Button (filled indigo #4F46E5) -->
+      <div class="mt-6">
+        <button class="w-full h-[52px] rounded-[14px] bg-[#4F46E5] hover:bg-[#4338CA] text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 active:scale-[0.99] transition-transform flex items-center justify-center">
+          Done
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

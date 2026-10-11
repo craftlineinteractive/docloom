@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=390, height=844, initial-scale=1.0">
+<title>docLoom - Frame 11: OCR Result Screen</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body class="w-[390px] h-[844px] bg-[#F4F6FA] text-[#1E2340] flex flex-col justify-between overflow-hidden relative select-none mx-auto">
+  <!-- TOP APP BAR (Full White Screen) -->
+  <header class="bg-white border-b border-gray-100 pt-11 px-5 pb-3 flex items-center justify-between shadow-xs">
+    <div class="flex items-center space-x-3">
+      <button class="w-9 h-9 rounded-full hover:bg-gray-100 flex items-center justify-center text-[#1E2340] transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      </button>
+      <h1 class="text-[17px] font-bold text-[#1E2340] tracking-tight">Extracted Text</h1>
+    </div>
+    <!-- Copy Icon on the right -->
+    <button class="w-9 h-9 rounded-full hover:bg-gray-100 flex items-center justify-center text-[#4F46E5] transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+    </button>
+  </header>
+
+  <!-- MAIN SCROLLABLE CONTENT -->
+  <main class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+    <!-- Small Captured-Image Thumbnail Card (Collapsed) -->
+    <div class="bg-white rounded-[16px] p-3.5 border border-gray-100 shadow-sm flex items-center justify-between cursor-pointer hover:border-[#4F46E5]/40 transition-colors">
+      <div class="flex items-center space-x-3">
+        <!-- Thumbnail image preview -->
+        <div class="w-12 h-14 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center relative shadow-xs">
+          <div class="w-8 h-10 bg-white border border-gray-200 rounded p-1 space-y-0.5">
+            <div class="w-full h-0.5 bg-gray-400 rounded"></div>
+            <div class="w-3/4 h-0.5 bg-gray-300 rounded"></div>
+            <div class="w-full h-0.5 bg-gray-300 rounded"></div>
+            <div class="w-1/2 h-0.5 bg-gray-200 rounded"></div>
+          </div>
+          <span class="absolute bottom-0 inset-x-0 bg-black/60 text-[8px] text-white text-center font-semibold">IMG_08</span>
+        </div>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <h3 class="text-[13px] font-bold text-[#1E2340]">Scanned Document</h3>
+            <span class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded">99.4% OCR</span>
+          </div>
+          <p class="text-[11px] text-[#8A90A6] mt-0.5">1 page • English • Tap to preview original</p>
+        </div>
+      </div>
+      <button class="text-[#8A90A6] hover:text-[#1E2340] p-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+    </div>
+
+    <!-- Editable Text Area with Sample English Text -->
+    <div class="bg-white rounded-[16px] p-4 border border-gray-100 shadow-sm flex flex-col flex-1 min-h-[440px]">
+      <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-gray-100">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-[#8A90A6]">Recognized Text Content</span>
+        <span class="text-[11px] text-[#4F46E5] font-semibold flex items-center space-x-1 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+          <span>Edit</span>
+        </span>
+      </div>
+
+      <div class="text-[13px] leading-relaxed text-[#1E2340] space-y-3 font-normal outline-none focus:ring-0">
+        <p class="font-semibold text-[14px] text-[#0f172a]">
+          MASTER CONSULTING AGREEMENT & STATEMENT OF WORK
+        </p>
+        <p>
+          This Consulting Agreement is entered into on this 14th day of October 2026, by and between docLoom Technologies Inc. ("Client") and the Independent Consultant named below ("Provider").
+        </p>
+        <p>
+          1. SCOPE OF SERVICES: Consultant agrees to provide document pipeline analysis, edge machine learning optical character recognition optimization, and localized cloud synchronization security protocols as set forth in Exhibit A.
+        </p>
+        <p>
+          2. DELIVERABLES & TIMELINE: All final architecture reports and source artifacts shall be delivered in portable document format (.pdf) compliant with ISO 19005-1 (PDF/A) standards by the scheduled milestone review date.
+        </p>
+        <p>
+          3. CONFIDENTIALITY: All processed data, including signature templates and scanned credentials, remain the exclusive property of the Client and are protected under non-disclosure terms.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- BOTTOM BAR (Two buttons: Copy indigo outline & Share filled indigo) -->
+  <footer class="bg-white border-t border-gray-100 px-5 py-3.5 flex items-center space-x-3 shadow-lg">
+    <button class="flex-1 py-3 text-xs font-semibold text-[#4F46E5] border border-[#4F46E5] rounded-[12px] flex items-center justify-center space-x-1.5 hover:bg-indigo-50 active:scale-98 transition-all">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+      <span>Copy</span>
+    </button>
+    <button class="flex-1 py-3 text-xs font-semibold text-white bg-[#4F46E5] rounded-[12px] flex items-center justify-center space-x-1.5 shadow-md shadow-indigo-500/20 hover:bg-indigo-600 active:scale-98 transition-all">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+      <span>Share</span>
+    </button>
+  </footer>
+</body>
+</html>
