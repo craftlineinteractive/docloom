@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
-import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/widgets.dart';
 
@@ -11,11 +10,13 @@ class DocumentItem {
     required this.name,
     required this.date,
     required this.pageCount,
+    this.coverPath,
   });
 
   final String name;
   final String date;
   final String pageCount;
+  final String? coverPath;
 }
 
 class DocumentCard extends StatelessWidget {
@@ -38,21 +39,7 @@ class DocumentCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: AppSizes.thumbnail,
-            height: AppSizes.thumbnail,
-            decoration: const BoxDecoration(
-              color: AppColors.pageBackdrop,
-              borderRadius: BorderRadius.all(Radius.circular(AppRadius.sm)),
-            ),
-            child: const Center(
-              child: Icon(
-                LucideIcons.fileText,
-                color: AppColors.primary,
-                size: 24,
-              ),
-            ),
-          ),
+          PageThumbnail(relativePath: item.coverPath),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(

@@ -1,130 +1,140 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../../app/router/routes.dart';
+import '../../../core/providers/app_providers.dart';
+import '../../../core/providers/home_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/time/relative_time.dart';
 import '../../../core/widgets/widgets.dart';
 import 'widgets/document_card.dart';
 import 'widgets/folder_card.dart';
+import 'widgets/home_add_sheet.dart';
 
-const _sampleFolders = [
-  FolderItem(
-    name: 'Client Files',
-    itemCountAndDate: '4 items - 12 Oct',
-    color: AppColors.folderIndigo,
-  ),
-  FolderItem(
-    name: 'Property Documents',
-    itemCountAndDate: '8 items - 04 Oct',
-    color: AppColors.folderOrange,
-  ),
-];
-
-const _sampleDocuments = [
-  DocumentItem(
-    name: 'sunilkumar_prajapati',
-    date: '2 days ago',
-    pageCount: '26 pages',
-  ),
-  DocumentItem(
-    name: 'DocLoom 17 Sept 2026 12-02',
-    date: '3 weeks ago',
-    pageCount: '1 page',
-  ),
-  DocumentItem(
-    name: 'kunjbhai',
-    date: '30 Jul 2026',
-    pageCount: '39 pages',
-  ),
-  DocumentItem(
-    name: 'pravinaben',
-    date: '30 Jul 2026',
-    pageCount: '16 pages',
-  ),
-];
-
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final foldersAsync = ref.watch(foldersProvider);
+    final docsAsync = ref.watch(documentsProvider(null));
+    final clock = ref.watch(clockProvider);
+
+    if ((foldersAsync.isLoading && !foldersAsync.hasValue) || (docsAsync.isLoading && !docsAsync.hasValue)) {
+      return const Scaffold(appBar: AppTopBar(title: 'docLoom'), body: Center(child: CircularProgressIndicator()));
+    }
+
+    if ((foldersAsync.hasError && !foldersAsync.hasValue) || (docsAsync.hasError && !docsAsync.hasValue)) {
+      return Scaffold(
+        appBar: const AppTopBar(title: 'docLoom'),
+        body: EmptyState(
+          icon: LucideIcons.alertCircle,
+          title: 'Failed to load',
+          body: 'Could not load your library.',
+          actionLabel: 'Try again',
+          onAction: () => ref.refreshLibrary(),
+        ),
+      );
+    }
+
+    final folders = foldersAsync.value ?? const [];
+    final docs = docsAsync.value ?? const [];
+    final isEmpty = folders.isEmpty && docs.isEmpty;
+
     return Scaffold(
       appBar: AppTopBar(
         title: 'docLoom',
-        leading: AppIconButton(
-          icon: LucideIcons.menu,
-          tooltip: 'Menu',
-          onPressed: () {},
-        ),
         actions: [
-          AppIconButton(
-            icon: LucideIcons.crown,
-            tooltip: 'Upgrade to PRO',
-            color: AppColors.gold,
-            onPressed: () {},
-          ),
-          AppIconButton(
-            icon: LucideIcons.search,
-            tooltip: 'Search documents',
-            onPressed: () {},
-          ),
-          AppIconButton(
-            icon: LucideIcons.moreVertical,
-            tooltip: 'More options',
-            onPressed: () {},
-          ),
+          AppIconButton(icon: LucideIcons.search, tooltip: 'Search', onPressed: () {}),
+          AppIconButton(icon: LucideIcons.moreVertical, tooltip: 'More options', onPressed: () {}),
           if (kDebugMode)
-            AppIconButton(
-              icon: LucideIcons.layoutGrid,
-              tooltip: 'Component Gallery',
-              onPressed: () => context.push(Routes.gallery),
-            ),
+            AppIconButton(icon: LucideIcons.layoutGrid, tooltip: 'Component Gallery', onPressed: () => context.push('/gallery')),
         ],
       ),
-      body: Stack(
-        children: [
-          ListView(
-            padding: const EdgeInsets.only(
-              left: AppSpacing.screenH,
-              right: AppSpacing.screenH,
-              top: AppSpacing.md,
-              bottom: AppSpacing.xxl * 4,
-            ),
-            children: [
-              const SectionHeader(title: 'Folders', count: 2),
-              const SizedBox(height: AppSpacing.sm),
-              IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    for (int i = 0; i < _sampleFolders.length; i++) ...[
-                      if (i > 0) const SizedBox(width: AppSpacing.md),
-                      Expanded(
-                        child: FolderCard(item: _sampleFolders[i]),
-                      ),
-                    ],
-                  ],
+      floatingActionButton: FabPill(
+        onCamera: () => showAppToast(context, 'Scanning arrives in Phase 4'),
+        onAdd: () => HomeAddSheet.show(context),
+      ),
+      body: CustomScrollView(
+        slivers: [
+          if (isEmpty)
+            const SliverFillRemaining(
+              hasScrollBody: false,
+              child: EmptyState(
+                icon: LucideIcons.fileText,
+                title: 'Scan your first document',
+                body: 'Digitize receipts, ID cards, notes, or\nimport existing files effortlessly.',
+              ),
+            )
+          else ...[
+            if (folders.isNotEmpty) ...[
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.screenH, AppSpacing.sm, AppSpacing.screenH, 0),
+                  child: SectionHeader(
+                    title: 'Folders',
+                    count: folders.length,
+                    trailing: AppIconButton(icon: LucideIcons.folderPlus, tooltip: 'Create folder', onPressed: () {}),
+                  ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.xxl),
-              const SectionHeader(title: 'Documents', count: 4),
-              const SizedBox(height: AppSpacing.sm),
-              for (final doc in _sampleDocuments) ...[
-                DocumentCard(item: doc),
-                const SizedBox(height: AppSpacing.md),
-              ],
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenH),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: AppSpacing.sm,
+                    mainAxisSpacing: AppSpacing.sm,
+                    childAspectRatio: 0.9,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final f = folders[index];
+                      final color = AppColors.folderPalette[f.folder.colorIndex % AppColors.folderPalette.length];
+                      final countText = '${f.itemCount} ${f.itemCount == 1 ? 'item' : 'items'} - ${shortDate(f.folder.updatedAt)}';
+                      return FolderCard(
+                        key: ValueKey(f.folder.id),
+                        item: FolderItem(name: f.folder.name, itemCountAndDate: countText, color: color),
+                        onTap: () => showAppToast(context, 'Folder screen comes in 3C'),
+                      );
+                    },
+                    childCount: folders.length,
+                  ),
+                ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
             ],
-          ),
-          Positioned(
-            right: AppSpacing.screenH,
-            bottom: AppSpacing.xxl,
-            child: FabPill(
-              onCamera: () => showAppToast(context, 'Camera coming soon'),
-              onAdd: () => showAppToast(context, 'Import coming soon'),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(AppSpacing.screenH, AppSpacing.sm, AppSpacing.screenH, 0),
+                child: SectionHeader(title: 'Documents', count: docs.length),
+              ),
             ),
-          ),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenH),
+              sliver: SliverList.separated(
+                itemCount: docs.length,
+                separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),
+                itemBuilder: (context, index) {
+                  final doc = docs[index];
+                  final pageCount = '${doc.pageCount} ${doc.pageCount == 1 ? 'page' : 'pages'}';
+                  return DocumentCard(
+                    key: ValueKey(doc.document.id),
+                    item: DocumentItem(
+                      name: doc.document.name,
+                      date: relativeTime(doc.document.updatedAt, clock()),
+                      pageCount: pageCount,
+                      coverPath: doc.coverPath,
+                    ),
+                    onTap: () => showAppToast(context, 'Viewer comes in a later phase'),
+                  );
+                },
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
+          ],
         ],
       ),
     );

@@ -21,4 +21,12 @@ abstract final class AppColors {
   static const folderOrange = Color(0xFFF59E0B);
   static const folderGreen = Color(0xFF22C55E);
   static const folderRed = Color(0xFFEF4444);
+
+  static const folderPalette = [
+    folderIndigo,
+    folderOrange,
+    folderGreen,
+    folderRed,
+  ];
 }
+
