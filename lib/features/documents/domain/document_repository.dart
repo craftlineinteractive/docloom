@@ -29,4 +29,5 @@ abstract interface class DocumentRepository {
   Future<ScanPage> deletePage(String pageId);
   Future<void> reorderPages(String documentId, List<String> orderedPageIds);
   Future<void> moveToTrash(String id);
+  Future<Set<String>> existingIds(List<String> ids);
 }

@@ -1,0 +1,48 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:docloom/core/providers/app_providers.dart';
+import 'package:docloom/core/storage/document_file_store.dart';
+import 'package:docloom/core/widgets/page_thumbnail.dart';
+
+void main() {
+  late Directory tempDir;
+  late DocumentFileStore fileStore;
+
+  setUp(() async {
+    tempDir = await Directory.systemTemp.createTemp('page_thumbnail_test_');
+    fileStore = DocumentFileStore(tempDir);
+  });
+
+  tearDown(() async {
+    if (await tempDir.exists()) await tempDir.delete(recursive: true);
+  });
+
+  Widget buildWidget(String? relativePath) {
+    return ProviderScope(
+      overrides: [
+        fileStoreProvider.overrideWithValue(fileStore),
+      ],
+      child: MaterialApp(
+        home: Scaffold(
+          body: PageThumbnail(relativePath: relativePath),
+        ),
+      ),
+    );
+  }
+
+  testWidgets('PageThumbnail renders placeholder for null path without exception', (tester) async {
+    await tester.pumpWidget(buildWidget(null));
+    expect(find.byIcon(LucideIcons.fileText), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('PageThumbnail renders placeholder for missing file without exception', (tester) async {
+    await tester.pumpWidget(buildWidget('documents/doc1/page1_original.jpg'));
+    expect(find.byIcon(LucideIcons.fileText), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+}
+

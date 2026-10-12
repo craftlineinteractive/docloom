@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
@@ -14,12 +13,12 @@ Future<void> main() async {
     try {
       final container = ProviderContainer(overrides: overrides);
       final trashService = container.read(trashServiceProvider);
-      final purged = await trashService.purgeExpired();
-      if (kDebugMode) {
-        debugPrint('TrashService: Purged $purged expired documents on startup');
-      }
+      await trashService.purgeExpired();
+      await trashService.cleanOrphanDirectories();
+      container.dispose();
     } catch (error, stackTrace) {
-      debugPrint('Startup trash purge error: $error\n$stackTrace');
+      debugPrint('Startup maintenance error: $error\n$stackTrace');
     }
   });
 }
+

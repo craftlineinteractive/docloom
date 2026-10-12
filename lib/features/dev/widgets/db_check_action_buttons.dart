@@ -12,6 +12,8 @@ class DbCheckActionButtons extends StatelessWidget {
     required this.onTrashNewestDoc,
     required this.onRestoreNewestDoc,
     required this.onEmptyTrash,
+    required this.onSeedData,
+    required this.onClearAllData,
     required this.busy,
   });
 
@@ -20,6 +22,8 @@ class DbCheckActionButtons extends StatelessWidget {
   final VoidCallback onTrashNewestDoc;
   final VoidCallback onRestoreNewestDoc;
   final VoidCallback onEmptyTrash;
+  final VoidCallback onSeedData;
+  final VoidCallback onClearAllData;
   final bool busy;
 
   @override
@@ -59,7 +63,21 @@ class DbCheckActionButtons extends StatelessWidget {
           variant: AppButtonVariant.danger,
           onPressed: busy ? null : onEmptyTrash,
         ),
+        const SizedBox(height: AppSpacing.sm),
+        AppButton(
+          label: 'Seed Sample Data',
+          icon: const Icon(LucideIcons.databaseZap, size: 18, color: AppColors.surface),
+          onPressed: busy ? null : onSeedData,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        AppButton(
+          label: 'Clear All Data',
+          icon: const Icon(LucideIcons.circleSlash2, size: 18, color: AppColors.surface),
+          variant: AppButtonVariant.danger,
+          onPressed: busy ? null : onClearAllData,
+        ),
       ],
     );
   }
 }
+

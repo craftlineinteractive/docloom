@@ -46,6 +46,21 @@ void main() {
     expect(relPath, 'documents/doc1/page1_original.jpg');
   });
 
+  test('importOriginalBytes writes bytes to _original path', () async {
+    final relPath = await fileStore.importOriginalBytes(
+      documentId: 'doc1',
+      pageId: 'page1',
+      bytes: [9, 8, 7],
+      ext: 'png',
+    );
+
+    expect(relPath, 'documents/doc1/page1_original.png');
+    final resolved = fileStore.resolve(relPath);
+    expect(await resolved.exists(), isTrue);
+    expect(await resolved.readAsBytes(), [9, 8, 7]);
+  });
+
+
   test('writeEdited writes bytes and returns forward-slash relative path', () async {
     final relPath = await fileStore.writeEdited(
       documentId: 'doc1',
@@ -101,4 +116,15 @@ void main() {
     expect(await fileStore.documentSizeBytes('doc1'), 5);
     expect(await fileStore.countFiles(), 2);
   });
+
+  test('listDocumentDirIds returns names of directories under documents/', () async {
+    expect(await fileStore.listDocumentDirIds(), isEmpty);
+
+    await fileStore.writeEdited(documentId: 'doc1', pageId: 'p1', bytes: [1]);
+    await fileStore.writeEdited(documentId: 'doc2', pageId: 'p1', bytes: [2]);
+
+    final dirIds = await fileStore.listDocumentDirIds();
+    expect(dirIds.toSet(), {'doc1', 'doc2'});
+  });
 }
+

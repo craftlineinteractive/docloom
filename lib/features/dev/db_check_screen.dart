@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/widgets.dart';
-import '../documents/domain/document_sort.dart';
-import '../documents/domain/new_page.dart';
+import 'db_check_actions.dart';
 import 'widgets/db_check_action_buttons.dart';
 import 'widgets/db_check_stats_card.dart';
 
@@ -47,10 +46,11 @@ class _DbCheckScreenState extends ConsumerState<DbCheckScreen> {
     });
   }
 
-  Future<void> _runAction(Future<void> Function() action) async {
+  Future<void> _run(Future<void> Function(DbCheckActions) fn) async {
     setState(() => _busy = true);
     try {
-      await action();
+      final actions = DbCheckActions(ref: ref, addLog: _addLog);
+      await fn(actions);
       await _refreshCounts();
     } catch (e, st) {
       _addLog('Error: $e');
@@ -59,46 +59,6 @@ class _DbCheckScreenState extends ConsumerState<DbCheckScreen> {
       if (mounted) setState(() => _busy = false);
     }
   }
-
-  Future<void> _createFolder() => _runAction(() async {
-    final folder = await ref.read(folderRepositoryProvider).create(
-      name: 'Test Folder ${_folderSeq++}',
-    );
-    _addLog('Created folder "${folder.name}" (${folder.id})');
-  });
-
-  Future<void> _createDoc() => _runAction(() async {
-    final idGen = ref.read(idGeneratorProvider);
-    final fileStore = ref.read(fileStoreProvider);
-    final docId = idGen(), p1Id = idGen(), p2Id = idGen();
-    final rel1 = await fileStore.writeEdited(documentId: docId, pageId: p1Id, bytes: const [0, 1, 2]);
-    final rel2 = await fileStore.writeEdited(documentId: docId, pageId: p2Id, bytes: const [3, 4, 5]);
-    final doc = await ref.read(documentRepositoryProvider).createWithPages(
-      id: docId,
-      name: 'Doc ${DateTime.now().millisecondsSinceEpoch % 1000}',
-      pages: [NewPage(id: p1Id, originalPath: rel1), NewPage(id: p2Id, originalPath: rel2)],
-    );
-    _addLog('Created doc "${doc.name}" with 2 pages');
-  });
-
-  Future<void> _trashNewestDoc() => _runAction(() async {
-    final docs = await ref.read(documentRepositoryProvider).listInFolder(sort: DocumentSort.modifiedDesc);
-    if (docs.isEmpty) return _addLog('No root document to trash');
-    await ref.read(documentRepositoryProvider).moveToTrash(docs.first.document.id);
-    _addLog('Trashed doc "${docs.first.document.name}"');
-  });
-
-  Future<void> _restoreNewestDoc() => _runAction(() async {
-    final trashed = await ref.read(trashRepositoryProvider).listTrashedDocuments();
-    if (trashed.isEmpty) return _addLog('No trashed document to restore');
-    final res = await ref.read(trashRepositoryProvider).restoreDocument(trashed.first.document.id);
-    _addLog('Restored "${trashed.first.document.name}" (toRoot: ${res.restoredToRoot})');
-  });
-
-  Future<void> _emptyTrash() => _runAction(() async {
-    await ref.read(trashServiceProvider).emptyTrash();
-    _addLog('Emptied trash');
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -111,11 +71,13 @@ class _DbCheckScreenState extends ConsumerState<DbCheckScreen> {
           children: [
             const SectionHeader(title: 'Actions'),
             DbCheckActionButtons(
-              onCreateFolder: _createFolder,
-              onCreateDocument: _createDoc,
-              onTrashNewestDoc: _trashNewestDoc,
-              onRestoreNewestDoc: _restoreNewestDoc,
-              onEmptyTrash: _emptyTrash,
+              onCreateFolder: () => _run((a) => a.createFolder(_folderSeq++)),
+              onCreateDocument: () => _run((a) => a.createDoc()),
+              onTrashNewestDoc: () => _run((a) => a.trashNewestDoc()),
+              onRestoreNewestDoc: () => _run((a) => a.restoreNewestDoc()),
+              onEmptyTrash: () => _run((a) => a.emptyTrash()),
+              onSeedData: () => _run((a) => a.seedData()),
+              onClearAllData: () => _run((a) => a.clearAll()),
               busy: _busy,
             ),
             const SizedBox(height: AppSpacing.lg),

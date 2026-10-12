@@ -23,6 +23,25 @@ class DocumentFileStore {
     return 'documents/$documentId/$fileName';
   }
 
+  Future<String> importOriginalBytes({
+    required String documentId,
+    required String pageId,
+    required List<int> bytes,
+    String ext = 'png',
+  }) async {
+    final cleanExt = ext.replaceAll('.', '').toLowerCase();
+    final finalExt = cleanExt.isEmpty ? 'png' : cleanExt;
+    final dir = Directory(p.join(root.path, 'documents', documentId));
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
+    final fileName = '${pageId}_original.$finalExt';
+    final target = File(p.join(dir.path, fileName));
+    await target.writeAsBytes(bytes, flush: true);
+    return 'documents/$documentId/$fileName';
+  }
+
+
   Future<String> writeEdited({
     required String documentId,
     required String pageId,
@@ -104,5 +123,17 @@ class DocumentFileStore {
       }
     }
     return count;
+  }
+
+  Future<List<String>> listDocumentDirIds() async {
+    final docsDir = Directory(p.join(root.path, 'documents'));
+    if (!await docsDir.exists()) return const [];
+    final ids = <String>[];
+    await for (final entity in docsDir.list()) {
+      if (entity is Directory) {
+        ids.add(p.basename(entity.path));
+      }
+    }
+    return ids;
   }
 }

@@ -36,8 +36,10 @@ void main() {
     folderRepo = SqliteFolderRepository(db, clock: fakeClock);
     docRepo = SqliteDocumentRepository(db, clock: fakeClock);
     trashRepo = SqliteTrashRepository(db, clock: fakeClock);
-    trashService = TrashService(trashRepo, fileStore, clock: fakeClock);
+    trashService = TrashService(trashRepo, docRepo, fileStore, clock: fakeClock);
   });
+
+
 
   tearDown(() async {
     await db.close();
@@ -121,4 +123,21 @@ void main() {
     expect(await fileStore.resolve(p2).exists(), isFalse);
     expect(await fileStore.countFiles(), 0);
   });
+
+  test('active document survives deleteDocumentForever and active folder survives deleteFolderForever', () async {
+    final folder = await folderRepo.create(name: 'Active Folder');
+    const docId = 'doc-active';
+    final p1 = await fileStore.writeEdited(documentId: docId, pageId: 'p1', bytes: [7, 8]);
+    await docRepo.createWithPages(id: docId, name: 'Active Doc', folderId: folder.id, pages: [NewPage(id: 'p1', originalPath: p1)]);
+
+    await trashService.deleteDocumentForever(docId);
+    expect(await docRepo.getById(docId), isNotNull);
+    expect(await fileStore.resolve(p1).exists(), isTrue);
+
+    await trashService.deleteFolderForever(folder.id);
+    expect(await folderRepo.getById(folder.id), isNotNull);
+    expect(await docRepo.getById(docId), isNotNull);
+    expect(await fileStore.resolve(p1).exists(), isTrue);
+  });
 }
+

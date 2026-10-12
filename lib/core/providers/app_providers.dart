@@ -58,10 +58,12 @@ final trashRepositoryProvider = Provider<TrashRepository>((ref) {
 
 final trashServiceProvider = Provider<TrashService>((ref) {
   final trashRepo = ref.watch(trashRepositoryProvider);
+  final docRepo = ref.watch(documentRepositoryProvider);
   final fileStore = ref.watch(fileStoreProvider);
   final clock = ref.watch(clockProvider);
   return TrashService(
     trashRepo,
+    docRepo,
     fileStore,
     clock: clock,
   );

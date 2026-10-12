@@ -13,11 +13,8 @@ import 'document_page_operations.dart';
 import 'document_sql.dart';
 
 class SqliteDocumentRepository implements DocumentRepository {
-  SqliteDocumentRepository(
-    this.db, {
-    this.clock = systemClock,
-    IdGenerator idGenerator = newId,
-  }) : _pageOps = const DocumentPageOperations();
+  SqliteDocumentRepository(this.db, {this.clock = systemClock, IdGenerator idGenerator = newId})
+      : _pageOps = const DocumentPageOperations();
 
   final AppDatabase db;
   final Clock clock;
@@ -31,6 +28,12 @@ class SqliteDocumentRepository implements DocumentRepository {
   Future<void> _assertDocActive(DatabaseExecutor executor, String id) async {
     final rows = await executor.rawQuery(DocumentSql.selectActiveById, [id]);
     if (rows.isEmpty) throw const NotFoundException('Document not found or trashed');
+  }
+
+  Future<void> _updateDoc(String id, Map<String, Object?> values) async {
+    await _assertDocActive(db.db, id);
+    values['updated_at'] = clock().millisecondsSinceEpoch;
+    await db.db.update('documents', values, where: 'id = ?', whereArgs: [id]);
   }
 
   @override
@@ -83,27 +86,19 @@ class SqliteDocumentRepository implements DocumentRepository {
   Future<void> rename(String id, String name) async {
     final trimmed = name.trim();
     if (trimmed.isEmpty) throw const ValidationException('Document name cannot be empty');
-    await _assertDocActive(db.db, id);
-    await db.db.update('documents', {'name': trimmed, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ?', whereArgs: [id]);
+    await _updateDoc(id, {'name': trimmed});
   }
 
   @override
-  Future<void> setFavorite(String id, bool value) async {
-    await _assertDocActive(db.db, id);
-    await db.db.update('documents', {'is_favorite': value ? 1 : 0, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ?', whereArgs: [id]);
-  }
+  Future<void> setFavorite(String id, bool value) => _updateDoc(id, {'is_favorite': value ? 1 : 0});
 
   @override
-  Future<void> setNote(String id, String? note) async {
-    await _assertDocActive(db.db, id);
-    await db.db.update('documents', {'note': note, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ?', whereArgs: [id]);
-  }
+  Future<void> setNote(String id, String? note) => _updateDoc(id, {'note': note});
 
   @override
   Future<void> moveToFolder(String id, String? folderId) async {
     if (folderId != null) await _assertFolderActive(folderId);
-    await _assertDocActive(db.db, id);
-    await db.db.update('documents', {'folder_id': folderId, 'updated_at': clock().millisecondsSinceEpoch}, where: 'id = ?', whereArgs: [id]);
+    await _updateDoc(id, {'folder_id': folderId});
   }
 
   @override
@@ -111,37 +106,44 @@ class SqliteDocumentRepository implements DocumentRepository {
     if (pages.isEmpty) return;
     await db.db.transaction((txn) async {
       await _assertDocActive(txn, documentId);
-      final maxResult = await txn.rawQuery('SELECT MAX(position) AS max_pos FROM pages WHERE document_id = ?;', [documentId]);
-      final maxPos = maxResult.first['max_pos'] as int?;
-      final startPos = maxPos != null ? maxPos + 1 : 0;
+      final max = await txn.rawQuery('SELECT MAX(position) AS p FROM pages WHERE document_id = ?;', [documentId]);
+      final start = ((max.first['p'] as int?) ?? -1) + 1;
       final now = clock();
-      await _pageOps.insertPages(txn, documentId: documentId, pages: pages, createdAt: now, startPosition: startPos);
+      await _pageOps.insertPages(txn, documentId: documentId, pages: pages, createdAt: now, startPosition: start);
       await txn.update('documents', {'updated_at': now.millisecondsSinceEpoch}, where: 'id = ?', whereArgs: [documentId]);
     });
   }
 
   @override
   Future<ScanPage> deletePage(String pageId) => db.db.transaction((txn) async {
-    final pageRows = await txn.query('pages', where: 'id = ?', whereArgs: [pageId]);
-    if (pageRows.isEmpty) throw const NotFoundException('Page not found');
-    await _assertDocActive(txn, pageRows.first['document_id'] as String);
+    final rows = await txn.query('pages', where: 'id = ?', whereArgs: [pageId]);
+    if (rows.isEmpty) throw const NotFoundException('Page not found');
+    await _assertDocActive(txn, rows.first['document_id'] as String);
     return _pageOps.deletePage(txn, pageId: pageId, updatedAt: clock());
   });
 
   @override
-  Future<void> reorderPages(String documentId, List<String> orderedPageIds) async {
-    await db.db.transaction((txn) async {
-      await _assertDocActive(txn, documentId);
-      await _pageOps.reorderPages(txn, documentId: documentId, orderedPageIds: orderedPageIds, updatedAt: clock());
-    });
-  }
+  Future<void> reorderPages(String documentId, List<String> orderedPageIds) =>
+      db.db.transaction((txn) async {
+        await _assertDocActive(txn, documentId);
+        await _pageOps.reorderPages(txn, documentId: documentId, orderedPageIds: orderedPageIds, updatedAt: clock());
+      });
 
   @override
   Future<void> moveToTrash(String id) async {
     final doc = await db.db.query('documents', columns: ['id', 'deleted_at'], where: 'id = ?', whereArgs: [id]);
     if (doc.isEmpty) throw const NotFoundException('Document not found');
     if (doc.first['deleted_at'] != null) return;
-    final now = clock();
-    await db.db.update('documents', {'deleted_at': now.millisecondsSinceEpoch, 'updated_at': now.millisecondsSinceEpoch}, where: 'id = ? AND deleted_at IS NULL', whereArgs: [id]);
+    final ms = clock().millisecondsSinceEpoch;
+    await db.db.update('documents', {'deleted_at': ms, 'updated_at': ms}, where: 'id = ? AND deleted_at IS NULL', whereArgs: [id]);
+  }
+
+  @override
+  Future<Set<String>> existingIds(List<String> ids) async {
+    if (ids.isEmpty) return const {};
+    final placeholders = List.filled(ids.length, '?').join(', ');
+    final rows = await db.db.query('documents', columns: ['id'], where: 'id IN ($placeholders)', whereArgs: ids);
+    return rows.map((r) => r['id'] as String).toSet();
   }
 }
+

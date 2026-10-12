@@ -102,4 +102,16 @@ void main() {
     final list = await repository.listInFolder();
     expect(list.any((d) => d.document.id == doc.id), isFalse);
   });
+
+  test('existingIds returns existing active and trashed ids, empty set for empty input', () async {
+    expect(await repository.existingIds(const []), isEmpty);
+
+    final d1 = await repository.createWithPages(id: 'd-act', name: 'Act', pages: const [NewPage(id: 'p1', originalPath: 'p1.jpg')]);
+    final d2 = await repository.createWithPages(id: 'd-tr', name: 'Tr', pages: const [NewPage(id: 'p2', originalPath: 'p2.jpg')]);
+    await repository.moveToTrash(d2.id);
+
+    final ids = await repository.existingIds([d1.id, d2.id, 'd-missing']);
+    expect(ids, equals({d1.id, d2.id}));
+  });
 }
+
