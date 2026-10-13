@@ -11,12 +11,14 @@ class DocumentItem {
     required this.date,
     required this.pageCount,
     this.coverPath,
+    this.isFavorite = false,
   });
 
   final String name;
   final String date;
   final String pageCount;
   final String? coverPath;
+  final bool isFavorite;
 }
 
 class DocumentCard extends StatelessWidget {
@@ -88,6 +90,14 @@ class DocumentCard extends StatelessWidget {
                       size: 14,
                       color: AppColors.danger,
                     ),
+                    if (item.isFavorite) ...[
+                      const SizedBox(width: AppSpacing.xs),
+                      const Icon(
+                        LucideIcons.heart,
+                        size: 14,
+                        color: AppColors.danger,
+                      ),
+                    ],
                   ],
                 ),
               ],

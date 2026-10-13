@@ -57,6 +57,23 @@ class SqliteFolderRepository implements FolderRepository {
   }
 
   @override
+  Future<void> setColor(String id, int colorIndex) async {
+    final now = clock();
+    final count = await db.db.update(
+      'folders',
+      {
+        'color_index': colorIndex,
+        'updated_at': now.millisecondsSinceEpoch,
+      },
+      where: 'id = ? AND deleted_at IS NULL',
+      whereArgs: [id],
+    );
+    if (count == 0) {
+      throw const NotFoundException('Folder not found or trashed');
+    }
+  }
+
+  @override
   Future<Folder?> getById(String id) async {
     final rows = await db.db.query(
       'folders',

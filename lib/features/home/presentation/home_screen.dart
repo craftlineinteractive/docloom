@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../../core/providers/app_providers.dart';
+import '../../../app/router/routes.dart';
 import '../../../core/providers/home_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/time/relative_time.dart';
 import '../../../core/widgets/widgets.dart';
-import 'widgets/document_card.dart';
+import 'widgets/document_list_sliver.dart';
+import 'widgets/folder_actions_sheet.dart';
 import 'widgets/folder_card.dart';
+import 'widgets/folder_edit_dialog.dart';
 import 'widgets/home_add_sheet.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -20,7 +22,6 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final foldersAsync = ref.watch(foldersProvider);
     final docsAsync = ref.watch(documentsProvider(null));
-    final clock = ref.watch(clockProvider);
 
     if ((foldersAsync.isLoading && !foldersAsync.hasValue) || (docsAsync.isLoading && !docsAsync.hasValue)) {
       return const Scaffold(appBar: AppTopBar(title: 'docLoom'), body: Center(child: CircularProgressIndicator()));
@@ -50,7 +51,7 @@ class HomeScreen extends ConsumerWidget {
           AppIconButton(icon: LucideIcons.search, tooltip: 'Search', onPressed: () {}),
           AppIconButton(icon: LucideIcons.moreVertical, tooltip: 'More options', onPressed: () {}),
           if (kDebugMode)
-            AppIconButton(icon: LucideIcons.layoutGrid, tooltip: 'Component Gallery', onPressed: () => context.push('/gallery')),
+            AppIconButton(icon: LucideIcons.layoutGrid, tooltip: 'Component Gallery', onPressed: () => context.push(Routes.gallery)),
         ],
       ),
       floatingActionButton: FabPill(
@@ -69,17 +70,21 @@ class HomeScreen extends ConsumerWidget {
               ),
             )
           else ...[
-            if (folders.isNotEmpty) ...[
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.screenH, AppSpacing.sm, AppSpacing.screenH, 0),
-                  child: SectionHeader(
-                    title: 'Folders',
-                    count: folders.length,
-                    trailing: AppIconButton(icon: LucideIcons.folderPlus, tooltip: 'Create folder', onPressed: () {}),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(AppSpacing.screenH, AppSpacing.sm, AppSpacing.screenH, 0),
+                child: SectionHeader(
+                  title: 'Folders',
+                  count: folders.length,
+                  trailing: AppIconButton(
+                    icon: LucideIcons.folderPlus,
+                    tooltip: 'Create folder',
+                    onPressed: () => FolderEditDialog.showCreate(context),
                   ),
                 ),
               ),
+            ),
+            if (folders.isNotEmpty) ...[
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenH),
                 sliver: SliverGrid(
@@ -97,7 +102,8 @@ class HomeScreen extends ConsumerWidget {
                       return FolderCard(
                         key: ValueKey(f.folder.id),
                         item: FolderItem(name: f.folder.name, itemCountAndDate: countText, color: color),
-                        onTap: () => showAppToast(context, 'Folder screen comes in 3C'),
+                        onTap: () => context.push(Routes.folderPath(f.folder.id)),
+                        onLongPress: () => FolderActionsSheet.show(context, folder: f.folder),
                       );
                     },
                     childCount: folders.length,
@@ -106,34 +112,7 @@ class HomeScreen extends ConsumerWidget {
               ),
               const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
             ],
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.screenH, AppSpacing.sm, AppSpacing.screenH, 0),
-                child: SectionHeader(title: 'Documents', count: docs.length),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenH),
-              sliver: SliverList.separated(
-                itemCount: docs.length,
-                separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),
-                itemBuilder: (context, index) {
-                  final doc = docs[index];
-                  final pageCount = '${doc.pageCount} ${doc.pageCount == 1 ? 'page' : 'pages'}';
-                  return DocumentCard(
-                    key: ValueKey(doc.document.id),
-                    item: DocumentItem(
-                      name: doc.document.name,
-                      date: relativeTime(doc.document.updatedAt, clock()),
-                      pageCount: pageCount,
-                      coverPath: doc.coverPath,
-                    ),
-                    onTap: () => showAppToast(context, 'Viewer comes in a later phase'),
-                  );
-                },
-              ),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 100)),
+            const DocumentListSliver(folderId: null),
           ],
         ],
       ),

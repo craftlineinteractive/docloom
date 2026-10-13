@@ -22,10 +22,12 @@ class FolderCard extends StatelessWidget {
     super.key,
     required this.item,
     this.onTap,
+    this.onLongPress,
   });
 
   final FolderItem item;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   static const double _iconBoxSize = 44;
   static const double _iconSize = 22;
@@ -34,6 +36,7 @@ class FolderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       onTap: onTap ?? () {},
+      onLongPress: onLongPress,
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
         vertical: AppSpacing.md,

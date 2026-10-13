@@ -1,5 +1,7 @@
 abstract final class Routes {
   static const home = '/';
+  static const folder = '/folder/:id';
+  static String folderPath(String id) => '/folder/$id';
   static const gallery = '/dev/gallery';
   static const dbCheck = '/dev/db-check';
 }

@@ -38,6 +38,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
+      automaticallyImplyLeading: showBack || leading != null,
       leading: effectiveLeading,
       title: Text(
         title,

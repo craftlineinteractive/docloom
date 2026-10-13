@@ -8,11 +8,13 @@ class AppCard extends StatelessWidget {
     super.key,
     required this.child,
     this.onTap,
+    this.onLongPress,
     this.padding,
   });
 
   final Widget child;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final EdgeInsetsGeometry? padding;
 
   @override
@@ -21,9 +23,10 @@ class AppCard extends StatelessWidget {
 
     Widget body = padding != null ? Padding(padding: padding!, child: child) : child;
 
-    if (onTap != null) {
+    if (onTap != null || onLongPress != null) {
       body = InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         borderRadius: cardRadius,
         child: body,
       );

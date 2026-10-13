@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/dev/component_gallery_screen.dart';
 import '../../features/dev/db_check_screen.dart';
+import '../../features/folders/presentation/folder_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import 'routes.dart';
 
@@ -11,6 +12,12 @@ final appRouter = GoRouter(
     GoRoute(
       path: Routes.home,
       builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: Routes.folder,
+      builder: (context, state) => FolderScreen(
+        folderId: state.pathParameters['id']!,
+      ),
     ),
     if (kDebugMode)
       GoRoute(

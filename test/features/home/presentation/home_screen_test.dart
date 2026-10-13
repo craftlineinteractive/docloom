@@ -106,7 +106,7 @@ void main() {
     expect(find.text('Active Folder'), findsOneWidget);
   });
 
-  testWidgets('Folders section is hidden when there are no folders', (tester) async {
+  testWidgets('Folders section header with create button remains visible when there are no folders', (tester) async {
     final docRepo = SqliteDocumentRepository(db);
     await tester.runAsync(() async {
       await docRepo.createWithPages(id: 'only-doc', name: 'Root Document Only', pages: const [NewPage(id: 'p', originalPath: 'p')]);
@@ -114,7 +114,8 @@ void main() {
 
     await pumpHomeScreen(tester);
 
-    expect(find.textContaining('Folders'), findsNothing);
+    expect(find.textContaining('Folders'), findsOneWidget);
+    expect(find.byTooltip('Create folder'), findsOneWidget);
     expect(find.text('Documents (1)'), findsOneWidget);
     expect(find.text('Root Document Only'), findsOneWidget);
   });

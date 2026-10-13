@@ -26,12 +26,28 @@ void showAppToast(
   String message, {
   String? actionLabel,
   VoidCallback? onAction,
+  Duration duration = const Duration(seconds: 4),
 }) {
-  final messenger = ScaffoldMessenger.of(context);
-  messenger.clearSnackBars();
+  showAppToastWithMessenger(
+    ScaffoldMessenger.of(context),
+    message,
+    actionLabel: actionLabel,
+    onAction: onAction,
+    duration: duration,
+  );
+}
 
+void showAppToastWithMessenger(
+  ScaffoldMessengerState messenger,
+  String message, {
+  String? actionLabel,
+  VoidCallback? onAction,
+  Duration duration = const Duration(seconds: 4),
+}) {
+  messenger.clearSnackBars();
   messenger.showSnackBar(
     SnackBar(
+      duration: duration,
       behavior: SnackBarBehavior.floating,
       backgroundColor: AppColors.textPrimary,
       shape: const RoundedRectangleBorder(

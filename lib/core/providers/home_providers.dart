@@ -38,6 +38,7 @@ extension RefreshLibraryWidgetRefX on WidgetRef {
   void refreshLibrary() {
     invalidate(foldersProvider);
     invalidate(documentsProvider);
+    invalidate(folderByIdProvider);
   }
 }
 
@@ -45,6 +46,7 @@ extension RefreshLibraryRefX on Ref {
   void refreshLibrary() {
     invalidate(foldersProvider);
     invalidate(documentsProvider);
+    invalidate(folderByIdProvider);
   }
 }
 
@@ -52,6 +54,7 @@ extension RefreshLibraryContainerX on ProviderContainer {
   void refreshLibrary() {
     invalidate(foldersProvider);
     invalidate(documentsProvider);
+    invalidate(folderByIdProvider);
   }
 }
 
