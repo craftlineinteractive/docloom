@@ -107,4 +107,15 @@ void main() {
     expect(await db.db.query('documents', where: 'id = ?', whereArgs: ['d-in-old']), isEmpty);
     expect(await db.db.query('folders', where: 'id = ?', whereArgs: ['f-old']), isEmpty);
   });
+
+  test('restoreDocuments restores multiple documents in one atomic transaction', () async {
+    await db.db.insert('documents', {'id': 'd-b1', 'name': 'B1', 'created_at': 0, 'updated_at': 0, 'deleted_at': 100});
+    await db.db.insert('documents', {'id': 'd-b2', 'name': 'B2', 'created_at': 0, 'updated_at': 0, 'deleted_at': 100});
+
+    await repository.restoreDocuments(['d-b1', 'd-b2']);
+
+    final rows = await db.db.query('documents', where: 'id IN (?, ?)', whereArgs: ['d-b1', 'd-b2']);
+    expect(rows.length, equals(2));
+    expect(rows.every((d) => d['deleted_at'] == null), isTrue);
+  });
 }

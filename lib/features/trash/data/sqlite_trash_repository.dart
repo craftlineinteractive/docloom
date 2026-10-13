@@ -40,26 +40,36 @@ class SqliteTrashRepository implements TrashRepository {
   }
 
   @override
-  Future<RestoreResult> restoreDocument(String id) async {
-    final docRows = await db.db.query('documents', where: 'id = ?', whereArgs: [id]);
-    if (docRows.isEmpty) throw const NotFoundException('Document not found in trash');
-    final doc = docRows.first;
-    if (doc['deleted_at'] == null) return const RestoreResult(restoredToRoot: false);
+  Future<RestoreResult> restoreDocument(String id) async => (await restoreDocuments([id])).first;
 
-    final folderId = doc['folder_id'] as String?;
-    final now = clock().millisecondsSinceEpoch;
-    var restoredToRoot = false;
-
-    if (folderId != null) {
-      final activeFolder = await db.db.query('folders', where: 'id = ? AND deleted_at IS NULL', whereArgs: [folderId]);
-      if (activeFolder.isEmpty) {
-        restoredToRoot = true;
-        await db.db.update('documents', {'deleted_at': null, 'folder_id': null, 'updated_at': now}, where: 'id = ?', whereArgs: [id]);
-        return RestoreResult(restoredToRoot: restoredToRoot);
+  @override
+  Future<List<RestoreResult>> restoreDocuments(List<String> ids) async {
+    if (ids.isEmpty) return const [];
+    return db.db.transaction((txn) async {
+      final results = <RestoreResult>[];
+      final now = clock().millisecondsSinceEpoch;
+      for (final id in ids) {
+        final docRows = await txn.query('documents', where: 'id = ?', whereArgs: [id]);
+        if (docRows.isEmpty) throw const NotFoundException('Document not found in trash');
+        final doc = docRows.first;
+        if (doc['deleted_at'] == null) {
+          results.add(const RestoreResult(restoredToRoot: false));
+          continue;
+        }
+        final folderId = doc['folder_id'] as String?;
+        if (folderId != null) {
+          final activeFolder = await txn.query('folders', where: 'id = ? AND deleted_at IS NULL', whereArgs: [folderId]);
+          if (activeFolder.isEmpty) {
+            await txn.update('documents', {'deleted_at': null, 'folder_id': null, 'updated_at': now}, where: 'id = ?', whereArgs: [id]);
+            results.add(const RestoreResult(restoredToRoot: true));
+            continue;
+          }
+        }
+        await txn.update('documents', {'deleted_at': null, 'updated_at': now}, where: 'id = ?', whereArgs: [id]);
+        results.add(const RestoreResult(restoredToRoot: false));
       }
-    }
-    await db.db.update('documents', {'deleted_at': null, 'updated_at': now}, where: 'id = ?', whereArgs: [id]);
-    return const RestoreResult(restoredToRoot: false);
+      return results;
+    });
   }
 
   @override

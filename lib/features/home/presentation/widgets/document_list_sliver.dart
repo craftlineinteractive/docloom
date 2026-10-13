@@ -8,6 +8,7 @@ import '../../../../core/time/relative_time.dart';
 import '../../../../core/widgets/widgets.dart';
 import 'document_actions_sheet.dart';
 import 'document_card.dart';
+import 'document_grid_tile.dart';
 
 class DocumentListSliver extends ConsumerWidget {
   const DocumentListSliver({super.key, this.folderId});
@@ -18,6 +19,9 @@ class DocumentListSliver extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final docsAsync = ref.watch(documentsProvider(folderId));
     final clock = ref.watch(clockProvider);
+    final viewMode = ref.watch(viewModeProvider);
+    final isSelectMode = ref.watch(selectModeProvider);
+    final selection = ref.watch(selectionProvider);
     final docs = docsAsync.value ?? const [];
 
     if (docs.isEmpty && folderId != null && !docsAsync.isLoading) {
@@ -31,6 +35,69 @@ class DocumentListSliver extends ConsumerWidget {
       );
     }
 
+    Widget buildItem(BuildContext context, int index, {required bool isGrid}) {
+      final doc = docs[index];
+      final docId = doc.document.id;
+      final pageCount = '${doc.pageCount} ${doc.pageCount == 1 ? 'page' : 'pages'}';
+      final item = DocumentItem(
+        name: doc.document.name,
+        date: relativeTime(doc.document.updatedAt, clock()),
+        pageCount: pageCount,
+        coverPath: doc.coverPath,
+        isFavorite: doc.document.isFavorite,
+      );
+      final isSelected = selection.contains(docId);
+
+      void handleToggle() => ref.read(selectionProvider.notifier).toggle(docId);
+      void handleLongPress() {
+        ref.read(selectModeProvider.notifier).enter();
+        ref.read(selectionProvider.notifier).toggle(docId);
+      }
+
+      if (isGrid) {
+        return DocumentGridTile(
+          key: ValueKey(docId),
+          item: item,
+          selectable: isSelectMode,
+          isSelected: isSelected,
+          onSelectToggle: handleToggle,
+          onLongPress: isSelectMode ? null : handleLongPress,
+          onTap: isSelectMode ? handleToggle : () => showAppToast(context, 'Viewer comes in a later phase'),
+          onOptionsPressed: () => DocumentActionsSheet.show(context, document: doc.document),
+        );
+      }
+
+      return DocumentCard(
+        key: ValueKey(docId),
+        item: item,
+        selectable: isSelectMode,
+        isSelected: isSelected,
+        onSelectToggle: handleToggle,
+        onLongPress: isSelectMode ? null : handleLongPress,
+        onTap: isSelectMode ? handleToggle : () => showAppToast(context, 'Viewer comes in a later phase'),
+        onOptionsPressed: () => DocumentActionsSheet.show(context, document: doc.document),
+      );
+    }
+
+    final sliverBody = viewMode == ViewMode.grid
+        ? SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: AppSpacing.sm,
+              mainAxisSpacing: AppSpacing.sm,
+              childAspectRatio: 0.78,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => buildItem(context, index, isGrid: true),
+              childCount: docs.length,
+            ),
+          )
+        : SliverList.separated(
+            itemCount: docs.length,
+            separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),
+            itemBuilder: (context, index) => buildItem(context, index, isGrid: false),
+          );
+
     return SliverMainAxisGroup(
       slivers: [
         SliverToBoxAdapter(
@@ -41,26 +108,7 @@ class DocumentListSliver extends ConsumerWidget {
         ),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenH),
-          sliver: SliverList.separated(
-            itemCount: docs.length,
-            separatorBuilder: (context, index) => const SizedBox(height: AppSpacing.sm),
-            itemBuilder: (context, index) {
-              final doc = docs[index];
-              final pageCount = '${doc.pageCount} ${doc.pageCount == 1 ? 'page' : 'pages'}';
-              return DocumentCard(
-                key: ValueKey(doc.document.id),
-                item: DocumentItem(
-                  name: doc.document.name,
-                  date: relativeTime(doc.document.updatedAt, clock()),
-                  pageCount: pageCount,
-                  coverPath: doc.coverPath,
-                  isFavorite: doc.document.isFavorite,
-                ),
-                onTap: () => showAppToast(context, 'Viewer comes in a later phase'),
-                onOptionsPressed: () => DocumentActionsSheet.show(context, document: doc.document),
-              );
-            },
-          ),
+          sliver: sliverBody,
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 100)),
       ],

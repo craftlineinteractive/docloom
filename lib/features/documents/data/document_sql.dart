@@ -42,4 +42,16 @@ WHERE $activeWhere AND $folderClause
 ORDER BY ${orderClause(sort)};
 ''';
   }
+
+  static const String searchActiveByName = '''
+SELECT d.*,
+  f.name AS folder_name,
+  (SELECT COUNT(*) FROM pages p WHERE p.document_id = d.id) AS page_count,
+  (SELECT COALESCE(p.edited_path, p.original_path) FROM pages p WHERE p.document_id = d.id AND p.position = 0) AS cover_path
+FROM documents d
+$joinFolder
+WHERE $activeWhere AND d.name LIKE ? ESCAPE '\\'
+ORDER BY d.updated_at DESC
+LIMIT 100;
+''';
 }

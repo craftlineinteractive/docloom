@@ -11,27 +11,63 @@ import '../../../documents/domain/document.dart';
 import '../../application/library_actions.dart';
 
 class DocumentMoveSheet extends ConsumerWidget {
-  const DocumentMoveSheet({super.key, required this.document});
+  const DocumentMoveSheet({
+    super.key,
+    this.document,
+    this.documentIds,
+    this.currentFolderId,
+  });
 
-  final Document document;
+  final Document? document;
+  final List<String>? documentIds;
+  final String? currentFolderId;
 
   static Future<void> show(BuildContext context, {required Document document}) {
     return showAppBottomSheet<void>(
       context,
       title: 'Move to folder',
-      child: DocumentMoveSheet(document: document),
+      child: DocumentMoveSheet(
+        document: document,
+        currentFolderId: document.folderId,
+      ),
+    );
+  }
+
+  static Future<void> showBatch(
+    BuildContext context, {
+    required List<String> documentIds,
+    String? currentFolderId,
+  }) {
+    return showAppBottomSheet<void>(
+      context,
+      title: 'Move to folder',
+      child: DocumentMoveSheet(
+        documentIds: documentIds,
+        currentFolderId: currentFolderId,
+      ),
     );
   }
 
   Future<void> _move(BuildContext context, WidgetRef ref, String? targetFolderId, String label) async {
     Navigator.of(context).pop();
     try {
-      await ref.read(libraryActionsProvider).moveDocument(
-            id: document.id,
-            targetFolderId: targetFolderId,
-          );
-      ref.refreshLibrary();
-      if (context.mounted) showAppToast(context, 'Moved to $label');
+      if (documentIds != null) {
+        await ref.read(libraryActionsProvider).moveDocuments(
+              ids: documentIds!,
+              targetFolderId: targetFolderId,
+            );
+        ref.read(selectModeProvider.notifier).exit();
+        ref.read(selectionProvider.notifier).clear();
+        ref.refreshLibrary();
+        if (context.mounted) showAppToast(context, 'Moved ${documentIds!.length} items to $label');
+      } else if (document != null) {
+        await ref.read(libraryActionsProvider).moveDocument(
+              id: document!.id,
+              targetFolderId: targetFolderId,
+            );
+        ref.refreshLibrary();
+        if (context.mounted) showAppToast(context, 'Moved to $label');
+      }
     } on AppException catch (e) {
       if (context.mounted) showAppToast(context, e.message);
     }
@@ -39,7 +75,6 @@ class DocumentMoveSheet extends ConsumerWidget {
 
   Widget _buildItem(
     BuildContext context, {
-    required WidgetRef ref,
     required String title,
     required IconData icon,
     required bool isCurrent,
@@ -82,19 +117,17 @@ class DocumentMoveSheet extends ConsumerWidget {
       children: [
         _buildItem(
           context,
-          ref: ref,
           title: 'Home (Root)',
           icon: LucideIcons.home,
-          isCurrent: document.folderId == null,
+          isCurrent: currentFolderId == null,
           onTap: () => _move(context, ref, null, 'Home'),
         ),
         for (final f in folders)
           _buildItem(
             context,
-            ref: ref,
             title: f.folder.name,
             icon: LucideIcons.folder,
-            isCurrent: document.folderId == f.folder.id,
+            isCurrent: currentFolderId == f.folder.id,
             onTap: () => _move(context, ref, f.folder.id, f.folder.name),
           ),
       ],

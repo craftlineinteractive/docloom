@@ -6,6 +6,7 @@ abstract interface class TrashRepository {
   Future<List<DocumentSummary>> listTrashedDocuments();
   Future<List<FolderSummary>> listTrashedFolders();
   Future<RestoreResult> restoreDocument(String id);
+  Future<List<RestoreResult>> restoreDocuments(List<String> ids);
   Future<void> restoreFolder(String id);
   Future<List<String>> deleteDocumentForever(String id);
   Future<List<String>> deleteFolderForever(String id);

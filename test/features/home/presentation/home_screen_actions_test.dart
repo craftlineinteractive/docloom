@@ -116,6 +116,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Failed to load'), findsNothing);
-    expect(find.text('Scan your first document'), findsOneWidget);
+    expect(find.textContaining('Folders'), findsOneWidget);
+    expect(find.textContaining('Documents'), findsOneWidget);
   });
 }

@@ -10,12 +10,14 @@ class AppCard extends StatelessWidget {
     this.onTap,
     this.onLongPress,
     this.padding,
+    this.border,
   });
 
   final Widget child;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
   final EdgeInsetsGeometry? padding;
+  final BoxBorder? border;
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +35,11 @@ class AppCard extends StatelessWidget {
     }
 
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: cardRadius,
         boxShadow: AppShadows.soft,
+        border: border,
       ),
       child: Material(
         type: MaterialType.transparency,

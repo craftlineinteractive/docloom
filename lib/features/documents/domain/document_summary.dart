@@ -7,21 +7,25 @@ class DocumentSummary {
     required this.document,
     required this.pageCount,
     this.coverPath,
+    this.folderName,
   });
 
   final Document document;
   final int pageCount;
   final String? coverPath;
+  final String? folderName;
 
   DocumentSummary copyWith({
     Document? document,
     int? pageCount,
     String? coverPath,
+    String? folderName,
   }) {
     return DocumentSummary(
       document: document ?? this.document,
       pageCount: pageCount ?? this.pageCount,
       coverPath: coverPath ?? this.coverPath,
+      folderName: folderName ?? this.folderName,
     );
   }
 
@@ -29,6 +33,7 @@ class DocumentSummary {
         document: document,
         pageCount: pageCount,
         coverPath: coverPath,
+        folderName: folderName,
       );
 
   @override
@@ -38,8 +43,9 @@ class DocumentSummary {
           runtimeType == other.runtimeType &&
           document == other.document &&
           pageCount == other.pageCount &&
-          coverPath == other.coverPath;
+          coverPath == other.coverPath &&
+          folderName == other.folderName;
 
   @override
-  int get hashCode => Object.hash(document, pageCount, coverPath);
+  int get hashCode => Object.hash(document, pageCount, coverPath, folderName);
 }

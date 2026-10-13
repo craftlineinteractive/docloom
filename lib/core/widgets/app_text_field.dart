@@ -11,6 +11,9 @@ class AppTextField extends StatelessWidget {
     this.hint,
     this.errorText,
     this.obscure = false,
+    this.autofocus = false,
+    this.prefixIcon,
+    this.suffixIcon,
     this.onChanged,
   });
 
@@ -19,6 +22,9 @@ class AppTextField extends StatelessWidget {
   final String? hint;
   final String? errorText;
   final bool obscure;
+  final bool autofocus;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
   final ValueChanged<String>? onChanged;
 
   @override
@@ -42,12 +48,15 @@ class AppTextField extends StatelessWidget {
         TextField(
           controller: controller,
           obscureText: obscure,
+          autofocus: autofocus,
           onChanged: onChanged,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppColors.textPrimary,
               ),
           decoration: InputDecoration(
             hintText: hint,
+            prefixIcon: prefixIcon,
+            suffixIcon: suffixIcon,
             hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
