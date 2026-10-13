@@ -53,8 +53,7 @@ class PageThumbnail extends ConsumerWidget {
       return _buildPlaceholder();
     }
 
-    final pixelRatio = MediaQuery.maybeDevicePixelRatioOf(context) ?? 1.0;
-    final cacheWidth = (size * pixelRatio).round();
+    final cacheWidth = (size * MediaQuery.devicePixelRatioOf(context)).round();
 
     return Container(
       width: size,

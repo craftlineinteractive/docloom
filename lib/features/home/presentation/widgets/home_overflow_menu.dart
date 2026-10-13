@@ -60,7 +60,7 @@ class HomeOverflowMenu extends ConsumerWidget {
                 child: Text(
                   documentSortLabel(sort),
                   textAlign: TextAlign.end,
-                  style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.textSecondary),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -101,14 +101,14 @@ class HomeOverflowMenu extends ConsumerWidget {
               const Text('View Mode', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w500)),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.hairline),
                 decoration: BoxDecoration(
                   color: AppColors.pageBackdrop,
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                 ),
                 child: Text(
                   viewMode == ViewMode.list ? 'List' : 'Grid',
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w500, color: AppColors.textSecondary),
                 ),
               ),
             ],

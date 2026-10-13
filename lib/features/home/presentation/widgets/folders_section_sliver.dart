@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../app/router/routes.dart';
+import '../../../../core/providers/home_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/time/relative_time.dart';
@@ -11,13 +13,13 @@ import 'folder_actions_sheet.dart';
 import 'folder_card.dart';
 import 'folder_edit_dialog.dart';
 
-class FoldersSectionSliver extends StatelessWidget {
+class FoldersSectionSliver extends ConsumerWidget {
   const FoldersSectionSliver({super.key, required this.folders});
 
   final List<FolderSummary> folders;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SliverMainAxisGroup(
       slivers: [
         SliverToBoxAdapter(
@@ -52,7 +54,11 @@ class FoldersSectionSliver extends StatelessWidget {
                   return FolderCard(
                     key: ValueKey(f.folder.id),
                     item: FolderItem(name: f.folder.name, itemCountAndDate: countText, color: color),
-                    onTap: () => context.push(Routes.folderPath(f.folder.id)),
+                    onTap: () {
+                      ref.read(selectModeProvider.notifier).exit();
+                      ref.read(selectionProvider.notifier).clear();
+                      context.push(Routes.folderPath(f.folder.id));
+                    },
                     onLongPress: () => FolderActionsSheet.show(context, folder: f.folder),
                   );
                 },

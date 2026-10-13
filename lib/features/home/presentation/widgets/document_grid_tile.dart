@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/widgets.dart';
 import 'document_card.dart';
@@ -35,7 +36,7 @@ class DocumentGridTile extends StatelessWidget {
       onTap: effectiveTap,
       onLongPress: onLongPress,
       padding: const EdgeInsets.all(AppSpacing.sm),
-      border: isSelected ? Border.all(color: AppColors.primary, width: 2) : null,
+      border: isSelected ? Border.all(color: AppColors.primary, width: AppSpacing.hairline) : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -47,7 +48,7 @@ class DocumentGridTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppRadius.md),
                     child: Container(
                       color: AppColors.pageBackdrop,
-                      child: PageThumbnail(relativePath: item.coverPath),
+                      child: PageThumbnail(relativePath: item.coverPath, size: AppSizes.gridThumbnail),
                     ),
                   ),
                 ),
@@ -76,7 +77,7 @@ class DocumentGridTile extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: AppSpacing.hairline),
           Row(
             children: [
               Expanded(
@@ -84,29 +85,31 @@ class DocumentGridTile extends StatelessWidget {
                   item.date,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: AppColors.textSecondary,
-                        fontSize: 10,
                       ),
                   maxLines: 1,
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs, vertical: 1),
                 decoration: const BoxDecoration(
                   color: AppColors.pageBackdrop,
                   borderRadius: BorderRadius.all(Radius.circular(AppRadius.pill)),
                 ),
                 child: Text(
                   item.pageCount,
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textPrimary,
+                      ),
                 ),
               ),
               if (!selectable) ...[
-                const SizedBox(width: 2),
+                const SizedBox(width: AppSpacing.hairline),
                 InkWell(
                   borderRadius: BorderRadius.circular(AppRadius.pill),
                   onTap: onOptionsPressed,
                   child: const Padding(
-                    padding: EdgeInsets.all(2),
+                    padding: EdgeInsets.all(AppSpacing.hairline),
                     child: Icon(LucideIcons.moreVertical, size: 16, color: AppColors.textSecondary),
                   ),
                 ),

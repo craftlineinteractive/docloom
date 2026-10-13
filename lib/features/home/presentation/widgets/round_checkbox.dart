@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
 
 class RoundCheckbox extends StatelessWidget {
   const RoundCheckbox({super.key, required this.isSelected});
@@ -25,7 +26,7 @@ class RoundCheckbox extends StatelessWidget {
       height: 20,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: AppColors.divider, width: 2),
+        border: Border.all(color: AppColors.divider, width: AppSpacing.hairline),
       ),
     );
   }

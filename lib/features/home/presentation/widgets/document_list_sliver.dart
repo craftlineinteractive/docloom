@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/providers/app_providers.dart';
 import '../../../../core/providers/home_providers.dart';
+import '../../../../core/theme/app_sizes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/time/relative_time.dart';
 import '../../../../core/widgets/widgets.dart';
@@ -110,7 +111,7 @@ class DocumentListSliver extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenH),
           sliver: sliverBody,
         ),
-        const SliverToBoxAdapter(child: SizedBox(height: 100)),
+        const SliverToBoxAdapter(child: SizedBox(height: AppSizes.bottomClearance)),
       ],
     );
   }

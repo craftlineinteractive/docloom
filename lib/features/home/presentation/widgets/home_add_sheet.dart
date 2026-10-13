@@ -63,7 +63,7 @@ class HomeAddSheet extends StatelessWidget {
                           color: AppColors.textPrimary,
                         ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppSpacing.hairline),
                   Text(
                     description,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(

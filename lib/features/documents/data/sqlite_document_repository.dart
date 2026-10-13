@@ -114,13 +114,11 @@ class SqliteDocumentRepository implements DocumentRepository {
       });
 
   @override
-  Future<void> moveToTrash(String id) async {
-    final doc = await db.db.query('documents', columns: ['id', 'deleted_at'], where: 'id = ?', whereArgs: [id]);
-    if (doc.isEmpty) throw const NotFoundException('Document not found');
-    if (doc.first['deleted_at'] != null) return;
-    final ms = clock().millisecondsSinceEpoch;
-    await db.db.update('documents', {'deleted_at': ms, 'updated_at': ms}, where: 'id = ? AND deleted_at IS NULL', whereArgs: [id]);
-  }
+  Future<void> moveToTrash(String id) => moveManyToTrash([id]);
+
+  @override
+  Future<void> moveManyToTrash(List<String> ids) =>
+      batchMoveToTrash(db.db, ids, clock: clock);
 
   @override
   Future<Set<String>> existingIds(List<String> ids) async {

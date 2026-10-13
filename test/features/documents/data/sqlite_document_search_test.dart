@@ -37,14 +37,14 @@ void main() {
   test('searchByName escapes percent and underscore wildcards', () async {
     await repository.createWithPages(id: 'd1', name: '100% Cotton', pages: const [NewPage(id: 'p1', originalPath: 'p1.jpg')]);
     await repository.createWithPages(id: 'd2', name: '1000 Cotton', pages: const [NewPage(id: 'p2', originalPath: 'p2.jpg')]);
-    await repository.createWithPages(id: 'd3', name: 'my_file.pdf', pages: const [NewPage(id: 'p3', originalPath: 'p3.jpg')]);
-    await repository.createWithPages(id: 'd4', name: 'myfile.pdf', pages: const [NewPage(id: 'p4', originalPath: 'p4.jpg')]);
+    await repository.createWithPages(id: 'd3', name: 'a_b test', pages: const [NewPage(id: 'p3', originalPath: 'p3.jpg')]);
+    await repository.createWithPages(id: 'd4', name: 'axb test', pages: const [NewPage(id: 'p4', originalPath: 'p4.jpg')]);
 
     final percentResults = await repository.searchByName('100%');
     expect(percentResults.map((r) => r.document.id).toList(), equals(['d1']));
 
-    final underscoreResults = await repository.searchByName('my_file');
-    expect(underscoreResults.map((r) => r.document.id).toList(), equals(['d3']));
+    final abResults = await repository.searchByName('a_b');
+    expect(abResults.map((r) => r.document.id).toList(), equals(['d3']));
   });
 
   test('searchByName excludes trashed docs and docs in trashed folders', () async {

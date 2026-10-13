@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/providers/home_providers.dart';
 import '../../../core/widgets/widgets.dart';
-import '../../home/application/library_actions.dart';
+import '../../home/presentation/widgets/batch_delete_action.dart';
 import '../../home/presentation/widgets/document_list_sliver.dart';
 import '../../home/presentation/widgets/document_move_sheet.dart';
 import '../../home/presentation/widgets/folder_actions_sheet.dart';
@@ -44,7 +44,10 @@ class FolderScreen extends ConsumerWidget {
           title: 'This folder is no longer available',
           body: 'It may have been moved to Trash or deleted.',
           actionLabel: 'Back',
-          onAction: () => Navigator.of(context).maybePop(),
+          onAction: () {
+            _exitSelect(ref);
+            Navigator.of(context).maybePop();
+          },
         ),
       );
     }
@@ -66,6 +69,14 @@ class FolderScreen extends ConsumerWidget {
         : AppTopBar(
             title: folder.name,
             showBack: true,
+            leading: AppIconButton(
+              icon: LucideIcons.arrowLeft,
+              tooltip: 'Back',
+              onPressed: () {
+                _exitSelect(ref);
+                Navigator.of(context).maybePop();
+              },
+            ),
             actions: [
               AppIconButton(
                 icon: LucideIcons.folderCog,
@@ -73,7 +84,10 @@ class FolderScreen extends ConsumerWidget {
                 onPressed: () => FolderActionsSheet.show(
                   context,
                   folder: folder,
-                  onDeletedFromScreen: () => Navigator.of(context).maybePop(),
+                  onDeletedFromScreen: () {
+                    _exitSelect(ref);
+                    Navigator.of(context).maybePop();
+                  },
                 ),
               ),
               const HomeOverflowMenu(isHome: false),
@@ -83,7 +97,7 @@ class FolderScreen extends ConsumerWidget {
     return PopScope(
       canPop: !isSelect,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _exitSelect(ref);
+        _exitSelect(ref);
       },
       child: Scaffold(
         appBar: appBar,
@@ -113,3 +127,5 @@ class FolderScreen extends ConsumerWidget {
     );
   }
 }
+
+

@@ -52,7 +52,7 @@ class DocumentCard extends StatelessWidget {
       onTap: effectiveTap,
       onLongPress: onLongPress,
       padding: const EdgeInsets.all(AppSpacing.md),
-      border: isSelected ? Border.all(color: AppColors.primary, width: 2) : null,
+      border: isSelected ? Border.all(color: AppColors.primary, width: AppSpacing.hairline) : null,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -77,18 +77,15 @@ class DocumentCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (item.folderName != null && item.folderName!.isNotEmpty) ...[
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppSpacing.hairline),
                   Row(
                     children: [
                       const Icon(LucideIcons.folder, size: 12, color: AppColors.textSecondary),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: AppSpacing.xs),
                       Expanded(
                         child: Text(
                           item.folderName!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppColors.textSecondary,
-                                fontSize: 11,
-                              ),
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.textSecondary),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),

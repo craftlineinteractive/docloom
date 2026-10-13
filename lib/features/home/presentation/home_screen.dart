@@ -5,7 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/router/routes.dart';
 import '../../../core/providers/home_providers.dart';
 import '../../../core/widgets/widgets.dart';
-import '../application/library_actions.dart';
+import 'widgets/batch_delete_action.dart';
 import 'widgets/document_list_sliver.dart';
 import 'widgets/document_move_sheet.dart';
 import 'widgets/folders_section_sliver.dart';

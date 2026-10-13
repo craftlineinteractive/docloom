@@ -38,3 +38,36 @@ String escapeSqlLike(String input) {
       .replaceAll('%', r'\%')
       .replaceAll('_', r'\_');
 }
+
+Future<void> batchMoveToTrash(
+  Database db,
+  List<String> ids, {
+  required Clock clock,
+}) async {
+  if (ids.isEmpty) return;
+  await db.transaction((txn) async {
+    final now = clock().millisecondsSinceEpoch;
+    for (final id in ids) {
+      final rows = await txn.query(
+        'documents',
+        columns: ['id', 'deleted_at'],
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      if (rows.isEmpty) {
+        throw NotFoundException('Document not found: $id');
+      }
+      final row = rows.first;
+      if (row['deleted_at'] != null) {
+        continue;
+      }
+      await txn.update(
+        'documents',
+        {'deleted_at': now, 'updated_at': now},
+        where: 'id = ? AND deleted_at IS NULL',
+        whereArgs: [id],
+      );
+    }
+  });
+}
+
