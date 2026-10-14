@@ -1,10 +1,13 @@
+import 'scanned_page.dart';
+
 sealed class ScanOutcome {
   const ScanOutcome();
 }
 
 final class ScanSuccess extends ScanOutcome {
-  const ScanSuccess(this.imagePaths);
-  final List<String> imagePaths;
+  const ScanSuccess(this.pages, {this.suggestedName});
+  final List<ScannedPage> pages;
+  final String? suggestedName;
 }
 
 final class ScanCancelled extends ScanOutcome {

@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:docloom/core/constants/app_config.dart';
 import 'package:docloom/features/scan/application/scan_providers.dart';
+import 'package:docloom/features/scan/data/custom_scan_gateway.dart';
 import 'package:docloom/features/scan/domain/scan_gateway.dart';
+import 'package:docloom/features/scan/domain/scanned_page.dart';
 
 class FakeScanGateway implements ScanGateway {
   FakeScanGateway(this.outcome);
@@ -33,7 +35,10 @@ class ThrowingScanGateway implements ScanGateway {
 
 void main() {
   test('Success shows toast with page count and returns to idle', () async {
-    final fake = FakeScanGateway(const ScanSuccess(['/p1.jpg', '/p2.jpg']));
+    final fake = FakeScanGateway(const ScanSuccess([
+      ScannedPage(originalPath: '/p1.jpg'),
+      ScannedPage(originalPath: '/p2.jpg'),
+    ]));
     final container = ProviderContainer(
       overrides: [scanGatewayProvider.overrideWithValue(fake)],
     );
@@ -46,7 +51,7 @@ void main() {
 
     expect(fake.callCount, equals(1));
     expect(fake.lastPageLimit, equals(AppConfig.scanPageLimit));
-    expect(toasts, equals(['Scanned 2 pages (saving comes in 4B)']));
+    expect(toasts, equals(['Scanned 2 pages']));
     expect(container.read(scanControllerProvider), equals(ScanState.idle));
   });
 
@@ -66,7 +71,7 @@ void main() {
   });
 
   test('Failure shows message as toast and returns to idle', () async {
-    final fake = FakeScanGateway(const ScanFailure('Google Play services missing'));
+    final fake = FakeScanGateway(const ScanFailure('Camera permission denied'));
     final container = ProviderContainer(
       overrides: [scanGatewayProvider.overrideWithValue(fake)],
     );
@@ -76,7 +81,7 @@ void main() {
     await container.read(scanControllerProvider.notifier).startScan(onToast: toasts.add);
 
     expect(fake.callCount, equals(1));
-    expect(toasts, equals(['Google Play services missing']));
+    expect(toasts, equals(['Camera permission denied']));
     expect(container.read(scanControllerProvider), equals(ScanState.idle));
   });
 
@@ -94,7 +99,6 @@ void main() {
     final future1 = notifier.startScan();
     expect(container.read(scanControllerProvider), equals(ScanState.scanning));
 
-    // Second quick tap while scanning
     final future2 = notifier.startScan();
     expect(fake.callCount, equals(1));
 
@@ -117,7 +121,14 @@ void main() {
 
     expect(throwing.callCount, equals(1));
     expect(toasts.length, equals(1));
-    expect(toasts.first, contains('Scanner not available'));
+    expect(toasts.first, contains('Scanner unavailable'));
     expect(container.read(scanControllerProvider), equals(ScanState.idle));
+  });
+
+  test('CustomScanGateway default returns camera arrives in 4C', () async {
+    const gateway = CustomScanGateway();
+    final outcome = await gateway.scan(pageLimit: 50);
+    expect(outcome, isA<ScanFailure>());
+    expect((outcome as ScanFailure).message, equals('Camera screen arrives in 4C'));
   });
 }

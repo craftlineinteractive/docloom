@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_config.dart';
 import '../../../core/widgets/app_toast.dart';
-import '../data/mlkit_scan_gateway.dart';
+import '../data/custom_scan_gateway.dart';
 import '../domain/scan_gateway.dart';
 
 enum ScanState { idle, scanning, saving }
 
 final scanGatewayProvider = Provider<ScanGateway>((ref) {
-  return const MlKitScanGateway();
+  return const CustomScanGateway();
 });
 
 class ScanController extends Notifier<ScanState> {
@@ -25,18 +25,15 @@ class ScanController extends Notifier<ScanState> {
       final gateway = ref.read(scanGatewayProvider);
       final outcome = await gateway.scan(pageLimit: AppConfig.scanPageLimit);
       switch (outcome) {
-        case ScanSuccess(:final imagePaths):
-          _showToast('Scanned ${imagePaths.length} pages (saving comes in 4B)', onToast);
+        case ScanSuccess(:final pages):
+          _showToast('Scanned ${pages.length} pages', onToast);
         case ScanCancelled():
           break;
         case ScanFailure(:final message):
           _showToast(message, onToast);
       }
     } catch (_) {
-      _showToast(
-        'Scanner not available. Check that Google Play services is installed and up to date.',
-        onToast,
-      );
+      _showToast('Scanner unavailable. Please try again.', onToast);
     } finally {
       state = ScanState.idle;
     }
