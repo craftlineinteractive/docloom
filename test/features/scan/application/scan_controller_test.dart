@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:docloom/core/constants/app_config.dart';
 import 'package:docloom/features/scan/application/scan_providers.dart';
-import 'package:docloom/features/scan/data/custom_scan_gateway.dart';
 import 'package:docloom/features/scan/domain/scan_gateway.dart';
 import 'package:docloom/features/scan/domain/scanned_page.dart';
 
@@ -123,12 +122,5 @@ void main() {
     expect(toasts.length, equals(1));
     expect(toasts.first, contains('Scanner unavailable'));
     expect(container.read(scanControllerProvider), equals(ScanState.idle));
-  });
-
-  test('CustomScanGateway default returns camera arrives in 4C', () async {
-    const gateway = CustomScanGateway();
-    final outcome = await gateway.scan(pageLimit: 50);
-    expect(outcome, isA<ScanFailure>());
-    expect((outcome as ScanFailure).message, equals('Camera screen arrives in 4C'));
   });
 }

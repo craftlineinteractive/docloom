@@ -14,6 +14,13 @@ abstract final class AppColors {
   static const goldTint = Color(0xFFFFF6DD);
   static const amberText = Color(0xFFB7791F);
   static const cameraBlack = Color(0xFF000000);
+  static const cameraDarkBg = Color(0xFF0C0E14);
+  static const cameraControlBg = Color(0x66000000);
+  static const cameraOverlay = Color(0x99000000);
+  static const gridLine = Color(0x4DFFFFFF);
+  static const textOnDark = Color(0xFFFFFFFF);
+  static const textOnDarkMuted = Color(0x99FFFFFF);
+  static const shadow = Color(0x33000000);
   static const charcoal = Color(0xFF0F1220);
   static const pageBackdrop = Color(0xFFE9ECF3);
   static const switchOff = Color(0xFFD5D9E5);

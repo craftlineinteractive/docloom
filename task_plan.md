@@ -115,12 +115,40 @@
    - Fix `test/app_smoke_test.dart` with in-memory overrides
 
 ### Execution Checklist
-- [ ] Task 1: Create `AppConfig` with `trashRetention` <!-- id: 63 -->
-- [ ] Task 2: Implement `DocumentFileStore` with path traversal rejection and relative forward-slash paths <!-- id: 64 -->
-- [ ] Task 3: Implement `TrashService` calling repository first, then deleting file directories <!-- id: 65 -->
-- [ ] Task 4: Implement Riverpod 3 `app_providers.dart` <!-- id: 66 -->
-- [ ] Task 5: Implement `bootstrap.dart`, update `main.dart`, and update `app_smoke_test.dart` <!-- id: 67 -->
-- [ ] Task 6: Implement `/dev/db-check` screen and link from `ComponentGalleryScreen` (all files <= 150 lines) <!-- id: 68 -->
-- [ ] Task 7: Create unit and integration tests (file store, trash service lifecycle with fake clock, provider wiring) <!-- id: 69 -->
-- [ ] Task 8: Verify line limits, `flutter analyze`, `flutter test`, and real device verification <!-- id: 70 -->
+- [x] Task 1: Create `AppConfig` with `trashRetention` <!-- id: 63 -->
+- [x] Task 2: Implement `DocumentFileStore` with path traversal rejection and relative forward-slash paths <!-- id: 64 -->
+- [x] Task 3: Implement `TrashService` calling repository first, then deleting file directories <!-- id: 65 -->
+- [x] Task 4: Implement Riverpod 3 `app_providers.dart` <!-- id: 66 -->
+- [x] Task 5: Implement `bootstrap.dart`, update `main.dart`, and update `app_smoke_test.dart` <!-- id: 67 -->
+- [x] Task 6: Implement `/dev/db-check` screen and link from `ComponentGalleryScreen` (all files <= 150 lines) <!-- id: 68 -->
+- [x] Task 7: Create unit and integration tests (file store, trash service lifecycle with fake clock, provider wiring) <!-- id: 69 -->
+- [x] Task 8: Verify line limits, `flutter analyze`, `flutter test`, and real device verification <!-- id: 70 -->
+
+---
+
+## ARCHITECTURAL MEMORY & CORE PRINCIPLES (Phase 4 Scanner & Viewers)
+
+1. **Camera UI & Edge Detection Modes**:
+   - Camera UI matches mockup (black top bar with back, flash popover, grid rule-of-thirds, flip lens, settings; 4:3 viewfinder; single "Document" mode tab; bottom row with 72px shutter).
+   - **Manual Scan**: Shutter triggers capture; after capturing, edges auto-adjust to document boundaries (via image engine / OpenCV edge detection) and move to crop/adjust screen.
+   - **Auto Scan**: Live edge detection overlay directly on the camera preview viewfinder; highlights detected corners/quad live and automatically clicks/triggers capture once stable.
+
+2. **Two Types of Document Viewers**:
+   - **In-between Scanner Viewer (`review_scan`)**: Immediate post-scan viewer with normal/quick workflow tools (page thumbnail strip, reorder/delete/retake page, add page, quick filter, adjust edges, confirm & save).
+   - **Detailed Viewer (`viewer`)**: Full comprehensive viewer for any-time viewing from library/documents (OCR text extraction/view, export to PDF/Images, annotations/signature, share, document info/metadata, full editing suite).
+
+---
+
+## Phase 4C: Camera Screen (Single Page Capture)
+
+### Goals
+- Install `camera: ^0.12.1` and `permission_handler: ^13.0.2`
+- Implement `CameraService` interface and `PluginCameraService` + `FakeCameraService`
+- Android setup (permissions + minSdk 24)
+- Screen `/scan/camera` with top bar, 4:3 preview, mode row ("Document"), 72px shutter, flash popover, rule-of-thirds grid, flip lens, tap-to-focus ring
+- Permission handling with `EmptyState` + `AppButton`
+- Lifecycle management (pause/resume, dispose, retry view on failure, double-tap prevention)
+- Capture integration with `OpenCvImageEngine`
+- Tests for all states and fake camera interactions
+
 

@@ -2,12 +2,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_config.dart';
 import '../../../core/widgets/app_toast.dart';
 import '../data/custom_scan_gateway.dart';
+import '../data/plugin_camera_permission_service.dart';
+import '../data/plugin_camera_service.dart';
+import '../domain/camera_permission_service.dart';
+import '../domain/camera_service.dart';
 import '../domain/scan_gateway.dart';
 
 enum ScanState { idle, scanning, saving }
 
 final scanGatewayProvider = Provider<ScanGateway>((ref) {
   return const CustomScanGateway();
+});
+
+final cameraServiceProvider = Provider<CameraService>((ref) {
+  final service = PluginCameraService();
+  ref.onDispose(() => service.dispose());
+  return service;
+});
+
+final cameraPermissionServiceProvider =
+    Provider<CameraPermissionService>((ref) {
+  return const PluginCameraPermissionService();
 });
 
 class ScanController extends Notifier<ScanState> {

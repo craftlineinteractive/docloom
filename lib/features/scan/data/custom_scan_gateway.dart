@@ -1,3 +1,5 @@
+import '../../../app/router/app_router.dart';
+import '../../../app/router/routes.dart';
 import '../domain/scan_gateway.dart';
 
 class CustomScanGateway implements ScanGateway {
@@ -5,6 +7,7 @@ class CustomScanGateway implements ScanGateway {
 
   @override
   Future<ScanOutcome> scan({required int pageLimit}) async {
-    return const ScanFailure('Camera screen arrives in 4C');
+    final outcome = await appRouter.push<ScanOutcome>(Routes.scanCamera);
+    return outcome ?? const ScanCancelled();
   }
 }

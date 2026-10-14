@@ -5,4 +5,5 @@ abstract final class Routes {
   static String folderPath(String id) => '/folder/$id';
   static const gallery = '/dev/gallery';
   static const dbCheck = '/dev/db-check';
+  static const scanCamera = '/scan/camera';
 }

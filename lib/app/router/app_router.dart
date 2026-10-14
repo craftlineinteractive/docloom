@@ -4,6 +4,7 @@ import '../../features/dev/component_gallery_screen.dart';
 import '../../features/dev/db_check_screen.dart';
 import '../../features/folders/presentation/folder_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/scan/presentation/camera_screen.dart';
 import '../../features/search/presentation/search_screen.dart';
 import 'routes.dart';
 
@@ -23,6 +24,10 @@ final appRouter = GoRouter(
       builder: (context, state) => FolderScreen(
         folderId: state.pathParameters['id']!,
       ),
+    ),
+    GoRoute(
+      path: Routes.scanCamera,
+      builder: (context, state) => const CameraScreen(),
     ),
     if (kDebugMode)
       GoRoute(

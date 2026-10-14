@@ -39,6 +39,8 @@ dependencies:
   path: ^1.9.1
   uuid: ^4.6.0
   opencv_dart: ^2.2.2
+  camera: ^0.12.1
+  permission_handler: ^13.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
