@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/providers/home_providers.dart';
 import '../../../core/widgets/widgets.dart';
+import '../../scan/application/scan_providers.dart';
 import '../../home/presentation/widgets/batch_delete_action.dart';
 import '../../home/presentation/widgets/document_list_sliver.dart';
 import '../../home/presentation/widgets/document_move_sheet.dart';
@@ -115,7 +116,7 @@ class FolderScreen extends ConsumerWidget {
         floatingActionButton: isSelect
             ? null
             : FabPill(
-                onCamera: () => showAppToast(context, 'Scanning arrives in Phase 4'),
+                onCamera: () => ref.read(scanControllerProvider.notifier).startScan(folderId: folderId),
                 onAdd: () => HomeAddSheet.show(context),
               ),
         body: CustomScrollView(

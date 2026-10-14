@@ -64,3 +64,24 @@ void showAppToastWithMessenger(
     ),
   );
 }
+
+final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+
+void showAppToastGlobal(
+  String message, {
+  String? actionLabel,
+  Duration duration = const Duration(seconds: 4),
+  VoidCallback? onAction,
+}) {
+  final state = rootScaffoldMessengerKey.currentState;
+  if (state != null) {
+    showAppToastWithMessenger(
+      state,
+      message,
+      actionLabel: actionLabel,
+      onAction: onAction,
+      duration: duration,
+    );
+  }
+}
+

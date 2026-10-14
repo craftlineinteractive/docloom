@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../app/router/routes.dart';
 import '../../../core/providers/home_providers.dart';
 import '../../../core/widgets/widgets.dart';
+import '../../scan/application/scan_providers.dart';
 import 'widgets/batch_delete_action.dart';
 import 'widgets/document_list_sliver.dart';
 import 'widgets/document_move_sheet.dart';
@@ -84,7 +85,7 @@ class HomeScreen extends ConsumerWidget {
         floatingActionButton: isSelect
             ? null
             : FabPill(
-                onCamera: () => showAppToast(context, 'Scanning arrives in Phase 4'),
+                onCamera: () => ref.read(scanControllerProvider.notifier).startScan(),
                 onAdd: () => HomeAddSheet.show(context),
               ),
         body: CustomScrollView(
