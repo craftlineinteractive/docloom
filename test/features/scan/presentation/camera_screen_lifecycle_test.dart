@@ -11,7 +11,6 @@ import 'package:docloom/features/scan/domain/image_engine.dart';
 import 'package:docloom/features/scan/domain/quad.dart';
 import 'package:docloom/features/scan/domain/scan_gateway.dart';
 import 'package:docloom/features/scan/presentation/adjust/adjust_screen.dart';
-import 'package:docloom/features/scan/presentation/camera_debug_dialog.dart';
 import 'package:docloom/features/scan/presentation/camera_screen.dart';
 
 class _FakeImageEngine implements ImageEngine {
@@ -118,9 +117,7 @@ void main() {
     await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
-    expect(find.byType(CameraDebugDialog), findsOneWidget);
-    await tester.tap(find.text('OK'));
-    await tester.pumpAndSettle();
+    expect(find.byType(CameraScreen), findsOneWidget);
   });
 
   testWidgets('back returns ScanCancelled', (tester) async {

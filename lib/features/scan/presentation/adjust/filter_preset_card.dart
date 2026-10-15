@@ -56,10 +56,10 @@ class FilterPresetCard extends StatelessWidget {
                   )
                 else
                   const Center(
-                    child: SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                    child: Icon(
+                      LucideIcons.sparkles,
+                      size: 20,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 if (isSelected)

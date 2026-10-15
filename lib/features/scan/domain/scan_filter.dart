@@ -24,6 +24,8 @@ class ScanFilter {
     blackWhite,
   ];
 
+  static const List<ScanFilter> presets = all;
+
   static ScanFilter fromId(String id) {
     return all.firstWhere(
       (f) => f.id == id,

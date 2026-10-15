@@ -26,7 +26,12 @@ class CameraBody extends StatelessWidget {
     required this.onTapPreview,
     required this.onDismissFocus,
     required this.onCapture,
+    this.leftSlot,
+    this.rightSlot,
   });
+
+  final Widget? leftSlot;
+  final Widget? rightSlot;
 
   final CameraService camera;
   final bool isGridVisible;
@@ -73,6 +78,8 @@ class CameraBody extends StatelessWidget {
                   onCapture: onCapture,
                   isEnabled: !isInitializing && !isCapturing,
                   isCapturing: isCapturing,
+                  leftSlot: leftSlot,
+                  rightSlot: rightSlot,
                 ),
               ],
             ),

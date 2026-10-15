@@ -1,0 +1,59 @@
+import 'package:flutter/material.dart';
+import 'review_filter_row.dart';
+import 'review_toolbar.dart';
+
+class ReviewBottomBar extends StatelessWidget {
+  const ReviewBottomBar({
+    super.key,
+    required this.isColorOpen,
+    required this.selectedFilterId,
+    required this.onSelectFilter,
+    required this.onApplyToAll,
+    required this.onCrop,
+    required this.onColor,
+    required this.onRotate,
+    required this.onArrange,
+    required this.onRetake,
+    required this.onDelete,
+    required this.onCheck,
+  });
+
+  final bool isColorOpen;
+  final String selectedFilterId;
+  final ValueChanged<String> onSelectFilter;
+  final VoidCallback onApplyToAll;
+  final VoidCallback onCrop;
+  final VoidCallback onColor;
+  final VoidCallback onRotate;
+  final VoidCallback onArrange;
+  final VoidCallback onRetake;
+  final VoidCallback onDelete;
+  final VoidCallback onCheck;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isColorOpen)
+            ReviewFilterSubRow(
+              selectedFilterId: selectedFilterId,
+              onSelectFilter: onSelectFilter,
+              onApplyToAll: onApplyToAll,
+            ),
+          ReviewToolbar(
+            isColorActive: isColorOpen,
+            onCrop: onCrop,
+            onColor: onColor,
+            onRotate: onRotate,
+            onArrange: onArrange,
+            onRetake: onRetake,
+            onDelete: onDelete,
+            onCheck: onCheck,
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -9,11 +9,15 @@ class CameraBottomBar extends StatelessWidget {
     required this.onCapture,
     required this.isEnabled,
     this.isCapturing = false,
+    this.leftSlot,
+    this.rightSlot,
   });
 
   final VoidCallback onCapture;
   final bool isEnabled;
   final bool isCapturing;
+  final Widget? leftSlot;
+  final Widget? rightSlot;
 
   @override
   Widget build(BuildContext context) {
@@ -27,19 +31,21 @@ class CameraBottomBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(
-            width: AppSizes.bottomSlotButton,
-            height: AppSizes.bottomSlotButton,
-          ),
+          leftSlot ??
+              const SizedBox(
+                width: AppSizes.bottomSlotButton,
+                height: AppSizes.bottomSlotButton,
+              ),
           _ShutterButton(
             onTap: isEnabled ? onCapture : null,
             isEnabled: isEnabled,
             isCapturing: isCapturing,
           ),
-          const SizedBox(
-            width: AppSizes.bottomSlotButton,
-            height: AppSizes.bottomSlotButton,
-          ),
+          rightSlot ??
+              const SizedBox(
+                width: AppSizes.bottomSlotButton,
+                height: AppSizes.bottomSlotButton,
+              ),
         ],
       ),
     );

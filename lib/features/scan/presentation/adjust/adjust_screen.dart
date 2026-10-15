@@ -24,12 +24,15 @@ class AdjustScreen extends ConsumerStatefulWidget {
     required this.importedPath,
     this.rawCapturePath,
     this.initialQuad,
+    this.initialRotation = 0,
+    this.initialFilterId,
     this.pageIndicator = '1/1',
   });
 
   final String previewPath, importedPath;
-  final String? rawCapturePath;
+  final String? rawCapturePath, initialFilterId;
   final Quad? initialQuad;
+  final int initialRotation;
   final String pageIndicator;
 
   @override
@@ -38,14 +41,16 @@ class AdjustScreen extends ConsumerStatefulWidget {
 
 class _AdjustScreenState extends ConsumerState<AdjustScreen> {
   late Quad _quad;
-  int _rotation = 0;
-  String _filterId = AppConfig.defaultFilterId;
+  late int _rotation;
+  late String _filterId;
   Uint8List? _previewBytes;
 
   @override
   void initState() {
     super.initState();
     _quad = widget.initialQuad ?? Quad.defaultInset();
+    _rotation = widget.initialRotation;
+    _filterId = widget.initialFilterId ?? AppConfig.defaultFilterId;
     _updatePreviewBytes(_filterId);
   }
 
@@ -53,7 +58,6 @@ class _AdjustScreenState extends ConsumerState<AdjustScreen> {
         _rotation = (_rotation + 90) % 360;
         _quad = _quad.rotated90();
       });
-
   void _reset() => setState(() => _quad = Quad.defaultInset());
 
   Future<void> _updatePreviewBytes(String filterId) async {
@@ -63,13 +67,9 @@ class _AdjustScreenState extends ConsumerState<AdjustScreen> {
       return;
     }
     try {
-      final bytes = await ref.read(engineProvider).renderPreview(
-            previewPath: widget.previewPath,
-            quad: Quad.unit(),
-            rotation: 0,
-            filterId: filterId,
-          );
-      if (mounted) setState(() => _previewBytes = bytes);
+      final b = await ref.read(engineProvider).renderPreview(
+            previewPath: widget.previewPath, quad: Quad.unit(), rotation: 0, filterId: filterId);
+      if (mounted) setState(() => _previewBytes = b);
     } catch (_) {}
   }
 
@@ -87,18 +87,16 @@ class _AdjustScreenState extends ConsumerState<AdjustScreen> {
       );
 
   void _retake() {
-    for (final path in [widget.rawCapturePath, widget.importedPath, widget.previewPath]) {
-      if (path != null) {
-        try { File(path).deleteSync(); } catch (_) {}
-      }
+    for (final p in [widget.rawCapturePath, widget.importedPath, widget.previewPath]) {
+      if (p != null) try { File(p).deleteSync(); } catch (_) {}
     }
     Navigator.of(context).pop(null);
   }
 
   Future<void> _continue() async {
     final dir = Directory(widget.importedPath).parent.path;
-    final dstPath = p.join(dir, 'rendered_${DateTime.now().millisecondsSinceEpoch}.jpg');
-    final rendered = await showAppProgressDialog<String>(
+    final dst = p.join(dir, 'rendered_${DateTime.now().millisecondsSinceEpoch}.jpg');
+    final res = await showAppProgressDialog<String>(
       context: context,
       message: 'Processing document...',
       task: () => ref.read(engineProvider).renderPage(
@@ -106,12 +104,12 @@ class _AdjustScreenState extends ConsumerState<AdjustScreen> {
             quad: _quad,
             rotation: _rotation,
             filterId: _filterId,
-            dstPath: dstPath,
+            dstPath: dst,
           ),
     );
     if (mounted) {
       Navigator.of(context).pop(AdjustResult(
-        renderedPath: rendered,
+        renderedPath: res,
         quad: _quad,
         rotation: _rotation,
         filterId: _filterId,

@@ -6,7 +6,9 @@ abstract final class AppSizes {
   static const double shutterInner = 56;
   static const double shutterPadding = 4;
   static const double topBarButton = 40;
-  static const double bottomSlotButton = 44;
+  static const double bottomSlotButton = 48;
+  static const double actionButton = 48;
+  static const double appBarHeight = 56;
   static const double focusRing = 64;
   static const double cameraRatio = 4 / 3;
   static const double cropHandleVisible = 24;
