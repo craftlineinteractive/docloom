@@ -30,11 +30,14 @@ class FakeCameraService implements CameraService {
   CameraFlash get currentFlash => _currentFlash;
 
   @override
+  double? get aspectRatio => 4 / 3;
+
+  @override
   List<CameraLens> get availableLenses => List.unmodifiable(availableLensesList);
 
   @override
   Future<void> initialize({
-    CameraPreset preset = CameraPreset.high,
+    CameraPreset preset = CameraPreset.max,
     CameraLens lens = CameraLens.back,
   }) async {
     initializeCount++;

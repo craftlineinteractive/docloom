@@ -10,7 +10,7 @@ abstract final class AppSizes {
   static const double actionButton = 48;
   static const double appBarHeight = 56;
   static const double focusRing = 64;
-  static const double cameraRatio = 4 / 3;
+  static const double cameraRatio = 3 / 4;
   static const double cropHandleVisible = 24;
   static const double cropHandleHitArea = 48;
   static const double cropMagnifier = 96;

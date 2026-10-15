@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 
 class AdjustCropContainer extends StatelessWidget {
@@ -17,19 +16,11 @@ class AdjustCropContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-        child: Container(
-          decoration: BoxDecoration(
-            color: AppColors.cropDeskBg,
-            borderRadius: BorderRadius.circular(AppRadius.xl),
-            border: Border.all(color: AppColors.gridLine, width: 0.5),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: RotatedBox(
-            quarterTurns: (rotation ~/ 90) % 4,
-            child: child,
-          ),
+      child: ColoredBox(
+        color: AppColors.cameraBlack,
+        child: RotatedBox(
+          quarterTurns: (rotation ~/ 90) % 4,
+          child: child,
         ),
       ),
     );

@@ -20,6 +20,9 @@ class PluginCameraService implements CameraService {
   CameraFlash get currentFlash => _currentFlash;
 
   @override
+  double? get aspectRatio => _controller?.value.aspectRatio;
+
+  @override
   List<CameraLens> get availableLenses {
     final lenses = <CameraLens>{};
     for (final cam in _cameras) {
@@ -31,7 +34,7 @@ class PluginCameraService implements CameraService {
 
   @override
   Future<void> initialize({
-    CameraPreset preset = CameraPreset.high,
+    CameraPreset preset = CameraPreset.max,
     CameraLens lens = CameraLens.back,
   }) async {
     await dispose();
@@ -45,8 +48,7 @@ class PluginCameraService implements CameraService {
       (cam) => cam.lensDirection == targetDirection,
       orElse: () => _cameras.first,
     );
-    _currentLens =
-        _mapLensDirection(selectedCam.lensDirection) ?? CameraLens.back;
+    _currentLens = _mapLensDirection(selectedCam.lensDirection) ?? CameraLens.back;
 
     final controller = CameraController(
       selectedCam,
@@ -55,6 +57,10 @@ class PluginCameraService implements CameraService {
     );
     await controller.initialize();
     _controller = controller;
+    try {
+      await controller.setFocusMode(FocusMode.auto);
+      await controller.setExposureMode(ExposureMode.auto);
+    } catch (_) {}
     await setFlash(_currentFlash);
   }
 
@@ -62,9 +68,7 @@ class PluginCameraService implements CameraService {
   Future<void> dispose() async {
     final controller = _controller;
     _controller = null;
-    if (controller != null) {
-      await controller.dispose();
-    }
+    if (controller != null) await controller.dispose();
   }
 
   @override
@@ -80,11 +84,11 @@ class PluginCameraService implements CameraService {
   Future<void> setFocusPoint(Offset point) async {
     final controller = _controller;
     if (controller != null && controller.value.isInitialized) {
-      final clamped = Offset(
-        point.dx.clamp(0.0, 1.0),
-        point.dy.clamp(0.0, 1.0),
-      );
-      await controller.setFocusPoint(clamped);
+      final p = Offset(point.dx.clamp(0.0, 1.0), point.dy.clamp(0.0, 1.0));
+      await controller.setFocusPoint(p);
+      try {
+        await controller.setExposurePoint(p);
+      } catch (_) {}
     }
   }
 
@@ -101,44 +105,34 @@ class PluginCameraService implements CameraService {
   @override
   Widget previewWidget() {
     final controller = _controller;
-    if (controller == null || !controller.value.isInitialized) {
-      return const SizedBox.shrink();
-    }
+    if (controller == null || !controller.value.isInitialized) return const SizedBox.shrink();
     return CameraPreview(controller);
   }
 
-  ResolutionPreset _mapResolutionPreset(CameraPreset preset) {
-    return switch (preset) {
-      CameraPreset.low => ResolutionPreset.low,
-      CameraPreset.medium => ResolutionPreset.medium,
-      CameraPreset.high => ResolutionPreset.high,
-      CameraPreset.veryHigh => ResolutionPreset.veryHigh,
-      CameraPreset.ultraHigh => ResolutionPreset.ultraHigh,
-      CameraPreset.max => ResolutionPreset.max,
-    };
-  }
+  ResolutionPreset _mapResolutionPreset(CameraPreset preset) => switch (preset) {
+        CameraPreset.low => ResolutionPreset.low,
+        CameraPreset.medium => ResolutionPreset.medium,
+        CameraPreset.high => ResolutionPreset.high,
+        CameraPreset.veryHigh => ResolutionPreset.veryHigh,
+        CameraPreset.ultraHigh => ResolutionPreset.ultraHigh,
+        CameraPreset.max => ResolutionPreset.max,
+      };
 
-  FlashMode _mapFlashMode(CameraFlash flash) {
-    return switch (flash) {
-      CameraFlash.off => FlashMode.off,
-      CameraFlash.on => FlashMode.always,
-      CameraFlash.auto => FlashMode.auto,
-    };
-  }
+  FlashMode _mapFlashMode(CameraFlash flash) => switch (flash) {
+        CameraFlash.off => FlashMode.off,
+        CameraFlash.on => FlashMode.always,
+        CameraFlash.auto => FlashMode.auto,
+      };
 
-  CameraLens? _mapLensDirection(CameraLensDirection dir) {
-    return switch (dir) {
-      CameraLensDirection.back => CameraLens.back,
-      CameraLensDirection.front => CameraLens.front,
-      CameraLensDirection.external => CameraLens.external,
-    };
-  }
+  CameraLens? _mapLensDirection(CameraLensDirection dir) => switch (dir) {
+        CameraLensDirection.back => CameraLens.back,
+        CameraLensDirection.front => CameraLens.front,
+        CameraLensDirection.external => CameraLens.external,
+      };
 
-  CameraLensDirection _mapToCameraLensDirection(CameraLens lens) {
-    return switch (lens) {
-      CameraLens.back => CameraLensDirection.back,
-      CameraLens.front => CameraLensDirection.front,
-      CameraLens.external => CameraLensDirection.external,
-    };
-  }
+  CameraLensDirection _mapToCameraLensDirection(CameraLens lens) => switch (lens) {
+        CameraLens.back => CameraLensDirection.back,
+        CameraLens.front => CameraLensDirection.front,
+        CameraLens.external => CameraLensDirection.external,
+      };
 }

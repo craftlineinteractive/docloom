@@ -31,7 +31,7 @@ abstract final class AppColors {
   static const cropDeskBg = Color(0xFF171B2F);
   static const cropDeskGradientStart = Color(0xFF1A1F36);
   static const cropDeskGradientEnd = Color(0xFF121526);
-  static const cropDimOverlay = Color(0x8C0F1220);
+  static const cropDimOverlay = Color(0x99000000);
   static const cropHandleHalo = Color(0x406366F1);
 
   static const folderPalette = [

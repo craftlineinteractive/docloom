@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/theme/app_colors.dart';
 import '../application/scan_providers.dart';
 import '../domain/camera_permission_service.dart';
 import '../domain/camera_service.dart';
@@ -22,7 +24,7 @@ class CameraScreen extends ConsumerStatefulWidget {
 
 class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBindingObserver {
   CameraPermissionState _perm = CameraPermissionState.notDetermined;
-  bool _isInit = false, _hasErr = false, _isCap = false, _grid = false, _flash = false;
+  bool _isInit = false, _hasErr = false, _isCap = false, _grid = false;
   Offset? _focusPos;
   CameraLens _lens = CameraLens.back;
 
@@ -45,17 +47,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   void didChangeAppLifecycleState(AppLifecycleState s) {
     if (s == AppLifecycleState.inactive || s == AppLifecycleState.paused) {
       ref.read(cameraServiceProvider).dispose();
-    } else if (s == AppLifecycleState.resumed) {
-      _checkPermission();
-    }
+    } else if (s == AppLifecycleState.resumed) { _checkPermission(); }
   }
 
   Future<void> _checkPermission() async => _setPermission(await ref.read(cameraPermissionServiceProvider).checkStatus());
   Future<void> _requestPermission() async => _setPermission(await ref.read(cameraPermissionServiceProvider).requestPermission());
-
   void _setPermission(CameraPermissionState s) {
-    if (!mounted) return;
-    setState(() => _perm = s);
+    if (mounted) setState(() => _perm = s);
     if (s == CameraPermissionState.granted) _initCamera();
   }
 
@@ -73,9 +71,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   Future<void> _onCapture() async {
     if (_isCap || _isInit || _hasErr) return;
     await CameraCaptureCoordinator.performCapture(
-      context: context,
-      ref: ref,
-      camera: ref.read(cameraServiceProvider),
+      context: context, ref: ref, camera: ref.read(cameraServiceProvider),
       retakePageIndex: widget.retakePageIndex,
       onStart: () { if (mounted) setState(() => _isCap = true); },
       onEnd: () { if (mounted) setState(() => _isCap = false); },
@@ -84,38 +80,46 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
 
   void _onTapPreview(TapDownDetails d, Size size) {
     setState(() => _focusPos = d.localPosition);
-    ref.read(cameraServiceProvider).setFocusPoint(Offset(
-      (d.localPosition.dx / size.width).clamp(0.0, 1.0),
-      (d.localPosition.dy / size.height).clamp(0.0, 1.0),
-    ));
+    ref.read(cameraServiceProvider).setFocusPoint(
+      Offset((d.localPosition.dx / size.width).clamp(0.0, 1.0), (d.localPosition.dy / size.height).clamp(0.0, 1.0)),
+    );
   }
 
   Future<void> _onBack() async {
     if (widget.retakePageIndex != null) { Navigator.of(context).pop(null); return; }
-    final session = ref.read(scanSessionProvider);
-    if (session.pages.isNotEmpty) {
-      if (await ReviewDialogs.showDiscardScanDialog(context, session.pages.length) && mounted) {
-        ref.read(scanSessionProvider.notifier).discard();
-        Navigator.of(context).pop(const ScanCancelled());
-      }
-    } else {
+    final s = ref.read(scanSessionProvider);
+    if (s.pages.isNotEmpty && await ReviewDialogs.showDiscardScanDialog(context, s.pages.length) && mounted) {
+      ref.read(scanSessionProvider.notifier).discard();
+      Navigator.of(context).pop(const ScanCancelled());
+    } else if (s.pages.isEmpty) {
       Navigator.of(context).pop(const ScanCancelled());
     }
   }
 
-  void _flip() {
-    _lens = _lens == CameraLens.back ? CameraLens.front : CameraLens.back;
-    _initCamera();
+  void _flip() { _lens = _lens == CameraLens.back ? CameraLens.front : CameraLens.back; _initCamera(); }
+
+  void _onCycleFlash() {
+    final cam = ref.read(cameraServiceProvider);
+    cam.setFlash(switch (cam.currentFlash) {
+      CameraFlash.off => CameraFlash.auto,
+      CameraFlash.auto => CameraFlash.on,
+      CameraFlash.on => CameraFlash.off,
+    });
+    setState(() {});
   }
+
+  static const _overlay = SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent, statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.dark, systemNavigationBarColor: AppColors.cameraBlack,
+    systemNavigationBarIconBrightness: Brightness.light,
+  );
 
   @override
   Widget build(BuildContext context) {
     if (_perm != CameraPermissionState.granted) {
       return CameraPermissionView(
-        state: _perm,
-        onRequest: _requestPermission,
+        state: _perm, onRequest: _requestPermission, onBack: _onBack,
         onOpenSettings: () => ref.read(cameraPermissionServiceProvider).openSettings(),
-        onBack: _onBack,
       );
     }
     if (_hasErr) return CameraErrorView(onRetry: _initCamera, onBack: _onBack);
@@ -125,23 +129,19 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) { if (!didPop) _onBack(); },
-      child: CameraBody(
-        camera: ref.read(cameraServiceProvider),
-        isGridVisible: _grid,
-        showFlashMenu: _flash,
-        focusPos: _focusPos,
-        isInitializing: _isInit,
-        isCapturing: _isCap,
-        leftSlot: CameraSlotsHelper.buildLeft(context: context, session: session, isRetake: isRetake),
-        rightSlot: CameraSlotsHelper.buildRight(context: context, session: session, isRetake: isRetake),
-        onBack: _onBack,
-        onToggleFlashMenu: () => setState(() => _flash = !_flash),
-        onToggleGrid: () => setState(() => _grid = !_grid),
-        onFlipCamera: _flip,
-        onSelectFlash: (f) { ref.read(cameraServiceProvider).setFlash(f); setState(() => _flash = false); },
-        onTapPreview: _onTapPreview,
-        onDismissFocus: () => setState(() => _focusPos = null),
-        onCapture: _onCapture,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: _overlay,
+        child: CameraBody(
+          camera: ref.read(cameraServiceProvider), isGridVisible: _grid, focusPos: _focusPos,
+          isInitializing: _isInit, isCapturing: _isCap,
+          leftSlot: CameraSlotsHelper.buildLeft(context: context, session: session, isRetake: isRetake),
+          rightSlot: CameraSlotsHelper.buildRight(context: context, session: session, isRetake: isRetake),
+          onBack: _onBack, onToggleFlash: _onCycleFlash,
+          onToggleGrid: () => setState(() => _grid = !_grid),
+          onFlipCamera: _flip, onTapPreview: _onTapPreview,
+          onDismissFocus: () => setState(() => _focusPos = null),
+          onCapture: _onCapture,
+        ),
       ),
     );
   }

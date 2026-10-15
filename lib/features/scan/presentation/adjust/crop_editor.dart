@@ -92,13 +92,15 @@ class _CropEditorState extends State<CropEditor> {
       return Image.memory(
         bytes,
         fit: BoxFit.fill,
-        errorBuilder: (_, _, _) => const ColoredBox(color: AppColors.cropDeskBg),
+        filterQuality: FilterQuality.high,
+        errorBuilder: (_, _, _) => const ColoredBox(color: AppColors.cameraBlack),
       );
     }
     return Image.file(
       File(widget.previewPath),
       fit: BoxFit.fill,
-      errorBuilder: (_, _, _) => const ColoredBox(color: AppColors.cropDeskBg),
+      filterQuality: FilterQuality.high,
+      errorBuilder: (_, _, _) => const ColoredBox(color: AppColors.cameraBlack),
     );
   }
 

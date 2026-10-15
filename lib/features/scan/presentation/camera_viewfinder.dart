@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_sizes.dart';
 import '../domain/camera_service.dart';
 import 'camera_grid.dart';
 import 'focus_ring.dart';
@@ -23,30 +22,39 @@ class CameraViewfinder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Center(
-        child: AspectRatio(
-          aspectRatio: AppSizes.cameraRatio,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final size = Size(constraints.maxWidth, constraints.maxHeight);
-              return GestureDetector(
-                onTapDown: (details) => onTapPreview(details, size),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    camera.previewWidget(),
-                    if (isGridVisible) const CameraGrid(),
-                    if (focusPos != null)
-                      FocusRing(
-                        position: focusPos!,
-                        onDismiss: onDismissFocus,
-                      ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final size = Size(constraints.maxWidth, constraints.maxHeight);
+          final rawAspect = camera.aspectRatio ?? (4 / 3);
+          final previewAspect = rawAspect > 1.0 ? (1.0 / rawAspect) : rawAspect;
+          final previewWidth = size.width;
+          final previewHeight = previewWidth / previewAspect;
+
+          return ClipRect(
+            child: GestureDetector(
+              onTapDown: (details) => onTapPreview(details, size),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.cover,
+                    child: SizedBox(
+                      width: previewWidth,
+                      height: previewHeight,
+                      child: camera.previewWidget(),
+                    ),
+                  ),
+                  if (isGridVisible) const CameraGrid(),
+                  if (focusPos != null)
+                    FocusRing(
+                      position: focusPos!,
+                      onDismiss: onDismissFocus,
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

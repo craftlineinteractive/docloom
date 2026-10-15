@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_sizes.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../domain/camera_service.dart';
@@ -25,6 +26,12 @@ class CameraTopBar extends StatelessWidget {
   final bool isGridVisible;
   final bool showFlip;
 
+  String _flashTooltip(CameraFlash flash) => switch (flash) {
+        CameraFlash.off => 'Flash: Off',
+        CameraFlash.auto => 'Flash: Auto',
+        CameraFlash.on => 'Flash: On',
+      };
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,10 +51,9 @@ class CameraTopBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               _CircleIconButton(
-                icon: currentFlash == CameraFlash.off
-                    ? LucideIcons.zapOff
-                    : LucideIcons.zap,
-                tooltip: 'Flash',
+                icon: currentFlash == CameraFlash.off ? LucideIcons.zapOff : LucideIcons.zap,
+                badgeText: currentFlash == CameraFlash.auto ? 'A' : null,
+                tooltip: _flashTooltip(currentFlash),
                 isActive: currentFlash != CameraFlash.off,
                 onTap: onFlashTap,
               ),
@@ -86,12 +92,14 @@ class _CircleIconButton extends StatelessWidget {
     required this.tooltip,
     required this.onTap,
     this.isActive = false,
+    this.badgeText,
   });
 
   final IconData icon;
   final String tooltip;
   final VoidCallback onTap;
   final bool isActive;
+  final String? badgeText;
 
   @override
   Widget build(BuildContext context) {
@@ -103,15 +111,35 @@ class _CircleIconButton extends StatelessWidget {
           width: AppSizes.topBarButton,
           height: AppSizes.topBarButton,
           decoration: BoxDecoration(
-            color: isActive
-                ? AppColors.primary
-                : AppColors.cameraControlBg,
+            color: isActive ? AppColors.primary : AppColors.cameraControlBg,
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            icon,
-            size: 20,
-            color: AppColors.textOnDark,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Icon(icon, size: 20, color: AppColors.textOnDark),
+              if (badgeText != null)
+                Positioned(
+                  right: 4,
+                  bottom: 3,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.cameraBlack.withValues(alpha: 0.8),
+                      borderRadius: BorderRadius.circular(AppRadius.sm),
+                    ),
+                    child: Text(
+                      badgeText!,
+                      style: const TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textOnDark,
+                        height: 1.1,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       ),

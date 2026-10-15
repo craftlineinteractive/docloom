@@ -8,7 +8,7 @@ enum CameraPreset { low, medium, high, veryHigh, ultraHigh, max }
 
 abstract interface class CameraService {
   Future<void> initialize({
-    CameraPreset preset = CameraPreset.high,
+    CameraPreset preset = CameraPreset.max,
     CameraLens lens = CameraLens.back,
   });
 
@@ -27,6 +27,8 @@ abstract interface class CameraService {
   CameraFlash get currentFlash;
 
   bool get isInitialized;
+
+  double? get aspectRatio;
 
   Widget previewWidget();
 }

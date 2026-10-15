@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import '../../../../core/constants/app_config.dart';
@@ -16,6 +16,12 @@ import 'adjust_tools_row.dart';
 import 'adjust_top_bar.dart';
 import 'crop_editor.dart';
 import 'filter_bottom_sheet.dart';
+
+const SystemUiOverlayStyle _overlay = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent,
+  statusBarIconBrightness: Brightness.light,
+  statusBarBrightness: Brightness.dark,
+);
 
 class AdjustScreen extends ConsumerStatefulWidget {
   const AdjustScreen({
@@ -40,9 +46,7 @@ class AdjustScreen extends ConsumerStatefulWidget {
 }
 
 class _AdjustScreenState extends ConsumerState<AdjustScreen> {
-  late Quad _quad;
-  late int _rotation;
-  late String _filterId;
+  late Quad _quad; late int _rotation; late String _filterId;
   Uint8List? _previewBytes;
 
   @override
@@ -78,11 +82,8 @@ class _AdjustScreenState extends ConsumerState<AdjustScreen> {
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
         builder: (_) => FilterBottomSheet(
-          previewPath: widget.previewPath,
-          quad: _quad,
-          rotation: _rotation,
-          selectedFilterId: _filterId,
-          onSelectFilter: _updatePreviewBytes,
+          previewPath: widget.previewPath, quad: _quad, rotation: _rotation,
+          selectedFilterId: _filterId, onSelectFilter: _updatePreviewBytes,
         ),
       );
 
@@ -100,45 +101,42 @@ class _AdjustScreenState extends ConsumerState<AdjustScreen> {
       context: context,
       message: 'Processing document...',
       task: () => ref.read(engineProvider).renderPage(
-            srcPath: widget.importedPath,
-            quad: _quad,
-            rotation: _rotation,
-            filterId: _filterId,
-            dstPath: dst,
+            srcPath: widget.importedPath, quad: _quad,
+            rotation: _rotation, filterId: _filterId, dstPath: dst,
           ),
     );
     if (mounted) {
       Navigator.of(context).pop(AdjustResult(
-        renderedPath: res,
-        quad: _quad,
-        rotation: _rotation,
-        filterId: _filterId,
+        renderedPath: res, quad: _quad, rotation: _rotation, filterId: _filterId,
       ));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.charcoal,
-      body: SafeArea(
-        child: Column(
-          children: [
-            AdjustTopBar(onBack: () => Navigator.of(context).pop(null), pageIndicator: widget.pageIndicator),
-            AdjustCropContainer(
-              rotation: _rotation,
-              child: CropEditor(
-                previewPath: widget.previewPath,
-                previewBytes: _previewBytes,
-                quad: _quad,
-                onChanged: (q) => setState(() => _quad = q),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: _overlay,
+      child: Scaffold(
+        backgroundColor: AppColors.cameraBlack,
+        body: SafeArea(
+          child: Column(
+            children: [
+              AdjustTopBar(onBack: () => Navigator.of(context).pop(null), pageIndicator: widget.pageIndicator),
+              AdjustCropContainer(
+                rotation: _rotation,
+                child: CropEditor(
+                  previewPath: widget.importedPath,
+                  previewBytes: _previewBytes,
+                  quad: _quad,
+                  onChanged: (q) => setState(() => _quad = q),
+                ),
               ),
-            ),
-            const AdjustHintText(),
-            AdjustFilterRow(currentFilterId: _filterId, onTapFilter: _openFilterSheet),
-            AdjustToolsRow(onRotate: _rotate, onReset: _reset),
-            AdjustBottomBar(onRetake: _retake, onContinue: _continue),
-          ],
+              const AdjustHintText(),
+              AdjustFilterRow(currentFilterId: _filterId, onTapFilter: _openFilterSheet),
+              AdjustToolsRow(onRotate: _rotate, onReset: _reset),
+              AdjustBottomBar(onRetake: _retake, onContinue: _continue),
+            ],
+          ),
         ),
       ),
     );

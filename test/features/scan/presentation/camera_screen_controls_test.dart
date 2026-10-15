@@ -26,7 +26,7 @@ Widget _buildApp({
 }
 
 void main() {
-  testWidgets('flash menu toggles and sets flash mode', (tester) async {
+  testWidgets('flash button cycles directly without dropdown', (tester) async {
     final camera = FakeCameraService();
     final permission = FakeCameraPermissionService();
 
@@ -34,14 +34,21 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(CameraFlashMenu), findsNothing);
-    await tester.tap(find.byTooltip('Flash'));
-    await tester.pumpAndSettle();
+    expect(camera.currentFlash, equals(CameraFlash.off));
 
-    expect(find.byType(CameraFlashMenu), findsOneWidget);
-    await tester.tap(find.text('On'));
+    await tester.tap(find.byTooltip('Flash: Off'));
     await tester.pumpAndSettle();
+    expect(camera.currentFlash, equals(CameraFlash.auto));
+    expect(find.byType(CameraFlashMenu), findsNothing);
 
+    await tester.tap(find.byTooltip('Flash: Auto'));
+    await tester.pumpAndSettle();
     expect(camera.currentFlash, equals(CameraFlash.on));
+    expect(find.byType(CameraFlashMenu), findsNothing);
+
+    await tester.tap(find.byTooltip('Flash: On'));
+    await tester.pumpAndSettle();
+    expect(camera.currentFlash, equals(CameraFlash.off));
     expect(find.byType(CameraFlashMenu), findsNothing);
   });
 
