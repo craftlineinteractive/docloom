@@ -11,7 +11,7 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp('opencv_engine_test_');
-    engine = const OpencvImageEngine();
+    engine = OpencvImageEngine();
   });
 
   tearDown(() async {

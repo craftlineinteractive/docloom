@@ -9,4 +9,8 @@ abstract final class AppSizes {
   static const double bottomSlotButton = 44;
   static const double focusRing = 64;
   static const double cameraRatio = 4 / 3;
+  static const double cropHandleVisible = 24;
+  static const double cropHandleHitArea = 48;
+  static const double cropMagnifier = 96;
+  static const double cropQuadStroke = 2;
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +10,7 @@ import 'package:docloom/features/scan/data/opencv_image_engine.dart';
 import 'package:docloom/features/scan/domain/image_engine.dart';
 import 'package:docloom/features/scan/domain/quad.dart';
 import 'package:docloom/features/scan/domain/scan_gateway.dart';
+import 'package:docloom/features/scan/presentation/adjust/adjust_screen.dart';
 import 'package:docloom/features/scan/presentation/camera_debug_dialog.dart';
 import 'package:docloom/features/scan/presentation/camera_screen.dart';
 
@@ -32,6 +34,15 @@ class _FakeImageEngine implements ImageEngine {
     required String filterId,
     required String dstPath,
   }) async => dstPath;
+
+  @override
+  Future<Uint8List> renderPreview({
+    required String previewPath,
+    required Quad quad,
+    required int rotation,
+    required String filterId,
+    int? maxSide,
+  }) async => Uint8List.fromList([1, 2, 3]);
 }
 
 Widget _buildApp({
@@ -101,6 +112,10 @@ void main() {
 
     expect(camera.takePictureCount, equals(1));
     engine.completer!.complete(const ImageSize(width: 100, height: 100));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AdjustScreen), findsOneWidget);
+    await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
     expect(find.byType(CameraDebugDialog), findsOneWidget);

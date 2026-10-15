@@ -41,4 +41,12 @@ abstract interface class ImageEngine {
     required String filterId,
     required String dstPath,
   });
+
+  Future<Uint8List> renderPreview({
+    required String previewPath,
+    required Quad quad,
+    required int rotation,
+    required String filterId,
+    int? maxSide,
+  });
 }

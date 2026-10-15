@@ -83,14 +83,12 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     if (_isCapturing || _isInit || _hasError) return;
     setState(() => _isCapturing = true);
     try {
-      await CameraCaptureHelper.captureAndShowDebug(
+      await CameraCaptureHelper.captureAndProcess(
         context: context,
         camera: ref.read(cameraServiceProvider),
         engine: ref.read(engineProvider),
         sessionId: _sessionId,
-        onCaptured: () {
-          if (mounted) setState(() => _isCapturing = false);
-        },
+        onCaptured: () { if (mounted) setState(() => _isCapturing = false); },
       );
     } catch (_) {
       showAppToastGlobal('Capture failed. Please try again.');

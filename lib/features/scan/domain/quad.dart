@@ -21,6 +21,15 @@ class Quad {
     );
   }
 
+  factory Quad.unit() {
+    return const Quad(
+      topLeft: Offset(0, 0),
+      topRight: Offset(1, 0),
+      bottomRight: Offset(1, 1),
+      bottomLeft: Offset(0, 1),
+    );
+  }
+
   factory Quad.defaultInset([double inset = 0.05]) {
     final start = inset;
     final end = 1.0 - inset;

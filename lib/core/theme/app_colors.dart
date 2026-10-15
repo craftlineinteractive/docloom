@@ -28,6 +28,11 @@ abstract final class AppColors {
   static const folderOrange = Color(0xFFF59E0B);
   static const folderGreen = Color(0xFF22C55E);
   static const folderRed = Color(0xFFEF4444);
+  static const cropDeskBg = Color(0xFF171B2F);
+  static const cropDeskGradientStart = Color(0xFF1A1F36);
+  static const cropDeskGradientEnd = Color(0xFF121526);
+  static const cropDimOverlay = Color(0x8C0F1220);
+  static const cropHandleHalo = Color(0x406366F1);
 
   static const folderPalette = [
     folderIndigo,
