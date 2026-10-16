@@ -8,10 +8,14 @@ class AdjustToolsRow extends StatelessWidget {
     super.key,
     required this.onRotate,
     required this.onReset,
+    this.onAutoDetect,
+    this.isDetecting = false,
   });
 
   final VoidCallback onRotate;
   final VoidCallback onReset;
+  final VoidCallback? onAutoDetect;
+  final bool isDetecting;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +29,12 @@ class AdjustToolsRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          if (onAutoDetect != null)
+            _ToolButton(
+              icon: LucideIcons.scanLine,
+              label: isDetecting ? 'Detecting...' : 'Auto detect',
+              onTap: isDetecting ? () {} : onAutoDetect!,
+            ),
           _ToolButton(
             icon: LucideIcons.rotateCw,
             label: 'Rotate',

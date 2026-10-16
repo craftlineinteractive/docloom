@@ -27,6 +27,12 @@ class ComponentGalleryScreen extends StatelessWidget {
               icon: const Icon(LucideIcons.database, size: 18, color: AppColors.surface),
               onPressed: () => context.push(Routes.dbCheck),
             ),
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(
+              label: 'Fixture Corner Labeler (/dev/labeler)',
+              icon: const Icon(LucideIcons.crop, size: 18, color: AppColors.surface),
+              onPressed: () => context.push(Routes.devLabeler),
+            ),
             const SizedBox(height: AppSpacing.lg),
             const SectionHeader(title: 'AppButton'),
             Wrap(

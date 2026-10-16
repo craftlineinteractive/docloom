@@ -32,8 +32,9 @@ final cameraServiceProvider = Provider<CameraService>((ref) {
   return service;
 });
 
-final cameraPermissionServiceProvider =
-    Provider<CameraPermissionService>((ref) {
+final cameraPermissionServiceProvider = Provider<CameraPermissionService>((
+  ref,
+) {
   return const PluginCameraPermissionService();
 });
 
@@ -100,5 +101,18 @@ class ScanController extends Notifier<ScanState> {
   }
 }
 
-final scanControllerProvider =
-    NotifierProvider<ScanController, ScanState>(ScanController.new);
+final scanControllerProvider = NotifierProvider<ScanController, ScanState>(
+  ScanController.new,
+);
+
+class AutoCropNotifier extends Notifier<bool> {
+  @override
+  bool build() => true;
+
+  void toggle() => state = !state;
+  void setEnabled(bool value) => state = value;
+}
+
+final autoCropEnabledProvider = NotifierProvider<AutoCropNotifier, bool>(
+  AutoCropNotifier.new,
+);
