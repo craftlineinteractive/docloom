@@ -10,6 +10,7 @@ class ScanPage {
     this.editedPath,
     this.filterId = 'original',
     this.rotation = 0,
+    this.cropJson,
     required this.createdAt,
   });
 
@@ -20,6 +21,7 @@ class ScanPage {
   final String? editedPath;
   final String filterId;
   final int rotation;
+  final String? cropJson;
   final DateTime createdAt;
 
   String get displayPath => editedPath ?? originalPath;
@@ -32,6 +34,7 @@ class ScanPage {
     String? editedPath,
     String? filterId,
     int? rotation,
+    String? cropJson,
     DateTime? createdAt,
   }) {
     return ScanPage(
@@ -42,6 +45,7 @@ class ScanPage {
       editedPath: editedPath ?? this.editedPath,
       filterId: filterId ?? this.filterId,
       rotation: rotation ?? this.rotation,
+      cropJson: cropJson ?? this.cropJson,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -54,6 +58,7 @@ class ScanPage {
         editedPath: editedPath,
         filterId: filterId,
         rotation: rotation,
+        cropJson: cropJson,
         createdAt: createdAt,
       );
 
@@ -65,6 +70,7 @@ class ScanPage {
         'edited_path': editedPath,
         'filter_id': filterId,
         'rotation': rotation,
+        'crop_json': cropJson,
         'created_at': createdAt.millisecondsSinceEpoch,
       };
 
@@ -77,6 +83,7 @@ class ScanPage {
       editedPath: map['edited_path'] as String?,
       filterId: (map['filter_id'] as String?) ?? 'original',
       rotation: (map['rotation'] as int?) ?? 0,
+      cropJson: map['crop_json'] as String?,
       createdAt: DateTime.fromMillisecondsSinceEpoch(
         map['created_at'] as int,
         isUtc: true,
@@ -96,6 +103,7 @@ class ScanPage {
           editedPath == other.editedPath &&
           filterId == other.filterId &&
           rotation == other.rotation &&
+          cropJson == other.cropJson &&
           createdAt == other.createdAt;
 
   @override
@@ -107,6 +115,7 @@ class ScanPage {
         editedPath,
         filterId,
         rotation,
+        cropJson,
         createdAt,
       );
 }

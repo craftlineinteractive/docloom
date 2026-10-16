@@ -28,33 +28,32 @@ class DocumentFileStore {
     required String pageId,
     required List<int> bytes,
     String ext = 'png',
-  }) async {
-    final cleanExt = ext.replaceAll('.', '').toLowerCase();
-    final finalExt = cleanExt.isEmpty ? 'png' : cleanExt;
-    final dir = Directory(p.join(root.path, 'documents', documentId));
-    if (!await dir.exists()) {
-      await dir.create(recursive: true);
-    }
-    final fileName = '${pageId}_original.$finalExt';
-    final target = File(p.join(dir.path, fileName));
-    await target.writeAsBytes(bytes, flush: true);
-    return 'documents/$documentId/$fileName';
+  }) {
+    final clean = ext.replaceAll('.', '').toLowerCase();
+    final finalExt = clean.isEmpty ? 'png' : clean;
+    return _writeBytes(documentId, '${pageId}_original.$finalExt', bytes);
   }
-
 
   Future<String> writeEdited({
     required String documentId,
     required String pageId,
     required List<int> bytes,
     String ext = 'jpg',
-  }) async {
-    final cleanExt = ext.replaceAll('.', '').toLowerCase();
-    final finalExt = cleanExt.isEmpty ? 'jpg' : cleanExt;
+  }) {
+    final clean = ext.replaceAll('.', '').toLowerCase();
+    final finalExt = clean.isEmpty ? 'jpg' : clean;
+    return _writeBytes(documentId, '${pageId}_edited.$finalExt', bytes);
+  }
+
+  Future<String> writeThumbnail({
+    required String documentId,
+    required String pageId,
+    required List<int> bytes,
+  }) => _writeBytes(documentId, '${pageId}_thumb.png', bytes);
+
+  Future<String> _writeBytes(String documentId, String fileName, List<int> bytes) async {
     final dir = Directory(p.join(root.path, 'documents', documentId));
-    if (!await dir.exists()) {
-      await dir.create(recursive: true);
-    }
-    final fileName = '${pageId}_edited.$finalExt';
+    if (!await dir.exists()) await dir.create(recursive: true);
     final target = File(p.join(dir.path, fileName));
     await target.writeAsBytes(bytes, flush: true);
     return 'documents/$documentId/$fileName';
@@ -88,7 +87,9 @@ class DocumentFileStore {
     for (final entity in entities) {
       if (entity is File) {
         final name = p.basename(entity.path);
-        if (name.startsWith('${pageId}_original.') || name.startsWith('${pageId}_edited.')) {
+        if (name.startsWith('${pageId}_original.') ||
+            name.startsWith('${pageId}_edited.') ||
+            name.startsWith('${pageId}_thumb.')) {
           await entity.delete();
         }
       }

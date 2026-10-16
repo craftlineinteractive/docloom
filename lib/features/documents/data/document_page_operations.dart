@@ -20,9 +20,10 @@ class DocumentPageOperations {
         'document_id': documentId,
         'position': startPosition + i,
         'original_path': page.originalPath,
-        'edited_path': null,
-        'filter_id': 'original',
-        'rotation': 0,
+        'edited_path': page.editedPath,
+        'filter_id': page.filterId,
+        'rotation': page.rotation,
+        'crop_json': page.cropJson,
         'created_at': createdAt.millisecondsSinceEpoch,
       });
     }

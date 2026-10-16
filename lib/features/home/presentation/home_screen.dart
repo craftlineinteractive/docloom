@@ -85,7 +85,7 @@ class HomeScreen extends ConsumerWidget {
         floatingActionButton: isSelect
             ? null
             : FabPill(
-                onCamera: () => ref.read(scanControllerProvider.notifier).startScan(),
+                onCamera: () => ref.read(scanControllerProvider.notifier).startScan(context: context),
                 onAdd: () => HomeAddSheet.show(context),
               ),
         body: CustomScrollView(

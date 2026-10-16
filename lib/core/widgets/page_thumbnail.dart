@@ -17,6 +17,16 @@ class PageThumbnail extends ConsumerWidget {
   final String? relativePath;
   final double size;
 
+  static String? resolveThumbnailPath(String? relativePath) {
+    if (relativePath == null || relativePath.isEmpty) return null;
+    if (relativePath.endsWith('_thumb.png')) return relativePath;
+    final thumbPath = relativePath.replaceAll(
+      RegExp(r'_(edited|original)\.[a-zA-Z0-9]+$'),
+      '_thumb.png',
+    );
+    return thumbPath != relativePath ? thumbPath : null;
+  }
+
   Widget _buildPlaceholder() {
     return Container(
       width: size,
@@ -55,6 +65,27 @@ class PageThumbnail extends ConsumerWidget {
 
     final cacheWidth = (size * MediaQuery.devicePixelRatioOf(context)).round();
 
+    File? thumbFile;
+    final thumbRelative = resolveThumbnailPath(path);
+    if (thumbRelative != null) {
+      try {
+        final candidate = fileStore.resolve(thumbRelative);
+        if (candidate.existsSync()) {
+          thumbFile = candidate;
+        }
+      } catch (_) {}
+    }
+
+    Widget buildOriginal() => Image.file(
+          file,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          gaplessPlayback: true,
+          cacheWidth: cacheWidth,
+          errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+        );
+
     return Container(
       width: size,
       height: size,
@@ -64,15 +95,16 @@ class PageThumbnail extends ConsumerWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppRadius.sm),
-        child: Image.file(
-          file,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-          gaplessPlayback: true,
-          cacheWidth: cacheWidth,
-          errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
-        ),
+        child: thumbFile != null
+            ? Image.file(
+                thumbFile,
+                width: size,
+                height: size,
+                fit: BoxFit.cover,
+                gaplessPlayback: true,
+                errorBuilder: (context, error, stackTrace) => buildOriginal(),
+              )
+            : buildOriginal(),
       ),
     );
   }

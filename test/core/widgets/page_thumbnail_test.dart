@@ -17,7 +17,11 @@ void main() {
   });
 
   tearDown(() async {
-    if (await tempDir.exists()) await tempDir.delete(recursive: true);
+    if (await tempDir.exists()) {
+      try {
+        await tempDir.delete(recursive: true);
+      } catch (_) {}
+    }
   });
 
   Widget buildWidget(String? relativePath) {
@@ -33,6 +37,35 @@ void main() {
     );
   }
 
+  group('PageThumbnail.resolveThumbnailPath', () {
+    test('resolves original path to _thumb.png', () {
+      expect(
+        PageThumbnail.resolveThumbnailPath('documents/doc1/page1_original.jpg'),
+        equals('documents/doc1/page1_thumb.png'),
+      );
+    });
+
+    test('resolves edited path to _thumb.png', () {
+      expect(
+        PageThumbnail.resolveThumbnailPath('documents/doc1/page1_edited.png'),
+        equals('documents/doc1/page1_thumb.png'),
+      );
+    });
+
+    test('keeps existing _thumb.png unchanged', () {
+      expect(
+        PageThumbnail.resolveThumbnailPath('documents/doc1/page1_thumb.png'),
+        equals('documents/doc1/page1_thumb.png'),
+      );
+    });
+
+    test('returns null for null, empty or non-matching paths', () {
+      expect(PageThumbnail.resolveThumbnailPath(null), isNull);
+      expect(PageThumbnail.resolveThumbnailPath(''), isNull);
+      expect(PageThumbnail.resolveThumbnailPath('documents/doc1/notes.txt'), isNull);
+    });
+  });
+
   testWidgets('PageThumbnail renders placeholder for null path without exception', (tester) async {
     await tester.pumpWidget(buildWidget(null));
     expect(find.byIcon(LucideIcons.fileText), findsOneWidget);
@@ -45,4 +78,3 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 }
-

@@ -12,12 +12,12 @@ import 'camera_capture_coordinator.dart';
 import 'camera_orientation_helper.dart';
 import 'camera_permission_view.dart';
 import 'review/review_dialogs.dart';
+import 'scan_finish_coordinator.dart';
 import 'widgets/camera_session_slots.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   const CameraScreen({super.key, this.retakePageIndex});
   final int? retakePageIndex;
-
   @override
   ConsumerState<CameraScreen> createState() => _CameraScreenState();
 }
@@ -63,9 +63,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     try {
       await ref.read(cameraServiceProvider).initialize(lens: _lens);
       if (mounted) setState(() => _isInit = false);
-    } catch (_) {
-      if (mounted) setState(() { _isInit = false; _hasErr = true; });
-    }
+    } catch (_) { if (mounted) setState(() { _isInit = false; _hasErr = true; }); }
   }
 
   Future<void> _onCapture() async {
@@ -73,8 +71,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     await CameraCaptureCoordinator.performCapture(
       context: context, ref: ref, camera: ref.read(cameraServiceProvider),
       retakePageIndex: widget.retakePageIndex,
-      onStart: () { if (mounted) setState(() => _isCap = true); },
-      onEnd: () { if (mounted) setState(() => _isCap = false); },
+      onStart: () => mounted ? setState(() => _isCap = true) : null,
+      onEnd: () => mounted ? setState(() => _isCap = false) : null,
     );
   }
 
@@ -91,19 +89,18 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     if (s.pages.isNotEmpty && await ReviewDialogs.showDiscardScanDialog(context, s.pages.length) && mounted) {
       ref.read(scanSessionProvider.notifier).discard();
       Navigator.of(context).pop(const ScanCancelled());
-    } else if (s.pages.isEmpty) {
-      Navigator.of(context).pop(const ScanCancelled());
-    }
+    } else if (s.pages.isEmpty) { Navigator.of(context).pop(const ScanCancelled()); }
   }
 
+  Future<void> _onFinishScan() async {
+    final s = await ScanFinishCoordinator.finish(context: context, ref: ref);
+    if (s != null && mounted) Navigator.of(context).pop(s);
+  }
   void _flip() { _lens = _lens == CameraLens.back ? CameraLens.front : CameraLens.back; _initCamera(); }
-
   void _onCycleFlash() {
     final cam = ref.read(cameraServiceProvider);
     cam.setFlash(switch (cam.currentFlash) {
-      CameraFlash.off => CameraFlash.auto,
-      CameraFlash.auto => CameraFlash.on,
-      CameraFlash.on => CameraFlash.off,
+      CameraFlash.off => CameraFlash.auto, CameraFlash.auto => CameraFlash.on, CameraFlash.on => CameraFlash.off,
     });
     setState(() {});
   }
@@ -134,8 +131,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
         child: CameraBody(
           camera: ref.read(cameraServiceProvider), isGridVisible: _grid, focusPos: _focusPos,
           isInitializing: _isInit, isCapturing: _isCap,
-          leftSlot: CameraSlotsHelper.buildLeft(context: context, session: session, isRetake: isRetake),
-          rightSlot: CameraSlotsHelper.buildRight(context: context, session: session, isRetake: isRetake),
+          leftSlot: CameraSlotsHelper.buildLeft(
+            context: context, session: session, isRetake: isRetake,
+            onOutcome: (o) => (o is ScanSuccess && mounted) ? Navigator.of(context).pop(o) : null,
+          ),
+          rightSlot: CameraSlotsHelper.buildRight(context: context, session: session, isRetake: isRetake, onCheck: _onFinishScan),
           onBack: _onBack, onToggleFlash: _onCycleFlash,
           onToggleGrid: () => setState(() => _grid = !_grid),
           onFlipCamera: _flip, onTapPreview: _onTapPreview,

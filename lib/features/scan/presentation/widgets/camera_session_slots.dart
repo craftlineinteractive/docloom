@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_sizes.dart';
+import '../../domain/scan_gateway.dart';
 import '../../domain/scan_session.dart';
 import '../review/review_screen.dart';
 
@@ -11,16 +12,22 @@ abstract final class CameraSlotsHelper {
     required BuildContext context,
     required ScanSession session,
     required bool isRetake,
+    void Function(ScanOutcome outcome)? onOutcome,
   }) {
     if (isRetake || session.pages.isEmpty) return null;
     return CameraThumbnailSlot(
       previewPath: session.pages.last.previewPath,
       count: session.pages.length,
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => ReviewScreen(initialIndex: session.pages.length - 1),
-        ),
-      ),
+      onTap: () async {
+        final outcome = await Navigator.of(context).push<ScanOutcome>(
+          MaterialPageRoute(
+            builder: (_) => ReviewScreen(initialIndex: session.pages.length - 1),
+          ),
+        );
+        if (outcome != null) {
+          onOutcome?.call(outcome);
+        }
+      },
     );
   }
 
@@ -28,12 +35,14 @@ abstract final class CameraSlotsHelper {
     required BuildContext context,
     required ScanSession session,
     required bool isRetake,
+    VoidCallback? onCheck,
   }) {
     if (isRetake || session.pages.isEmpty) return null;
     return CameraCheckSlot(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ReviewScreen()),
-      ),
+      onTap: onCheck ??
+          () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ReviewScreen()),
+              ),
     );
   }
 }

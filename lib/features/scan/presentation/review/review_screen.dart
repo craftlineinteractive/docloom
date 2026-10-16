@@ -12,6 +12,8 @@ import 'review_dialogs.dart';
 import 'review_page_view.dart';
 import 'review_top_bar.dart';
 
+import '../scan_finish_coordinator.dart';
+
 class ReviewScreen extends ConsumerStatefulWidget {
   const ReviewScreen({super.key, this.initialIndex});
   final int? initialIndex;
@@ -97,15 +99,16 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
     }
   }
 
+  Future<void> _onCheck() async {
+    final success = await ScanFinishCoordinator.finish(context: context, ref: ref);
+    if (success != null && mounted) Navigator.of(context).pop(success);
+  }
+
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(scanSessionProvider);
     if (session.pages.isEmpty) {
-      return Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(title: const Text('Review Scan')),
-        body: const Center(child: Text('No pages scanned')),
-      );
+      return const Scaffold(backgroundColor: AppColors.background, body: Center(child: Text('No pages scanned')));
     }
     final page = session.pages[_currentIndex.clamp(0, session.pages.length - 1)];
 
@@ -126,21 +129,15 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
       bottomNavigationBar: ReviewBottomBar(
         isColorOpen: _isColorOpen,
         selectedFilterId: page.filterId,
-        onSelectFilter: (fid) {
-          ref.read(scanSessionProvider.notifier).setFilter(_currentIndex, fid);
-          setState(() {});
-        },
-        onApplyToAll: () {
-          ref.read(scanSessionProvider.notifier).setFilterForAll(page.filterId);
-          setState(() {});
-        },
+        onSelectFilter: (fid) => setState(() => ref.read(scanSessionProvider.notifier).setFilter(_currentIndex, fid)),
+        onApplyToAll: () => setState(() => ref.read(scanSessionProvider.notifier).setFilterForAll(page.filterId)),
         onCrop: () => _onCrop(session),
         onColor: () => setState(() => _isColorOpen = !_isColorOpen),
         onRotate: () => _onRotate(session),
         onArrange: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ArrangeScreen())),
         onRetake: _onRetake,
         onDelete: () => _onDelete(session),
-        onCheck: () => Navigator.of(context).pop(),
+        onCheck: _onCheck,
       ),
     );
   }

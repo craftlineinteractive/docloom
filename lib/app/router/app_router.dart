@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/dev/component_gallery_screen.dart';
 import '../../features/dev/db_check_screen.dart';
@@ -8,7 +9,10 @@ import '../../features/scan/presentation/camera_screen.dart';
 import '../../features/search/presentation/search_screen.dart';
 import 'routes.dart';
 
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final appRouter = GoRouter(
+  navigatorKey: rootNavigatorKey,
   initialLocation: Routes.home,
   routes: [
     GoRoute(

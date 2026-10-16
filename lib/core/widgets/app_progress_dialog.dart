@@ -1,12 +1,32 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 
 class AppProgressDialog extends StatelessWidget {
-  const AppProgressDialog({super.key, required this.message});
+  const AppProgressDialog({
+    super.key,
+    required this.message,
+    this.messageListenable,
+  });
 
   final String message;
+  final ValueListenable<String>? messageListenable;
+
+  Widget _buildText(BuildContext context) {
+    final style = Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w500,
+        );
+    if (messageListenable != null) {
+      return ValueListenableBuilder<String>(
+        valueListenable: messageListenable!,
+        builder: (context, val, _) => Text(val, style: style),
+      );
+    }
+    return Text(message, style: style);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +52,7 @@ class AppProgressDialog extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.lg),
-              Expanded(
-                child: Text(
-                  message,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                ),
-              ),
+              Expanded(child: _buildText(context)),
             ],
           ),
         ),
@@ -52,16 +64,21 @@ class AppProgressDialog extends StatelessWidget {
 Future<T> showAppProgressDialog<T>({
   required BuildContext context,
   required String message,
+  ValueListenable<String>? messageListenable,
   required Future<T> Function() task,
 }) async {
   var isDialogPopped = false;
-  final navigator = Navigator.of(context, rootNavigator: true);
+  final navigator = Navigator.maybeOf(context, rootNavigator: true);
+  if (navigator == null) return task();
 
   showDialog<void>(
     context: context,
     barrierDismissible: false,
     useRootNavigator: true,
-    builder: (_) => AppProgressDialog(message: message),
+    builder: (_) => AppProgressDialog(
+      message: message,
+      messageListenable: messageListenable,
+    ),
   ).then((_) => isDialogPopped = true);
 
   try {

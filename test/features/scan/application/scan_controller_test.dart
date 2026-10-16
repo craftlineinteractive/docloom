@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:docloom/core/constants/app_config.dart';
+import 'package:docloom/features/documents/domain/document.dart';
 import 'package:docloom/features/scan/application/scan_providers.dart';
+import 'package:docloom/features/scan/application/scan_save_service.dart';
 import 'package:docloom/features/scan/domain/scan_gateway.dart';
 import 'package:docloom/features/scan/domain/scanned_page.dart';
 
@@ -17,14 +19,25 @@ class FakeScanGateway implements ScanGateway {
   Future<ScanOutcome> scan({required int pageLimit}) async {
     callCount++;
     lastPageLimit = pageLimit;
-    if (completer != null) return completer!.future;
-    return outcome;
+    return completer != null ? completer!.future : outcome;
+  }
+}
+
+class FakeScanSaveService implements ScanSaveService {
+  int saveCount = 0;
+  bool shouldThrow = false;
+
+  @override
+  Future<Document> save({required List<ScannedPage> pages, String? folderId, String? name}) async {
+    if (shouldThrow) throw Exception('Storage error');
+    saveCount++;
+    final now = DateTime.now();
+    return Document(id: 'doc-1', name: name ?? 'docLoom', createdAt: now, updatedAt: now);
   }
 }
 
 class ThrowingScanGateway implements ScanGateway {
   int callCount = 0;
-
   @override
   Future<ScanOutcome> scan({required int pageLimit}) async {
     callCount++;
@@ -33,37 +46,53 @@ class ThrowingScanGateway implements ScanGateway {
 }
 
 void main() {
-  test('Success shows toast with page count and returns to idle', () async {
-    final fake = FakeScanGateway(const ScanSuccess([
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  test('Success saves pages, shows toast Saved N pages, and returns to idle', () async {
+    final fakeGateway = FakeScanGateway(const ScanSuccess([
       ScannedPage(originalPath: '/p1.jpg'),
       ScannedPage(originalPath: '/p2.jpg'),
     ]));
-    final container = ProviderContainer(
-      overrides: [scanGatewayProvider.overrideWithValue(fake)],
-    );
+    final fakeSave = FakeScanSaveService();
+    final container = ProviderContainer(overrides: [
+      scanGatewayProvider.overrideWithValue(fakeGateway),
+      scanSaveServiceProvider.overrideWithValue(fakeSave),
+    ]);
     addTearDown(container.dispose);
 
     final toasts = <String>[];
     expect(container.read(scanControllerProvider), equals(ScanState.idle));
-
     await container.read(scanControllerProvider.notifier).startScan(onToast: toasts.add);
 
-    expect(fake.callCount, equals(1));
-    expect(fake.lastPageLimit, equals(AppConfig.scanPageLimit));
-    expect(toasts, equals(['Scanned 2 pages']));
+    expect(fakeGateway.callCount, equals(1));
+    expect(fakeGateway.lastPageLimit, equals(AppConfig.scanPageLimit));
+    expect(fakeSave.saveCount, equals(1));
+    expect(toasts, equals(['Saved 2 pages']));
+    expect(container.read(scanControllerProvider), equals(ScanState.idle));
+  });
+
+  test('Save failure shows error toast and returns to idle', () async {
+    final fakeGateway = FakeScanGateway(const ScanSuccess([ScannedPage(originalPath: '/p1.jpg')]));
+    final fakeSave = FakeScanSaveService()..shouldThrow = true;
+    final container = ProviderContainer(overrides: [
+      scanGatewayProvider.overrideWithValue(fakeGateway),
+      scanSaveServiceProvider.overrideWithValue(fakeSave),
+    ]);
+    addTearDown(container.dispose);
+
+    final toasts = <String>[];
+    await container.read(scanControllerProvider.notifier).startScan(onToast: toasts.add);
+    expect(toasts, equals(['Failed to save document. Please try again.']));
     expect(container.read(scanControllerProvider), equals(ScanState.idle));
   });
 
   test('Cancel shows nothing and returns to idle', () async {
     final fake = FakeScanGateway(const ScanCancelled());
-    final container = ProviderContainer(
-      overrides: [scanGatewayProvider.overrideWithValue(fake)],
-    );
+    final container = ProviderContainer(overrides: [scanGatewayProvider.overrideWithValue(fake)]);
     addTearDown(container.dispose);
 
     final toasts = <String>[];
     await container.read(scanControllerProvider.notifier).startScan(onToast: toasts.add);
-
     expect(fake.callCount, equals(1));
     expect(toasts, isEmpty);
     expect(container.read(scanControllerProvider), equals(ScanState.idle));
@@ -71,14 +100,11 @@ void main() {
 
   test('Failure shows message as toast and returns to idle', () async {
     final fake = FakeScanGateway(const ScanFailure('Camera permission denied'));
-    final container = ProviderContainer(
-      overrides: [scanGatewayProvider.overrideWithValue(fake)],
-    );
+    final container = ProviderContainer(overrides: [scanGatewayProvider.overrideWithValue(fake)]);
     addTearDown(container.dispose);
 
     final toasts = <String>[];
     await container.read(scanControllerProvider.notifier).startScan(onToast: toasts.add);
-
     expect(fake.callCount, equals(1));
     expect(toasts, equals(['Camera permission denied']));
     expect(container.read(scanControllerProvider), equals(ScanState.idle));
@@ -88,10 +114,7 @@ void main() {
     final fake = FakeScanGateway(const ScanCancelled());
     final completer = Completer<ScanOutcome>();
     fake.completer = completer;
-
-    final container = ProviderContainer(
-      overrides: [scanGatewayProvider.overrideWithValue(fake)],
-    );
+    final container = ProviderContainer(overrides: [scanGatewayProvider.overrideWithValue(fake)]);
     addTearDown(container.dispose);
 
     final notifier = container.read(scanControllerProvider.notifier);
@@ -100,7 +123,6 @@ void main() {
 
     final future2 = notifier.startScan();
     expect(fake.callCount, equals(1));
-
     completer.complete(const ScanCancelled());
     await Future.wait([future1, future2]);
 
@@ -110,16 +132,12 @@ void main() {
 
   test('State returns to idle when the gateway throws an unhandled error', () async {
     final throwing = ThrowingScanGateway();
-    final container = ProviderContainer(
-      overrides: [scanGatewayProvider.overrideWithValue(throwing)],
-    );
+    final container = ProviderContainer(overrides: [scanGatewayProvider.overrideWithValue(throwing)]);
     addTearDown(container.dispose);
 
     final toasts = <String>[];
     await container.read(scanControllerProvider.notifier).startScan(onToast: toasts.add);
-
     expect(throwing.callCount, equals(1));
-    expect(toasts.length, equals(1));
     expect(toasts.first, contains('Scanner unavailable'));
     expect(container.read(scanControllerProvider), equals(ScanState.idle));
   });

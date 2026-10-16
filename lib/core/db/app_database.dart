@@ -6,7 +6,7 @@ class AppDatabase {
 
   final Database db;
 
-  static const version = 1;
+  static const version = 2;
 
   static Future<AppDatabase> open({
     required DatabaseFactory factory,
@@ -20,15 +20,14 @@ class AppDatabase {
           await db.execute('PRAGMA foreign_keys = ON;');
         },
         onCreate: (db, version) async {
-          for (final statement in AppDatabaseSchema.v1) {
+          for (final statement in AppDatabaseSchema.v2) {
             await db.execute(statement);
           }
         },
         onUpgrade: (db, oldVersion, newVersion) async {
-          // Future schema migrations will be placed here (e.g. if oldVersion < 2).
-          throw UnsupportedError(
-            'Migration from version $oldVersion to $newVersion is not supported.',
-          );
+          if (oldVersion < 2) {
+            await db.execute('ALTER TABLE pages ADD COLUMN crop_json TEXT;');
+          }
         },
       ),
     );

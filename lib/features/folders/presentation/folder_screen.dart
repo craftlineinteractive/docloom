@@ -116,7 +116,7 @@ class FolderScreen extends ConsumerWidget {
         floatingActionButton: isSelect
             ? null
             : FabPill(
-                onCamera: () => ref.read(scanControllerProvider.notifier).startScan(folderId: folderId),
+                onCamera: () => ref.read(scanControllerProvider.notifier).startScan(context: context, folderId: folderId),
                 onAdd: () => HomeAddSheet.show(context),
               ),
         body: CustomScrollView(
