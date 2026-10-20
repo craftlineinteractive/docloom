@@ -5,6 +5,7 @@ import 'camera_bottom_bar.dart';
 import 'camera_mode_row.dart';
 import 'camera_top_bar.dart';
 import 'camera_viewfinder.dart';
+import 'widgets/camera_settings_grid_panel.dart';
 
 class CameraBody extends StatelessWidget {
   const CameraBody({
@@ -23,11 +24,14 @@ class CameraBody extends StatelessWidget {
     required this.onCapture,
     this.leftSlot,
     this.rightSlot,
+    this.isSettingsOpen = false,
+    this.onSettingsTap,
+    this.onCloseSettings,
+    this.onHomeScreenTap,
   });
 
   final Widget? leftSlot;
   final Widget? rightSlot;
-
   final CameraService camera;
   final bool isGridVisible;
   final Offset? focusPos;
@@ -40,6 +44,10 @@ class CameraBody extends StatelessWidget {
   final void Function(TapDownDetails details, Size size) onTapPreview;
   final VoidCallback onDismissFocus;
   final VoidCallback onCapture;
+  final bool isSettingsOpen;
+  final VoidCallback? onSettingsTap;
+  final VoidCallback? onCloseSettings;
+  final VoidCallback? onHomeScreenTap;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +61,8 @@ class CameraBody extends StatelessWidget {
               onFlashTap: onToggleFlash,
               onGridTap: onToggleGrid,
               onFlipTap: onFlipCamera,
+              onSettingsTap: onSettingsTap,
+              isSettingsOpen: isSettingsOpen,
               currentFlash: camera.currentFlash,
               isGridVisible: isGridVisible,
               showFlip: camera.availableLenses.length > 1,
@@ -63,11 +73,18 @@ class CameraBody extends StatelessWidget {
               focusPos: focusPos,
               onTapPreview: onTapPreview,
               onDismissFocus: onDismissFocus,
+              isOverlayHidden: isSettingsOpen,
+              settingsPanel: isSettingsOpen
+                  ? CameraSettingsGridPanel(
+                      onClose: onCloseSettings ?? () {},
+                      onHomeScreenTap: onHomeScreenTap ?? () {},
+                    )
+                  : null,
             ),
             const CameraModeRow(),
             CameraBottomBar(
               onCapture: onCapture,
-              isEnabled: !isInitializing && !isCapturing,
+              isEnabled: !isInitializing && !isCapturing && !isSettingsOpen,
               isCapturing: isCapturing,
               leftSlot: leftSlot,
               rightSlot: rightSlot,

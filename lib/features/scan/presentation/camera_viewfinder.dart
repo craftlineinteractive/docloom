@@ -11,6 +11,8 @@ class CameraViewfinder extends StatelessWidget {
     required this.focusPos,
     required this.onTapPreview,
     required this.onDismissFocus,
+    this.settingsPanel,
+    this.isOverlayHidden = false,
   });
 
   final CameraService camera;
@@ -18,6 +20,8 @@ class CameraViewfinder extends StatelessWidget {
   final Offset? focusPos;
   final void Function(TapDownDetails details, Size size) onTapPreview;
   final VoidCallback onDismissFocus;
+  final Widget? settingsPanel;
+  final bool isOverlayHidden;
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +35,12 @@ class CameraViewfinder extends StatelessWidget {
           final previewHeight = previewWidth / previewAspect;
 
           return ClipRect(
-            child: GestureDetector(
-              onTapDown: (details) => onTapPreview(details, size),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  FittedBox(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                GestureDetector(
+                  onTapDown: isOverlayHidden ? null : (details) => onTapPreview(details, size),
+                  child: FittedBox(
                     fit: BoxFit.cover,
                     child: SizedBox(
                       width: previewWidth,
@@ -44,14 +48,12 @@ class CameraViewfinder extends StatelessWidget {
                       child: camera.previewWidget(),
                     ),
                   ),
-                  if (isGridVisible) const CameraGrid(),
-                  if (focusPos != null)
-                    FocusRing(
-                      position: focusPos!,
-                      onDismiss: onDismissFocus,
-                    ),
-                ],
-              ),
+                ),
+                if (isGridVisible && !isOverlayHidden) const CameraGrid(),
+                if (focusPos != null && !isOverlayHidden)
+                  FocusRing(position: focusPos!, onDismiss: onDismissFocus),
+                if (settingsPanel != null) Positioned.fill(child: settingsPanel!),
+              ],
             ),
           );
         },

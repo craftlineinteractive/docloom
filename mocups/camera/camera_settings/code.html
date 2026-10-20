@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>docLoom - Camera Settings Panel Suite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            docloom: {
+              black: '#000000',
+              panel: '#1A1D2E',
+              darkOverlay: 'rgba(0, 0, 0, 0.90)',
+              accent: '#6366F1',
+              accentLight: '#818CF8',
+              muted: '#6B7280',
+              tabMuted: '#9AA0B4',
+              desk: '#1E1610',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar hiding */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Device frame styling */
+    .mobile-frame {
+      width: 390px;
+      height: 844px;
+      min-width: 390px;
+      max-width: 390px;
+      min-height: 844px;
+      max-height: 844px;
+      position: relative;
+      overflow: hidden;
+      background-color: #000000;
+      border-radius: 36px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body class="bg-[#0B0D17] text-white font-sans antialiased min-h-screen p-6 lg:p-10">
+
+  <!-- Header & Metadata -->
+  <div class="max-w-[1720px] mx-auto mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/10 pb-6">
+    <div>
+      <div class="flex items-center gap-3 mb-2">
+        <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 tracking-wide uppercase">docLoom Camera UI</span>
+        <span class="text-xs text-gray-400">Android 390×844 • Dark Camera UI • Inter Typography</span>
+      </div>
+      <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-white">Camera Settings Panel Suite (4 Frames)</h1>
+      <p class="text-sm text-gray-400 mt-1">Shared dark camera viewfinder layout, full 10-tile settings grid overlay, scan quality picker bottom sheet, and flash states.</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs">
+        <span class="w-2.5 h-2.5 rounded-full bg-[#6366F1]"></span>
+        <span class="text-gray-300">Accent: #6366F1</span>
+      </div>
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-xs">
+        <span class="w-2.5 h-2.5 rounded-full bg-[#1A1D2E] border border-white/20"></span>
+        <span class="text-gray-300">Sheet: #1A1D2E</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Horizontal Scrollable Container for 4 Frames -->
+  <div class="max-w-[1720px] mx-auto overflow-x-auto pb-8 no-scrollbar">
+    <div class="flex items-start gap-8 min-w-max">
+
+      <!-- ========================================== -->
+      <!-- FRAME A: Camera - Document (default) -->
+      <!-- ========================================== -->
+      <div class="flex flex-col items-center">
+        <div class="flex items-center gap-2 mb-3 self-start">
+          <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">A</span>
+          <span class="text-sm font-semibold tracking-wide text-gray-200 uppercase">Camera - Document (Default)</span>
+        </div>
+
+        <div class="mobile-frame flex flex-col justify-between">
+          <!-- Top Bar (56px) -->
+          <div class="h-14 w-full bg-black px-4 flex items-center justify-between z-20 border-b border-white/5">
+            <!-- Back Arrow -->
+            <button class="w-10 h-10 flex items-center justify-center text-white active:opacity-70">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+            <!-- Flash Off (default) -->
+            <button class="w-10 h-10 flex items-center justify-center text-white active:opacity-70">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18M11.414 10L13 2.5l-4.5 7h4.086l-1.5 5.5m3.414 3.5L15.5 14.5" />
+              </svg>
+            </button>
+            <!-- Grid -->
+            <button class="w-10 h-10 flex items-center justify-center text-white active:opacity-70">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5M6.75 3.75v16.5m5.25-16.5v16.5m5.25-16.5v16.5" />
+              </svg>
+            </button>
+            <!-- Flip Camera -->
+            <button class="w-10 h-10 flex items-center justify-center text-white active:opacity-70">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+            </button>
+            <!-- Settings Gear -->
+            <button class="w-10 h-10 flex items-center justify-center text-white active:opacity-70">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Viewfinder: 4:3 camera preview of a printed doc on wood desk -->
+          <div class="relative w-full h-[520px] bg-[#1E1712] overflow-hidden flex items-center justify-center">
+            <!-- Desk Wood Texture Simulation -->
+            <div class="absolute inset-0 bg-gradient-to-b from-[#231A13] via-[#1B130E] to-[#140E0A] opacity-90"></div>
+            
+            <!-- Document on Desk with Soft Angle & Shadow -->
+            <div class="relative w-[280px] h-[375px] bg-[#FDFEFE] rounded-sm shadow-2xl p-6 flex flex-col justify-between border border-gray-200/40 transform -rotate-1">
+              <!-- Scan Quad Detection Corners -->
+              <div class="absolute -top-1.5 -left-1.5 w-4 h-4 border-t-2 border-l-2 border-indigo-400"></div>
+              <div class="absolute -top-1.5 -right-1.5 w-4 h-4 border-t-2 border-r-2 border-indigo-400"></div>
+              <div class="absolute -bottom-1.5 -left-1.5 w-4 h-4 border-b-2 border-l-2 border-indigo-400"></div>
+              <div class="absolute -bottom-1.5 -right-1.5 w-4 h-4 border-b-2 border-r-2 border-indigo-400"></div>
+
+              <div>
+                <div class="h-4 w-32 bg-gray-800 rounded-sm mb-3"></div>
+                <div class="space-y-1.5 mb-4">
+                  <div class="h-2 w-full bg-gray-300 rounded-sm"></div>
+                  <div class="h-2 w-5/6 bg-gray-300 rounded-sm"></div>
+                  <div class="h-2 w-4/6 bg-gray-300 rounded-sm"></div>
+                </div>
+                <!-- Small Table -->
+                <div class="border border-gray-200 rounded p-2 text-[8px] text-gray-500 space-y-1">
+                  <div class="flex justify-between font-bold border-b pb-1 text-gray-700">
+                    <span>ITEM</span>
+                    <span>AMOUNT</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Legal Services</span>
+                    <span>$120.00</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Doc Processing</span>
+                    <span>$45.00</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-between items-center text-[7px] text-gray-400 border-t pt-2">
+                <span>CONFIDENTIAL • DOCLOOM</span>
+                <span>PAGE 1 OF 1</span>
+              </div>
+            </div>
+
+            <!-- Spirit Level Line (Thin line + green bubble in center) -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="relative w-48 h-0.5 bg-white/40 flex items-center justify-center">
+                <div class="w-8 h-2 rounded-full border border-white/60 bg-black/40 flex items-center justify-center">
+                  <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mode Tab Row & Bottom Shutter Controls -->
+          <div class="bg-black w-full flex flex-col justify-end pb-7 pt-2 z-10">
+            <!-- Mode Tab Row (Photo, ID Card, Document, Book, Signature, QR Scanner, OCR Text) -->
+            <div class="w-full flex items-center justify-center gap-5 text-[13px] tracking-wide mb-5 px-3 overflow-x-hidden">
+              <span class="text-docloom-tabMuted whitespace-nowrap">ID Card</span>
+              <div class="flex flex-col items-center">
+                <span class="text-white font-semibold whitespace-nowrap">Document</span>
+                <span class="w-4 h-0.5 bg-docloom-accent rounded-full mt-1"></span>
+              </div>
+              <span class="text-docloom-tabMuted whitespace-nowrap">Book</span>
+              <span class="text-docloom-tabMuted whitespace-nowrap">Signature</span>
+              <span class="text-docloom-tabMuted whitespace-nowrap">QR Scanner</span>
+            </div>
+
+            <!-- Bottom Control Area -->
+            <div class="relative px-6 flex items-center justify-center">
+              <!-- Auto/Manual Pill left of shutter -->
+              <div class="absolute left-8 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-white text-[11px] font-semibold tracking-wider">
+                <svg class="w-3.5 h-3.5 text-docloom-accentLight" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>AUTO</span>
+              </div>
+
+              <!-- 72px Shutter Button (White ring, indigo center, small camera icon) -->
+              <button class="w-[72px] h-[72px] rounded-full p-1 border-2 border-white flex items-center justify-center active:scale-95 transition-transform">
+                <div class="w-full h-full rounded-full bg-docloom-accent flex items-center justify-center shadow-lg">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
+                  </svg>
+                </div>
+              </button>
+
+              <!-- Empty right slot -->
+              <div class="absolute right-8 w-10 h-10"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ========================================== -->
+      <!-- FRAME B: Camera settings open -->
+      <!-- ========================================== -->
+      <div class="flex flex-col items-center">
+        <div class="flex items-center gap-2 mb-3 self-start">
+          <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">B</span>
+          <span class="text-sm font-semibold tracking-wide text-gray-200 uppercase">Camera Settings Open</span>
+        </div>
+
+        <div class="mobile-frame flex flex-col justify-between">
+          <!-- Top Bar with Highlighted Gear in Indigo -->
+          <div class="h-14 w-full bg-black px-4 flex items-center justify-between z-30 border-b border-white/5">
+            <button class="w-10 h-10 flex items-center justify-center text-white">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+            <button class="w-10 h-10 flex items-center justify-center text-white">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18M11.414 10L13 2.5l-4.5 7h4.086l-1.5 5.5m3.414 3.5L15.5 14.5" />
+              </svg>
+            </button>
+            <button class="w-10 h-10 flex items-center justify-center text-white">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5M6.75 3.75v16.5m5.25-16.5v16.5m5.25-16.5v16.5" />
+              </svg>
+            </button>
+            <button class="w-10 h-10 flex items-center justify-center text-white">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+            </button>
+            <!-- Highlighted Gear in Indigo -->
+            <button class="w-10 h-10 flex items-center justify-center text-docloom-accent">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Middle Viewfinder Area Dimmed under 90% Overlay with Expanded Grid Panel -->
+          <div class="relative w-full h-[520px] bg-black">
+            <!-- Background blurred doc preview -->
+            <div class="absolute inset-0 bg-[#1E1712] opacity-40"></div>
+
+            <!-- 90% Black Overlay / Settings Panel -->
+            <div class="absolute inset-0 bg-black/90 px-5 pt-4 pb-4 flex flex-col justify-between z-20">
+              
+              <!-- 3-Column Grid of 10 Tiles (each 96px min touch area, 28px icon, 13px label, 11px value) -->
+              <div class="grid grid-cols-3 gap-y-3.5 gap-x-2">
+                
+                <!-- Tile 1: Capture Sound (ON, Indigo, "On") -->
+                <div class="w-[96px] min-h-[64px] mx-auto flex flex-col items-center justify-center text-center cursor-pointer active:opacity-75">
+                  <div class="w-7 h-7 flex items-center justify-center text-docloom-accent mb-1">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.414 0-.75-.336-.75-.75V8.999c0-.414.336-.75.75-.75h2.24z" />
+                    </svg>
+                  </div>
+                  <span class="text-[13px] font-medium text-white leading-tight">Capture Sound</span>
+                  <span class="text-[11px] font-medium text-docloom-accentLight leading-tight mt-0.5">On</span>
+                </div>
+
+                <!-- Tile 2: Focus Sound (ON, Indigo, "On") -->
+                <div class="w-[96px] min-h-[64px] mx-auto flex flex-col items-center justify-center text-center cursor-pointer active:opacity-75">
+                  <div class="w-7 h-7 flex items-center justify-center text-docloom-accent mb-1">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 3.75H4.5A2.25 2.25 0 002.25 6v3m0 6v3a2.25 2.25 0 002.25 2.25h3m9-16.5h3A2.25 2.25 0 0121.75 6v3m0 6v3a2.25 2.25 0 01-2.25 2.25h-3M12 9v6m-3-3h6" />
+                    </svg>
+                  </div>
+                  <span class="text-[13px] font-medium text-white leading-tight">Focus Sound</span>
+                  <span class="text-[11px] font-medium text-docloom-accentLight leading-tight mt-0.5">On</span>
+                </div>
+
+                <!-- Tile 3: Auto Crop (ON, Indigo, "On") -->
+                <div class="w-[96px] min-h-[64px] mx-auto flex flex-col items-center justify-center text-center cursor-pointer active:opacity-75">
+                  <div class="w-7 h-7 flex items-center justify-center text-docloom-accent mb-1">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 3v13.5A2.25 2.25 0 009.75 18.75H21M3 7.5h13.5A2.25 2.25 0 0118.75 9.75V21" />
+                    </svg>
+                  </div>
+                  <span class="text-[13px] font-medium text-white leading-tight">Auto Crop</span>
+                  <span class="text-[11px] font-medium text-docloom-accentLight leading-tight mt-0.5">On</span>
+                </div>
+
+                <!-- Tile 4: Color Filter (White, "Vivid Light") -->
+                <div class="w-[96px] min-h-[64px] mx-auto flex flex-col items-center justify-center text-center cursor-pointer active:opacity-75">
+                  <div class="w-7 h-7 flex items-center justify-center text-white mb-1">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0l4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0l-5.571 3-5.571-3" />
+                    </svg>
+                  </div>
+                  <span class="text-[13px] font-medium text-white leading-tight">Color Filter</span>
+                  <span class="text-[11px] text-gray-300 leading-tight mt-0.5">Vivid Light</span>
+                </div>
+
+                <!-- Tile 5: Image Rotation (White, "Auto") -->
+                <div class="w-[96px] min-h-[64px] mx-auto flex flex-col items-center justify-center text-center cursor-pointer active:opacity-75">
+                  <div class="w-7 h-7 flex items-center justify-center text-white mb-1">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-6 18.75h6" />
+                    </svg>
+                  </div>
+                  <span class="text-[13px] font-medium text-white leading-tight">Image Rotation</span>
+                  <span class="text-[11px] text-gray-300 leading-tight mt-0.5">Auto</span>
+                </div>
+
+                <!-- Tile 6: Settings (White, no value) -->
+                <div class="w-[96px] min-h-[64px] mx-auto flex flex-col items-center justify-center text-center cursor-pointer active:opacity-75">
+                  <div class="w-7 h-7 flex items-center justify-center text-white mb-1">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <span class="text-[13px] font-medium text-white leading-tight">Settings</span>
+                  <span class="text-[11px] text-transparent leading-tight mt-0.5 select-none">—</span>
+                </div>
+
+                <!-- Tile 7: Home Screen (White, no value) -->
+                <div class="w-[96px] min-h-[64px] mx-auto flex flex-col items-center justify-center text-center cursor-pointer active:opacity-75">
+                  <div class="w-7 h-7 flex items-center justify-center text-white mb-1">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                    </svg>
+                  </div>
+                  <span class="text-[13px] font-medium text-white leading-tight">Home Screen</span>
+                  <span class="text-[11px] text-transparent leading-tight mt-0.5 select-none">—</span>
+                </div>
+
+                <!-- Tile 8: Spirit Level (ON, Indigo, "On") -->
+                <div class="w-[96px] min-h-[64px] mx-auto flex flex-col items-center justify-center text-center cursor-pointer active:opacity-75">
+                  <div class="w-7 h-7 flex items-center justify-center text-docloom-accent mb-1">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
+                      <path d="M12 3a9 9 0 010 18v-18z" fill="currentColor" opacity="0.6" />
+                    </svg>
+                  </div>
+                  <span class="text-[13px] font-medium text-white leading-tight">Spirit Level</span>
+                  <span class="text-[11px] font-medium text-docloom-accentLight leading-tight mt-0.5">On</span>
+                </div>
+
+                <!-- Tile 9: Scan Quality (White, "High") -->
+                <div class="w-[96px] min-h-[64px] mx-auto flex flex-col items-center justify-center text-center cursor-pointer active:opacity-75">
+                  <div class="w-7 h-7 flex items-center justify-center text-white mb-1">
+                    <!-- HQ Icon -->
+                    <div class="border border-white rounded px-1 py-0.5 text-[10px] font-extrabold tracking-tighter">HQ</div>
+                  </div>
+                  <span class="text-[13px] font-medium text-white leading-tight">Scan Quality</span>
+                  <span class="text-[11px] text-gray-300 leading-tight mt-0.5">High</span>
+                </div>
+
+                <!-- Tile 10: Auto Capture Time (White, "2 sec") -->
+                <div class="w-[96px] min-h-[64px] mx-auto flex flex-col items-center justify-center text-center cursor-pointer active:opacity-75">
+                  <div class="w-7 h-7 flex items-center justify-center text-white mb-1">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0zM10.5 2.25h3m-1.5 0V4.5" />
+                    </svg>
+                  </div>
+                  <span class="text-[13px] font-medium text-white leading-tight text-center">Auto Capture<br>Time</span>
+                  <span class="text-[11px] text-gray-300 leading-tight mt-0.5">2 sec</span>
+                </div>
+
+              </div>
+
+              <!-- Close Button on bottom right (outlined pill, 16px radius, 48px tall) -->
+              <div class="w-full flex justify-end pt-2">
+                <button class="h-12 px-7 rounded-[16px] border-[1.5px] border-white text-white font-medium text-sm flex items-center justify-center active:bg-white/10 transition-colors">
+                  Close
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Dimmed Tab row and Shutter below panel -->
+          <div class="bg-black w-full flex flex-col justify-end pb-7 pt-2 opacity-30 pointer-events-none">
+            <div class="w-full flex items-center justify-center gap-5 text-[13px] mb-5 px-3">
+              <span class="text-docloom-tabMuted">ID Card</span>
+              <div class="flex flex-col items-center">
+                <span class="text-white font-semibold">Document</span>
+                <span class="w-4 h-0.5 bg-docloom-accent rounded-full mt-1"></span>
+              </div>
+              <span class="text-docloom-tabMuted">Book</span>
+            </div>
+            <div class="relative px-6 flex items-center justify-center">
+              <div class="w-[72px] h-[72px] rounded-full p-1 border-2 border-white flex items-center justify-center">
+                <div class="w-full h-full rounded-full bg-docloom-accent"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ========================================== -->
+      <!-- FRAME C: Picker open -->
+      <!-- ========================================== -->
+      <div class="flex flex-col items-center">
+        <div class="flex items-center gap-2 mb-3 self-start">
+          <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">C</span>
+          <span class="text-sm font-semibold tracking-wide text-gray-200 uppercase">Picker Open (Scan Quality)</span>
+        </div>
+
+        <div class="mobile-frame flex flex-col justify-end">
+          <!-- Background: Frame B Dimmed by 50% -->
+          <div class="absolute inset-0 bg-black opacity-50 z-0"></div>
+          
+          <!-- Blurred settings grid in background for authentic depth -->
+          <div class="absolute inset-x-0 top-14 bottom-28 px-5 pt-4 opacity-25 filter blur-[1px] pointer-events-none">
+            <div class="grid grid-cols-3 gap-y-3.5 gap-x-2">
+              <div class="w-16 h-12 bg-white/20 rounded mx-auto"></div>
+              <div class="w-16 h-12 bg-white/20 rounded mx-auto"></div>
+              <div class="w-16 h-12 bg-white/20 rounded mx-auto"></div>
+              <div class="w-16 h-12 bg-white/20 rounded mx-auto"></div>
+              <div class="w-16 h-12 bg-white/20 rounded mx-auto"></div>
+              <div class="w-16 h-12 bg-white/20 rounded mx-auto"></div>
+            </div>
+          </div>
+
+          <!-- Dark Bottom Sheet (24px top radius, #1A1D2E background) -->
+          <div class="relative z-30 w-full bg-docloom-panel rounded-t-[24px] p-6 pb-8 shadow-2xl border-t border-white/10">
+            <!-- Sheet Drag Pill -->
+            <div class="w-10 h-1 bg-gray-600 rounded-full mx-auto mb-5"></div>
+
+            <!-- Title -->
+            <h3 class="text-lg font-bold text-white mb-4 tracking-tight">Scan Quality</h3>
+
+            <!-- Radio Options List -->
+            <div class="space-y-1 mb-6">
+              
+              <!-- Option 1: Standard -->
+              <div class="w-full flex items-center justify-between py-3.5 px-3 rounded-xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-colors">
+                <div>
+                  <div class="text-[15px] font-medium text-white">Standard</div>
+                  <div class="text-xs text-gray-400">Fastest</div>
+                </div>
+                <div class="w-5 h-5 rounded-full border-2 border-gray-500 flex items-center justify-center"></div>
+              </div>
+
+              <!-- Option 2: High (Selected) -->
+              <div class="w-full flex items-center justify-between py-3.5 px-3 rounded-xl bg-indigo-500/10 border border-indigo-500/30 cursor-pointer">
+                <div>
+                  <div class="text-[15px] font-semibold text-white">High</div>
+                  <div class="text-xs text-docloom-accentLight">Recommended</div>
+                </div>
+                <div class="w-5 h-5 rounded-full border-2 border-docloom-accent flex items-center justify-center">
+                  <div class="w-2.5 h-2.5 rounded-full bg-docloom-accent"></div>
+                </div>
+              </div>
+
+              <!-- Option 3: Max -->
+              <div class="w-full flex items-center justify-between py-3.5 px-3 rounded-xl cursor-pointer hover:bg-white/5 active:bg-white/10 transition-colors">
+                <div>
+                  <div class="text-[15px] font-medium text-white">Max</div>
+                  <div class="text-xs text-gray-400">Largest files</div>
+                </div>
+                <div class="w-5 h-5 rounded-full border-2 border-gray-500 flex items-center justify-center"></div>
+              </div>
+
+            </div>
+
+            <!-- "Done" Filled Indigo Button -->
+            <button class="w-full h-12 rounded-[16px] bg-docloom-accent text-white font-semibold text-sm flex items-center justify-center shadow-lg shadow-indigo-600/30 active:scale-[0.98] transition-transform">
+              Done
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ========================================== -->
+      <!-- FRAME D: Flash states -->
+      <!-- ========================================== -->
+      <div class="flex flex-col items-center">
+        <div class="flex items-center gap-2 mb-3 self-start">
+          <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">D</span>
+          <span class="text-sm font-semibold tracking-wide text-gray-200 uppercase">Flash States</span>
+        </div>
+
+        <div class="mobile-frame flex flex-col justify-start p-6 bg-[#0E101A]">
+          <div class="mb-5">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider">Top Bar Flash Options</h4>
+            <p class="text-xs text-gray-400 mt-0.5">Direct top bar iconography for each flash state without dialogs or menus.</p>
+          </div>
+
+          <div class="space-y-6">
+            
+            <!-- State 1: Flash Off -->
+            <div>
+              <div class="w-full h-14 bg-black rounded-xl px-4 flex items-center justify-between border border-white/10 shadow-md">
+                <!-- Back -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                </div>
+                <!-- Flash OFF: Bolt with slash, white -->
+                <div class="w-9 h-9 flex items-center justify-center text-white">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18M11.414 10L13 2.5l-4.5 7h4.086l-1.5 5.5m3.414 3.5L15.5 14.5" />
+                  </svg>
+                </div>
+                <!-- Grid -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5M6.75 3.75v16.5m5.25-16.5v16.5m5.25-16.5v16.5" /></svg>
+                </div>
+                <!-- Flip -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+                </div>
+                <!-- Settings -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                </div>
+              </div>
+              <div class="text-center text-xs font-medium text-gray-400 mt-2">Off</div>
+            </div>
+
+            <!-- State 2: Flash On -->
+            <div>
+              <div class="w-full h-14 bg-black rounded-xl px-4 flex items-center justify-between border border-white/10 shadow-md">
+                <!-- Back -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                </div>
+                <!-- Flash ON: Filled bolt, indigo -->
+                <div class="w-9 h-9 flex items-center justify-center text-docloom-accent">
+                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M11.25 3.75a.75.75 0 00-1.32-.485l-5.25 7.5a.75.75 0 00.615 1.235h4.955l-1.875 8.25a.75.75 0 001.32.485l7.5-9.75a.75.75 0 00-.615-1.235H11.5l1.875-6z" />
+                  </svg>
+                </div>
+                <!-- Grid -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5M6.75 3.75v16.5m5.25-16.5v16.5m5.25-16.5v16.5" /></svg>
+                </div>
+                <!-- Flip -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+                </div>
+                <!-- Settings -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                </div>
+              </div>
+              <div class="text-center text-xs font-medium text-gray-400 mt-2">On</div>
+            </div>
+
+            <!-- State 3: Flash Auto -->
+            <div>
+              <div class="w-full h-14 bg-black rounded-xl px-4 flex items-center justify-between border border-white/10 shadow-md">
+                <!-- Back -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+                </div>
+                <!-- Flash AUTO: Bolt with "A", white -->
+                <div class="w-9 h-9 flex items-center justify-center text-white relative">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                  </svg>
+                  <span class="absolute -bottom-1 -right-1 text-[9px] font-black bg-black text-white px-0.5 rounded leading-none border border-white/40">A</span>
+                </div>
+                <!-- Grid -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5M6.75 3.75v16.5m5.25-16.5v16.5m5.25-16.5v16.5" /></svg>
+                </div>
+                <!-- Flip -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+                </div>
+                <!-- Settings -->
+                <div class="w-9 h-9 flex items-center justify-center text-white/70">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                </div>
+              </div>
+              <div class="text-center text-xs font-medium text-gray-400 mt-2">Auto</div>
+            </div>
+
+          </div>
+
+          <!-- Helper Note Card -->
+          <div class="mt-auto p-4 rounded-2xl bg-white/5 border border-white/10">
+            <div class="text-xs font-medium text-gray-300">Quick Cycle</div>
+            <p class="text-[11px] text-gray-400 mt-1">Tapping the flash button cycles directly through Off → On → Auto without an intervening popup menu.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

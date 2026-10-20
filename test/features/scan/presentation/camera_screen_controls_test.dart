@@ -5,7 +5,6 @@ import 'package:docloom/features/scan/application/scan_providers.dart';
 import 'package:docloom/features/scan/data/fake_camera_permission_service.dart';
 import 'package:docloom/features/scan/data/fake_camera_service.dart';
 import 'package:docloom/features/scan/domain/camera_service.dart';
-import 'package:docloom/features/scan/presentation/camera_flash_menu.dart';
 import 'package:docloom/features/scan/presentation/camera_grid.dart';
 import 'package:docloom/features/scan/presentation/camera_screen.dart';
 import 'package:docloom/features/scan/presentation/focus_ring.dart';
@@ -26,30 +25,30 @@ Widget _buildApp({
 }
 
 void main() {
-  testWidgets('flash button cycles directly without dropdown', (tester) async {
+  testWidgets('flash button cycles directly without dropdown: Off -> On -> Auto -> Off', (tester) async {
     final camera = FakeCameraService();
     final permission = FakeCameraPermissionService();
 
     await tester.pumpWidget(_buildApp(camera: camera, permission: permission));
     await tester.pumpAndSettle();
 
-    expect(find.byType(CameraFlashMenu), findsNothing);
     expect(camera.currentFlash, equals(CameraFlash.off));
+    expect(find.byTooltip('Flash: Off'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Flash: Off'));
     await tester.pumpAndSettle();
-    expect(camera.currentFlash, equals(CameraFlash.auto));
-    expect(find.byType(CameraFlashMenu), findsNothing);
-
-    await tester.tap(find.byTooltip('Flash: Auto'));
-    await tester.pumpAndSettle();
     expect(camera.currentFlash, equals(CameraFlash.on));
-    expect(find.byType(CameraFlashMenu), findsNothing);
+    expect(find.byTooltip('Flash: On'), findsOneWidget);
 
     await tester.tap(find.byTooltip('Flash: On'));
     await tester.pumpAndSettle();
+    expect(camera.currentFlash, equals(CameraFlash.auto));
+    expect(find.byTooltip('Flash: Auto'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Flash: Auto'));
+    await tester.pumpAndSettle();
     expect(camera.currentFlash, equals(CameraFlash.off));
-    expect(find.byType(CameraFlashMenu), findsNothing);
+    expect(find.byTooltip('Flash: Off'), findsOneWidget);
   });
 
   testWidgets('grid button toggles rule of thirds overlay', (tester) async {

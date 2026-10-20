@@ -16,4 +16,6 @@ abstract final class AppSizes {
   static const double cropMagnifier = 96;
   static const double cropQuadStroke = 2;
   static const int thumbnailSource = 400;
+  static const double settingTileIcon = 28;
+  static const double settingTileMinTouch = 48;
 }

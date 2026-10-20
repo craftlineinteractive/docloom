@@ -33,6 +33,11 @@ abstract final class AppColors {
   static const cropDeskGradientEnd = Color(0xFF121526);
   static const cropDimOverlay = Color(0x99000000);
   static const cropHandleHalo = Color(0x406366F1);
+  static const darkSheet = Color(0xFF1A1D2E);
+  static const darkSheetSelected = Color(0x1A6366F1);
+  static const darkSheetSelectedBorder = Color(0x4D6366F1);
+  static const cameraPanelOverlay = Color(0xE6000000);
+  static const dragHandleDark = Color(0xFF4B5563);
 
   static const folderPalette = [
     folderIndigo,

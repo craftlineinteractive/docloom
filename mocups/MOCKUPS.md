@@ -22,3 +22,7 @@ drawer_tools_open   Drawer, Tools and Other expanded
 settings            Settings screens
 trash               Trash screens
 camera, adjust, review_scan, viewer, ocr_result   LATER PHASES. Do not open or build in Phase 1.
+
+camera/camera_settings   One PNG + HTML with 4 frames: A Document camera (default, AUTO pill, spirit level), B settings grid panel (10 tiles + Close), C Scan Quality picker sheet, D flash icon states in the top bar.
+IGNORE in this mockup (presentation labels, not UI): the "DOCLOOM CAMERA" tag, the title "Camera Settings Panel Suite", the Accent/Sheet colour chips, the "Top bar flash options" caption, the "Quick Cycle" note card.
+These blocks' old folder names camera_document, camera_flash_menu and camera_settings_menu do NOT exist. Use camera_settings instead.

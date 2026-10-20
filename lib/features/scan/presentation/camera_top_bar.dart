@@ -16,15 +16,19 @@ class CameraTopBar extends StatelessWidget {
     required this.currentFlash,
     required this.isGridVisible,
     required this.showFlip,
+    this.onSettingsTap,
+    this.isSettingsOpen = false,
   });
 
   final VoidCallback onBack;
   final VoidCallback onFlashTap;
   final VoidCallback onGridTap;
   final VoidCallback onFlipTap;
+  final VoidCallback? onSettingsTap;
   final CameraFlash currentFlash;
   final bool isGridVisible;
   final bool showFlip;
+  final bool isSettingsOpen;
 
   String _flashTooltip(CameraFlash flash) => switch (flash) {
         CameraFlash.off => 'Flash: Off',
@@ -35,26 +39,19 @@ class CameraTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.sm,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _CircleIconButton(
-            icon: LucideIcons.x,
-            tooltip: 'Cancel',
-            onTap: onBack,
-          ),
+          _CircleIconButton(icon: LucideIcons.x, tooltip: 'Cancel', onTap: onBack),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               _CircleIconButton(
                 icon: currentFlash == CameraFlash.off ? LucideIcons.zapOff : LucideIcons.zap,
                 badgeText: currentFlash == CameraFlash.auto ? 'A' : null,
+                iconColor: currentFlash == CameraFlash.on ? AppColors.primaryLight : AppColors.textOnDark,
                 tooltip: _flashTooltip(currentFlash),
-                isActive: currentFlash != CameraFlash.off,
                 onTap: onFlashTap,
               ),
               const SizedBox(width: AppSpacing.sm),
@@ -66,17 +63,14 @@ class CameraTopBar extends StatelessWidget {
               ),
               if (showFlip) ...[
                 const SizedBox(width: AppSpacing.sm),
-                _CircleIconButton(
-                  icon: LucideIcons.switchCamera,
-                  tooltip: 'Switch Camera',
-                  onTap: onFlipTap,
-                ),
+                _CircleIconButton(icon: LucideIcons.switchCamera, tooltip: 'Switch Camera', onTap: onFlipTap),
               ],
               const SizedBox(width: AppSpacing.sm),
               _CircleIconButton(
                 icon: LucideIcons.settings,
+                iconColor: isSettingsOpen ? AppColors.primaryLight : AppColors.textOnDark,
                 tooltip: 'Settings',
-                onTap: () {},
+                onTap: onSettingsTap ?? () {},
               ),
             ],
           ),
@@ -93,6 +87,7 @@ class _CircleIconButton extends StatelessWidget {
     required this.onTap,
     this.isActive = false,
     this.badgeText,
+    this.iconColor,
   });
 
   final IconData icon;
@@ -100,6 +95,7 @@ class _CircleIconButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool isActive;
   final String? badgeText;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +113,7 @@ class _CircleIconButton extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Icon(icon, size: 20, color: AppColors.textOnDark),
+              Icon(icon, size: 20, color: iconColor ?? AppColors.textOnDark),
               if (badgeText != null)
                 Positioned(
                   right: 4,
