@@ -41,6 +41,8 @@ dependencies:
   opencv_dart: ^2.2.2
   camera: ^0.12.1
   permission_handler: ^13.0.2
+  zxing2: ^0.2.4
+  url_launcher: ^6.3.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -52,6 +54,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   sqflite_common_ffi: ^2.4.3
+  qr: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

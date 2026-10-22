@@ -12,6 +12,7 @@ import 'camera_body.dart';
 import 'camera_capture_coordinator.dart';
 import 'camera_orientation_helper.dart';
 import 'camera_permission_view.dart';
+import 'camera_qr_coordinator.dart';
 import 'review/review_dialogs.dart';
 import 'scan_finish_coordinator.dart';
 import 'widgets/camera_session_slots.dart';
@@ -25,8 +26,7 @@ class CameraScreen extends ConsumerStatefulWidget {
   ConsumerState<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraScreenState extends ConsumerState<CameraScreen>
-    with WidgetsBindingObserver {
+class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBindingObserver {
   CameraPermissionState _perm = CameraPermissionState.notDetermined;
   bool _isInit = false, _hasErr = false, _isCap = false, _grid = false;
   Offset? _focusPos;
@@ -56,12 +56,12 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     }
   }
 
-  Future<void> _checkPermission() async => _setPermission(
-    await ref.read(cameraPermissionServiceProvider).checkStatus(),
-  );
-  Future<void> _requestPermission() async => _setPermission(
-    await ref.read(cameraPermissionServiceProvider).requestPermission(),
-  );
+  Future<void> _checkPermission() async =>
+      _setPermission(await ref.read(cameraPermissionServiceProvider).checkStatus());
+
+  Future<void> _requestPermission() async =>
+      _setPermission(await ref.read(cameraPermissionServiceProvider).requestPermission());
+
   void _setPermission(CameraPermissionState s) {
     if (mounted) setState(() => _perm = s);
     if (s == CameraPermissionState.granted) _initCamera();
@@ -69,20 +69,16 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
 
   Future<void> _initCamera() async {
     if (!mounted) return;
-    setState(() {
-      _isInit = true;
-      _hasErr = false;
-    });
+    setState(() { _isInit = true; _hasErr = false; });
     try {
-      await ref.read(cameraServiceProvider).initialize(lens: _lens);
-      if (mounted) setState(() => _isInit = false);
-    } catch (_) {
+      final cam = ref.read(cameraServiceProvider);
+      await cam.initialize(lens: _lens);
       if (mounted) {
-        setState(() {
-          _isInit = false;
-          _hasErr = true;
-        });
+        setState(() => _isInit = false);
+        CameraQrCoordinator.startIfActive(ref: ref, camera: cam);
       }
+    } catch (_) {
+      if (mounted) setState(() { _isInit = false; _hasErr = true; });
     }
   }
 
@@ -105,8 +101,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
     ref.read(cameraServiceProvider).setFocusPoint(Offset(normX, normY));
   }
 
-  Future<void> _onBack() =>
-      _CameraScreenHelper.handleBack(context, ref, widget.retakePageIndex);
+  Future<void> _onBack() => _CameraScreenHelper.handleBack(context, ref, widget.retakePageIndex);
 
   Future<void> _onFinishScan() async {
     final s = await ScanFinishCoordinator.finish(context: context, ref: ref);
@@ -134,8 +129,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen>
       perm: _perm,
       hasErr: _hasErr,
       onRequestPerm: _requestPermission,
-      onOpenSettings: () =>
-          ref.read(cameraPermissionServiceProvider).openSettings(),
+      onOpenSettings: () => ref.read(cameraPermissionServiceProvider).openSettings(),
       onRetryInit: _initCamera,
       onBack: _onBack,
     ),

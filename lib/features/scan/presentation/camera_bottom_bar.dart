@@ -9,6 +9,7 @@ class CameraBottomBar extends StatelessWidget {
     required this.onCapture,
     required this.isEnabled,
     this.isCapturing = false,
+    this.isQrMode = false,
     this.leftSlot,
     this.rightSlot,
   });
@@ -16,6 +17,7 @@ class CameraBottomBar extends StatelessWidget {
   final VoidCallback onCapture;
   final bool isEnabled;
   final bool isCapturing;
+  final bool isQrMode;
   final Widget? leftSlot;
   final Widget? rightSlot;
 
@@ -36,11 +38,34 @@ class CameraBottomBar extends StatelessWidget {
                 width: AppSizes.bottomSlotButton,
                 height: AppSizes.bottomSlotButton,
               ),
-          _ShutterButton(
-            onTap: isEnabled ? onCapture : null,
-            isEnabled: isEnabled,
-            isCapturing: isCapturing,
-          ),
+          if (isQrMode)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+              decoration: BoxDecoration(
+                color: AppColors.cameraControlBg,
+                borderRadius: BorderRadius.circular(AppSizes.bottomSlotButton),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DecoratedBox(
+                    decoration: BoxDecoration(color: AppColors.autoDetectGreen, shape: BoxShape.circle),
+                    child: SizedBox(width: AppSizes.qrAutoDetectDot, height: AppSizes.qrAutoDetectDot),
+                  ),
+                  SizedBox(width: AppSpacing.xs),
+                  Text(
+                    'Auto Detect',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textOnDark),
+                  ),
+                ],
+              ),
+            )
+          else
+            _ShutterButton(
+              onTap: isEnabled ? onCapture : null,
+              isEnabled: isEnabled,
+              isCapturing: isCapturing,
+            ),
           rightSlot ??
               const SizedBox(
                 width: AppSizes.bottomSlotButton,

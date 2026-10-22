@@ -62,6 +62,11 @@ abstract final class _CameraScreenHelper {
   };
 
   static Widget buildBody(_CameraScreenState state) {
+    CameraQrCoordinator.setup(
+      context: state.context,
+      ref: state.ref,
+      camera: state.ref.read(cameraServiceProvider),
+    );
     final session = state.ref.watch(scanSessionProvider);
     final isRetake = state.widget.retakePageIndex != null;
     final isSettingsOpen = state.ref.watch(cameraSettingsOpenProvider);

@@ -42,6 +42,10 @@ abstract final class AppColors {
   static const textTertiary = Color(0xFF9CA3AF);
   static const checkerLight = Color(0xFFEEEEEE);
   static const checkerDark = Color(0xFFCCCCCC);
+  static const qrLaser = Color(0xFF4F46E5);
+  static const qrLaserGlow = Color(0xFF6366F1);
+  static const autoDetectGreen = Color(0xFF34D399);
+  static const qrCodeGraphic = Color(0x26FFFFFF);
 
   static const folderPalette = [
     folderIndigo,

@@ -19,7 +19,7 @@ enum CaptureMode {
         CaptureMode.ocr => 'OCR Text',
       };
 
-  bool get visible => this != CaptureMode.qr && this != CaptureMode.ocr;
+  bool get visible => this != CaptureMode.ocr;
 
   bool get hasPopup =>
       this == CaptureMode.photo ||

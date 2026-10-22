@@ -10,6 +10,7 @@ import 'camera_top_bar.dart';
 import 'camera_viewfinder.dart';
 import 'widgets/camera_settings_grid_panel.dart';
 import 'widgets/id_card_step_banner.dart';
+import 'widgets/qr_cutout_overlay.dart';
 import 'widgets/signature_reticle_overlay.dart';
 
 class CameraBody extends ConsumerWidget {
@@ -76,6 +77,7 @@ class CameraBody extends ConsumerWidget {
                 fit: StackFit.expand,
                 children: [
                   if (mode == CaptureMode.signature) const SignatureReticleOverlay(),
+                  if (mode == CaptureMode.qr) const QrCutoutOverlay(),
                   if (mode == CaptureMode.idCard && idCardFront != null)
                     Positioned(
                       top: 0, left: 0, right: 0,
@@ -98,6 +100,7 @@ class CameraBody extends ConsumerWidget {
               onCapture: onCapture,
               isEnabled: !isInitializing && !isCapturing && !isSettingsOpen,
               isCapturing: isCapturing,
+              isQrMode: mode == CaptureMode.qr,
               leftSlot: leftSlot,
               rightSlot: rightSlot,
             ),

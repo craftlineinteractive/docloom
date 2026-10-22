@@ -24,5 +24,13 @@ abstract final class AppSizes {
   static const double checkerSquare = 12;
   static const double signatureReticleWidth = 320;
   static const double signatureReticleHeight = 210;
+  static const double qrCutoutSize = 240;
+  static const double qrCornerLength = 32;
+  static const double qrCornerThickness = 4;
+  static const double qrCornerRadius = 8;
+  static const double qrLaserHeight = 2;
+  static const double qrLaserGlowSpread = 12;
+  static const int qrMaxDecodeDimension = 640;
+  static const double qrAutoDetectDot = 8;
 }
 

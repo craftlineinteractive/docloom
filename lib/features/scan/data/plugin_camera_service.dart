@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/widgets.dart';
 import '../domain/camera_service.dart';
+import 'plugin_camera_mappers.dart';
 
 class PluginCameraService implements CameraService {
   PluginCameraService();
@@ -9,6 +10,7 @@ class PluginCameraService implements CameraService {
   List<CameraDescription> _cameras = const [];
   CameraLens _currentLens = CameraLens.back;
   CameraFlash _currentFlash = CameraFlash.off;
+  bool _isStreaming = false;
 
   @override
   bool get isInitialized => _controller?.value.isInitialized ?? false;
@@ -23,10 +25,13 @@ class PluginCameraService implements CameraService {
   double? get aspectRatio => _controller?.value.aspectRatio;
 
   @override
+  bool get isStreamingImages => _isStreaming;
+
+  @override
   List<CameraLens> get availableLenses {
     final lenses = <CameraLens>{};
     for (final cam in _cameras) {
-      final lens = _mapLensDirection(cam.lensDirection);
+      final lens = PluginCameraMappers.mapLensDirection(cam.lensDirection);
       if (lens != null) lenses.add(lens);
     }
     return lenses.toList();
@@ -43,16 +48,16 @@ class PluginCameraService implements CameraService {
       throw CameraException('no_cameras', 'No cameras available on this device');
     }
 
-    final targetDirection = _mapToCameraLensDirection(lens);
+    final targetDirection = PluginCameraMappers.mapToCameraLensDirection(lens);
     final selectedCam = _cameras.firstWhere(
       (cam) => cam.lensDirection == targetDirection,
       orElse: () => _cameras.first,
     );
-    _currentLens = _mapLensDirection(selectedCam.lensDirection) ?? CameraLens.back;
+    _currentLens = PluginCameraMappers.mapLensDirection(selectedCam.lensDirection) ?? CameraLens.back;
 
     final controller = CameraController(
       selectedCam,
-      _mapResolutionPreset(preset),
+      PluginCameraMappers.mapResolutionPreset(preset),
       enableAudio: false,
     );
     await controller.initialize();
@@ -66,6 +71,7 @@ class PluginCameraService implements CameraService {
 
   @override
   Future<void> dispose() async {
+    await stopImageStream();
     final controller = _controller;
     _controller = null;
     if (controller != null) await controller.dispose();
@@ -76,7 +82,7 @@ class PluginCameraService implements CameraService {
     _currentFlash = flash;
     final controller = _controller;
     if (controller != null && controller.value.isInitialized) {
-      await controller.setFlashMode(_mapFlashMode(flash));
+      await controller.setFlashMode(PluginCameraMappers.mapFlashMode(flash));
     }
   }
 
@@ -103,36 +109,34 @@ class PluginCameraService implements CameraService {
   }
 
   @override
+  Future<void> startImageStream(CameraFrameCallback onFrame) async {
+    final controller = _controller;
+    if (controller == null || !controller.value.isInitialized || _isStreaming) return;
+    _isStreaming = true;
+    await controller.startImageStream((CameraImage image) {
+      if (!_isStreaming) return;
+      if (image.planes.isNotEmpty) {
+        onFrame(image.planes.first.bytes, image.width, image.height);
+      }
+    });
+  }
+
+  @override
+  Future<void> stopImageStream() async {
+    if (!_isStreaming) return;
+    _isStreaming = false;
+    final controller = _controller;
+    if (controller != null && controller.value.isInitialized) {
+      try {
+        await controller.stopImageStream();
+      } catch (_) {}
+    }
+  }
+
+  @override
   Widget previewWidget() {
     final controller = _controller;
     if (controller == null || !controller.value.isInitialized) return const SizedBox.shrink();
     return CameraPreview(controller);
   }
-
-  ResolutionPreset _mapResolutionPreset(CameraPreset preset) => switch (preset) {
-        CameraPreset.low => ResolutionPreset.low,
-        CameraPreset.medium => ResolutionPreset.medium,
-        CameraPreset.high => ResolutionPreset.high,
-        CameraPreset.veryHigh => ResolutionPreset.veryHigh,
-        CameraPreset.ultraHigh => ResolutionPreset.ultraHigh,
-        CameraPreset.max => ResolutionPreset.max,
-      };
-
-  FlashMode _mapFlashMode(CameraFlash flash) => switch (flash) {
-        CameraFlash.off => FlashMode.off,
-        CameraFlash.on => FlashMode.always,
-        CameraFlash.auto => FlashMode.auto,
-      };
-
-  CameraLens? _mapLensDirection(CameraLensDirection dir) => switch (dir) {
-        CameraLensDirection.back => CameraLens.back,
-        CameraLensDirection.front => CameraLens.front,
-        CameraLensDirection.external => CameraLens.external,
-      };
-
-  CameraLensDirection _mapToCameraLensDirection(CameraLens lens) => switch (lens) {
-        CameraLens.back => CameraLensDirection.back,
-        CameraLens.front => CameraLensDirection.front,
-        CameraLens.external => CameraLensDirection.external,
-      };
 }

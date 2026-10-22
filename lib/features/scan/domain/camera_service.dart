@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/widgets.dart';
 
 enum CameraFlash { off, on, auto }
@@ -5,6 +6,12 @@ enum CameraFlash { off, on, auto }
 enum CameraLens { back, front, external }
 
 enum CameraPreset { low, medium, high, veryHigh, ultraHigh, max }
+
+typedef CameraFrameCallback = void Function(
+  Uint8List yPlane,
+  int width,
+  int height,
+);
 
 abstract interface class CameraService {
   Future<void> initialize({
@@ -19,6 +26,12 @@ abstract interface class CameraService {
   Future<void> setFocusPoint(Offset point);
 
   Future<String> takePicture();
+
+  Future<void> startImageStream(CameraFrameCallback onFrame);
+
+  Future<void> stopImageStream();
+
+  bool get isStreamingImages;
 
   List<CameraLens> get availableLenses;
 

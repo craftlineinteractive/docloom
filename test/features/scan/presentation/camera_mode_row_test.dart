@@ -29,6 +29,8 @@ void main() {
     expect(find.text('Book'), findsOneWidget);
     expect(find.text('Photo'), findsOneWidget);
     expect(find.text('Signature'), findsOneWidget);
+    expect(find.text('QR Scanner'), findsOneWidget);
+    expect(find.text('OCR Text'), findsNothing);
   });
 
   testWidgets('tapping ID Card tab when active opens IdCardPopupDialog', (tester) async {

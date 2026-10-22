@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../domain/camera_service.dart';
 
@@ -19,6 +20,8 @@ class FakeCameraService implements CameraService {
   CameraLens _currentLens = CameraLens.back;
   CameraFlash _currentFlash = CameraFlash.off;
   bool _isInitialized = false;
+  bool _isStreaming = false;
+  CameraFrameCallback? _streamCallback;
 
   @override
   bool get isInitialized => _isInitialized;
@@ -31,6 +34,9 @@ class FakeCameraService implements CameraService {
 
   @override
   double? get aspectRatio => 4 / 3;
+
+  @override
+  bool get isStreamingImages => _isStreaming;
 
   @override
   List<CameraLens> get availableLenses => List.unmodifiable(availableLensesList);
@@ -52,7 +58,9 @@ class FakeCameraService implements CameraService {
   @override
   Future<void> dispose() async {
     disposeCount++;
+    _isStreaming = false;
     _isInitialized = false;
+    _streamCallback = null;
   }
 
   @override
@@ -72,6 +80,24 @@ class FakeCameraService implements CameraService {
       throw StateError('Camera not initialized');
     }
     return picturePathToReturn;
+  }
+
+  @override
+  Future<void> startImageStream(CameraFrameCallback onFrame) async {
+    _isStreaming = true;
+    _streamCallback = onFrame;
+  }
+
+  @override
+  Future<void> stopImageStream() async {
+    _isStreaming = false;
+    _streamCallback = null;
+  }
+
+  void emitFrame(Uint8List gray, int width, int height) {
+    if (_isStreaming && _streamCallback != null) {
+      _streamCallback!(gray, width, height);
+    }
   }
 
   @override
