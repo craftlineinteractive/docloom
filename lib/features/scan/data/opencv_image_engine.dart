@@ -4,47 +4,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_config.dart';
 import '../domain/image_engine.dart';
 import '../domain/quad.dart';
+import 'opencv_card_ops.dart';
 import 'opencv_isolate_ops.dart';
 import 'preview_lru_cache.dart';
 
-final engineProvider = Provider<ImageEngine>((ref) {
-  return OpencvImageEngine();
-});
+final engineProvider = Provider<ImageEngine>((ref) => OpencvImageEngine());
 
 class OpencvImageEngine implements ImageEngine {
-  OpencvImageEngine({PreviewLruCache? cache})
-      : cache = cache ?? PreviewLruCache();
+  OpencvImageEngine({PreviewLruCache? cache}) : cache = cache ?? PreviewLruCache();
 
   final PreviewLruCache cache;
 
   @override
-  Future<ImageSize> importCapture({
-    required String srcPath,
-    required String dstPath,
-  }) {
-    return Isolate.run(() {
-      return OpencvIsolateOps.importCapture(
-        srcPath,
-        dstPath,
-        AppConfig.scanMaxSide,
-        AppConfig.jpegQuality,
-      );
-    });
+  Future<ImageSize> importCapture({required String srcPath, required String dstPath}) {
+    return Isolate.run(() => OpencvIsolateOps.importCapture(
+          srcPath,
+          dstPath,
+          AppConfig.scanMaxSide,
+          AppConfig.jpegQuality,
+        ));
   }
 
   @override
-  Future<String> makePreview({
-    required String srcPath,
-    required String dstPath,
-  }) {
-    return Isolate.run(() {
-      return OpencvIsolateOps.makePreview(
-        srcPath,
-        dstPath,
-        AppConfig.previewMaxSide,
-        AppConfig.jpegQuality,
-      );
-    });
+  Future<String> makePreview({required String srcPath, required String dstPath}) {
+    return Isolate.run(() => OpencvIsolateOps.makePreview(
+          srcPath,
+          dstPath,
+          AppConfig.previewMaxSide,
+          AppConfig.jpegQuality,
+        ));
   }
 
   static void _validateFilterId(String filterId) {
@@ -61,18 +49,20 @@ class OpencvImageEngine implements ImageEngine {
     required int rotation,
     required String filterId,
     required String dstPath,
+    int? targetWidth,
+    int? targetHeight,
   }) {
     _validateFilterId(filterId);
-    return Isolate.run(() {
-      return OpencvIsolateOps.renderPage(
-        srcPath: srcPath,
-        quad: quad,
-        rotation: rotation,
-        filterId: filterId,
-        dstPath: dstPath,
-        quality: AppConfig.jpegQuality,
-      );
-    });
+    return Isolate.run(() => OpencvIsolateOps.renderPage(
+          srcPath: srcPath,
+          quad: quad,
+          rotation: rotation,
+          filterId: filterId,
+          dstPath: dstPath,
+          quality: AppConfig.jpegQuality,
+          targetWidth: targetWidth,
+          targetHeight: targetHeight,
+        ));
   }
 
   @override
@@ -94,18 +84,30 @@ class OpencvImageEngine implements ImageEngine {
     final cached = cache.get(key);
     if (cached != null) return cached;
 
-    final bytes = await Isolate.run(() {
-      return OpencvIsolateOps.renderPreview(
-        previewPath: previewPath,
-        quad: quad,
-        rotation: rotation,
-        filterId: filterId,
-        maxSide: maxSide,
-        quality: AppConfig.jpegQuality,
-      );
-    });
+    final bytes = await Isolate.run(() => OpencvIsolateOps.renderPreview(
+          previewPath: previewPath,
+          quad: quad,
+          rotation: rotation,
+          filterId: filterId,
+          maxSide: maxSide,
+          quality: AppConfig.jpegQuality,
+        ));
 
     cache.put(key, bytes);
     return bytes;
+  }
+
+  @override
+  Future<String> composeCardPage({
+    required String frontPath,
+    String? backPath,
+    required String dstPath,
+  }) {
+    return Isolate.run(() => OpencvCardOps.composeCardPage(
+          frontPath: frontPath,
+          backPath: backPath,
+          dstPath: dstPath,
+          quality: AppConfig.jpegQuality,
+        ));
   }
 }

@@ -12,20 +12,12 @@ class ReviewToolbar extends StatelessWidget {
     required this.onColor,
     required this.onRotate,
     required this.onArrange,
-    required this.onRetake,
-    required this.onDelete,
-    required this.onCheck,
-    this.isColorActive = false,
+    required this.onRetake, required this.onDelete, required this.onCheck,
+    this.isColorActive = false, this.isCropVisible = true,
   });
 
-  final VoidCallback onCrop;
-  final VoidCallback onColor;
-  final VoidCallback onRotate;
-  final VoidCallback onArrange;
-  final VoidCallback onRetake;
-  final VoidCallback onDelete;
-  final VoidCallback onCheck;
-  final bool isColorActive;
+  final VoidCallback onCrop, onColor, onRotate, onArrange, onRetake, onDelete, onCheck;
+  final bool isColorActive, isCropVisible;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +34,7 @@ class ReviewToolbar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _ToolButton(label: 'Crop', icon: LucideIcons.crop, onTap: onCrop),
+                if (isCropVisible) _ToolButton(label: 'Crop', icon: LucideIcons.crop, onTap: onCrop),
                 _ToolButton(
                   label: 'Color',
                   icon: LucideIcons.palette,

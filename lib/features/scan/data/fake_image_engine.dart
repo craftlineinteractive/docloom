@@ -15,6 +15,7 @@ class FakeImageEngine implements ImageEngine {
   int makePreviewCount = 0;
   int renderPageCount = 0;
   int renderPreviewCount = 0;
+  int composeCardCount = 0;
 
   String? lastImportSrc;
   String? lastImportDst;
@@ -26,12 +27,19 @@ class FakeImageEngine implements ImageEngine {
   int? lastRenderRotation;
   String? lastRenderFilterId;
   String? lastRenderDst;
+  int? lastRenderWidth;
+  int? lastRenderHeight;
 
   String? lastPreviewRenderPath;
   Quad? lastPreviewRenderQuad;
   int? lastPreviewRenderRotation;
   String? lastPreviewRenderFilterId;
   int? lastPreviewRenderMaxSide;
+
+  String? lastComposeFront;
+  String? lastComposeBack;
+  String? lastComposeDst;
+
   Uint8List previewBytes = Uint8List.fromList(const [
     137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82,
     0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137,
@@ -40,10 +48,7 @@ class FakeImageEngine implements ImageEngine {
   ]);
 
   @override
-  Future<ImageSize> importCapture({
-    required String srcPath,
-    required String dstPath,
-  }) async {
+  Future<ImageSize> importCapture({required String srcPath, required String dstPath}) async {
     importCaptureCount++;
     lastImportSrc = srcPath;
     lastImportDst = dstPath;
@@ -52,10 +57,7 @@ class FakeImageEngine implements ImageEngine {
   }
 
   @override
-  Future<String> makePreview({
-    required String srcPath,
-    required String dstPath,
-  }) async {
+  Future<String> makePreview({required String srcPath, required String dstPath}) async {
     makePreviewCount++;
     lastPreviewSrc = srcPath;
     lastPreviewDst = dstPath;
@@ -69,6 +71,8 @@ class FakeImageEngine implements ImageEngine {
     required int rotation,
     required String filterId,
     required String dstPath,
+    int? targetWidth,
+    int? targetHeight,
   }) async {
     renderPageCount++;
     lastRenderSrc = srcPath;
@@ -76,6 +80,8 @@ class FakeImageEngine implements ImageEngine {
     lastRenderRotation = rotation;
     lastRenderFilterId = filterId;
     lastRenderDst = dstPath;
+    lastRenderWidth = targetWidth;
+    lastRenderHeight = targetHeight;
     return dstPath;
   }
 
@@ -94,5 +100,18 @@ class FakeImageEngine implements ImageEngine {
     lastPreviewRenderFilterId = filterId;
     lastPreviewRenderMaxSide = maxSide;
     return previewBytes;
+  }
+
+  @override
+  Future<String> composeCardPage({
+    required String frontPath,
+    String? backPath,
+    required String dstPath,
+  }) async {
+    composeCardCount++;
+    lastComposeFront = frontPath;
+    lastComposeBack = backPath;
+    lastComposeDst = dstPath;
+    return dstPath;
   }
 }

@@ -38,6 +38,10 @@ abstract final class AppColors {
   static const darkSheetSelectedBorder = Color(0x4D6366F1);
   static const cameraPanelOverlay = Color(0xE6000000);
   static const dragHandleDark = Color(0xFF4B5563);
+  static const cardBorder = Color(0xFFE5E7EB);
+  static const textTertiary = Color(0xFF9CA3AF);
+  static const checkerLight = Color(0xFFEEEEEE);
+  static const checkerDark = Color(0xFFCCCCCC);
 
   static const folderPalette = [
     folderIndigo,

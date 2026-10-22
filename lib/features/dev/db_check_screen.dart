@@ -6,6 +6,7 @@ import '../../core/widgets/widgets.dart';
 import 'db_check_actions.dart';
 import 'widgets/db_check_action_buttons.dart';
 import 'widgets/db_check_stats_card.dart';
+import '../scan/domain/signature.dart';
 
 class DbCheckScreen extends ConsumerStatefulWidget {
   const DbCheckScreen({super.key});
@@ -16,6 +17,8 @@ class DbCheckScreen extends ConsumerStatefulWidget {
 
 class _DbCheckScreenState extends ConsumerState<DbCheckScreen> {
   int _folderCount = 0, _rootDocCount = 0, _trashedDocCount = 0, _fileCount = 0, _folderSeq = 1;
+  int _signatureCount = 0;
+  List<Signature> _signatures = [];
   bool _busy = false;
   final List<String> _logs = [];
 
@@ -37,12 +40,15 @@ class _DbCheckScreenState extends ConsumerState<DbCheckScreen> {
     final docs = await ref.read(documentRepositoryProvider).listInFolder();
     final trashed = await ref.read(trashRepositoryProvider).listTrashedDocuments();
     final files = await ref.read(fileStoreProvider).countFiles();
+    final sigs = await ref.read(signatureRepositoryProvider).list();
     if (!mounted) return;
     setState(() {
       _folderCount = folders.length;
       _rootDocCount = docs.length;
       _trashedDocCount = trashed.length;
       _fileCount = files;
+      _signatureCount = sigs.length;
+      _signatures = sigs;
     });
   }
 
@@ -86,6 +92,8 @@ class _DbCheckScreenState extends ConsumerState<DbCheckScreen> {
               rootDocCount: _rootDocCount,
               trashedDocCount: _trashedDocCount,
               fileCount: _fileCount,
+              signatureCount: _signatureCount,
+              signatures: _signatures,
               logs: _logs,
             ),
           ],

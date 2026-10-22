@@ -22,21 +22,25 @@ abstract final class CameraCaptureCoordinator {
         ? '${retakePageIndex + 1}/${session.pages.length}'
         : '${session.pages.length + 1}';
     try {
-      final page = await CameraCaptureHelper.captureAndProcess(
+      final pages = await CameraCaptureHelper.captureAndProcess(
         context: context,
+        ref: ref,
         camera: camera,
         engine: ref.read(engineProvider),
         sessionId: session.id,
         pageIndicator: indicator,
         onCaptured: onEnd,
       );
-      if (page != null && context.mounted) {
+      if (pages != null && pages.isNotEmpty && context.mounted) {
         if (retakePageIndex != null) {
-          Navigator.of(context).pop(page);
+          Navigator.of(context).pop(pages.first);
           return;
         }
-        if (!ref.read(scanSessionProvider.notifier).addPage(page)) {
-          showAppToastGlobal('Page limit reached (${AppConfig.scanPageLimit} pages)');
+        for (final page in pages) {
+          if (!ref.read(scanSessionProvider.notifier).addPage(page)) {
+            showAppToastGlobal('Page limit reached (${AppConfig.scanPageLimit} pages)');
+            break;
+          }
         }
       }
     } catch (_) {

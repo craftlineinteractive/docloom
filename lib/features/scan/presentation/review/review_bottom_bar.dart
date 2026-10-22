@@ -12,23 +12,14 @@ class ReviewBottomBar extends StatelessWidget {
     required this.onCrop,
     required this.onColor,
     required this.onRotate,
-    required this.onArrange,
-    required this.onRetake,
-    required this.onDelete,
-    required this.onCheck,
+    required this.onArrange, required this.onRetake, required this.onDelete, required this.onCheck,
+    this.isCropVisible = true,
   });
 
-  final bool isColorOpen;
+  final bool isColorOpen, isCropVisible;
   final String selectedFilterId;
   final ValueChanged<String> onSelectFilter;
-  final VoidCallback onApplyToAll;
-  final VoidCallback onCrop;
-  final VoidCallback onColor;
-  final VoidCallback onRotate;
-  final VoidCallback onArrange;
-  final VoidCallback onRetake;
-  final VoidCallback onDelete;
-  final VoidCallback onCheck;
+  final VoidCallback onApplyToAll, onCrop, onColor, onRotate, onArrange, onRetake, onDelete, onCheck;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +35,7 @@ class ReviewBottomBar extends StatelessWidget {
             ),
           ReviewToolbar(
             isColorActive: isColorOpen,
+            isCropVisible: isCropVisible,
             onCrop: onCrop,
             onColor: onColor,
             onRotate: onRotate,

@@ -1,3 +1,5 @@
+import 'capture_mode.dart';
+import 'crop_type.dart';
 import 'quad.dart';
 
 class ScanSessionPage {
@@ -8,7 +10,11 @@ class ScanSessionPage {
     required this.quad,
     required this.rotation,
     required this.filterId,
-  });
+    this.mode = CaptureMode.document,
+    this.photoSizeId,
+    CropType? cropType,
+  }) : cropType = cropType ??
+            (mode == CaptureMode.photo ? CropType.rect : CropType.quad);
 
   final String id;
   final String capturePath;
@@ -16,6 +22,9 @@ class ScanSessionPage {
   final Quad quad;
   final int rotation;
   final String filterId;
+  final CaptureMode mode;
+  final String? photoSizeId;
+  final CropType cropType;
 
   ScanSessionPage copyWith({
     String? id,
@@ -24,6 +33,9 @@ class ScanSessionPage {
     Quad? quad,
     int? rotation,
     String? filterId,
+    CaptureMode? mode,
+    String? photoSizeId,
+    CropType? cropType,
   }) =>
       ScanSessionPage(
         id: id ?? this.id,
@@ -32,5 +44,8 @@ class ScanSessionPage {
         quad: quad ?? this.quad,
         rotation: rotation ?? this.rotation,
         filterId: filterId ?? this.filterId,
+        mode: mode ?? this.mode,
+        photoSizeId: photoSizeId ?? this.photoSizeId,
+        cropType: cropType ?? this.cropType,
       );
 }

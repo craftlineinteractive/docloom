@@ -1,53 +1,21 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:docloom/features/scan/application/scan_providers.dart';
 import 'package:docloom/features/scan/data/fake_camera_permission_service.dart';
 import 'package:docloom/features/scan/data/fake_camera_service.dart';
+import 'package:docloom/features/scan/data/fake_image_engine.dart';
 import 'package:docloom/features/scan/data/opencv_image_engine.dart';
 import 'package:docloom/features/scan/domain/image_engine.dart';
-import 'package:docloom/features/scan/domain/quad.dart';
 import 'package:docloom/features/scan/domain/scan_gateway.dart';
 import 'package:docloom/features/scan/presentation/adjust/adjust_screen.dart';
 import 'package:docloom/features/scan/presentation/camera_screen.dart';
 
-class _FakeImageEngine implements ImageEngine {
-  Completer<ImageSize>? completer;
-
-  @override
-  Future<ImageSize> importCapture({required String srcPath, required String dstPath}) async {
-    if (completer != null) return completer!.future;
-    return const ImageSize(width: 1920, height: 1080);
-  }
-
-  @override
-  Future<String> makePreview({required String srcPath, required String dstPath}) async => dstPath;
-
-  @override
-  Future<String> renderPage({
-    required String srcPath,
-    required Quad quad,
-    required int rotation,
-    required String filterId,
-    required String dstPath,
-  }) async => dstPath;
-
-  @override
-  Future<Uint8List> renderPreview({
-    required String previewPath,
-    required Quad quad,
-    required int rotation,
-    required String filterId,
-    int? maxSide,
-  }) async => Uint8List.fromList([1, 2, 3]);
-}
-
 Widget _buildApp({
   required FakeCameraService camera,
   required FakeCameraPermissionService permission,
-  _FakeImageEngine? engine,
+  FakeImageEngine? engine,
   void Function(ScanOutcome? outcome)? onPopped,
 }) {
   return ProviderScope(
@@ -97,7 +65,7 @@ void main() {
   testWidgets('double tap on shutter triggers single capture', (tester) async {
     final camera = FakeCameraService();
     final permission = FakeCameraPermissionService();
-    final engine = _FakeImageEngine()..completer = Completer<ImageSize>();
+    final engine = FakeImageEngine()..completer = Completer<ImageSize>();
 
     await tester.pumpWidget(_buildApp(camera: camera, permission: permission, engine: engine));
     await tester.tap(find.text('Open'));

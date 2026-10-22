@@ -44,7 +44,7 @@ abstract final class ScanFinishCoordinator {
               editedPath: outPath,
               filterId: page.filterId,
               rotation: page.rotation,
-              cropJson: jsonEncode(page.quad.toJson()),
+              cropJson: jsonEncode(page.quad.toJson(type: page.cropType.name)),
             ));
           }
           return result;

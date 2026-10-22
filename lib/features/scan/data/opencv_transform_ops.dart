@@ -72,8 +72,22 @@ abstract final class OpencvTransformOps {
     required Quad quad,
     required int rotation,
     required String filterId,
+    int? targetWidth,
+    int? targetHeight,
   }) {
-    final warpedRotated = warpAndRotate(src, quad, rotation);
+    var warpedRotated = warpAndRotate(src, quad, rotation);
+    if (targetWidth != null &&
+        targetHeight != null &&
+        (warpedRotated.width != targetWidth ||
+            warpedRotated.height != targetHeight)) {
+      final resized = cv.resize(
+        warpedRotated,
+        (targetWidth, targetHeight),
+        interpolation: cv.INTER_AREA,
+      );
+      warpedRotated.dispose();
+      warpedRotated = resized;
+    }
     try {
       return FilterRecipes.apply(warpedRotated, filterId);
     } finally {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/widgets.dart';
+import '../../scan/domain/signature.dart';
 
 class DbCheckStatsCard extends StatelessWidget {
   const DbCheckStatsCard({
@@ -10,10 +11,13 @@ class DbCheckStatsCard extends StatelessWidget {
     required this.rootDocCount,
     required this.trashedDocCount,
     required this.fileCount,
+    required this.signatureCount,
+    required this.signatures,
     required this.logs,
   });
 
-  final int folderCount, rootDocCount, trashedDocCount, fileCount;
+  final int folderCount, rootDocCount, trashedDocCount, fileCount, signatureCount;
+  final List<Signature> signatures;
   final List<String> logs;
 
   @override
@@ -35,9 +39,30 @@ class DbCheckStatsCard extends StatelessWidget {
               _StatRow(label: 'Trashed Documents', value: '$trashedDocCount'),
               const Divider(height: AppSpacing.md),
               _StatRow(label: 'Files on Disk', value: '$fileCount'),
+              const Divider(height: AppSpacing.md),
+              _StatRow(label: 'Signatures', value: '$signatureCount'),
             ],
           ),
         ),
+        if (signatures.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.lg),
+          SectionHeader(title: 'Signatures (Debug)', count: signatures.length),
+          AppCard(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (int i = 0; i < signatures.length; i++) ...[
+                  if (i > 0) const Divider(height: AppSpacing.sm),
+                  Text(
+                    '${signatures[i].id} • ${signatures[i].path}',
+                    style: textTheme.bodySmall?.copyWith(color: AppColors.textPrimary),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
         const SizedBox(height: AppSpacing.lg),
         SectionHeader(title: 'Action Results', count: logs.length),
         AppCard(

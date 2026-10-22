@@ -1,54 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as p;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../application/capture_mode_provider.dart';
 import '../domain/camera_service.dart';
+import '../domain/capture_mode.dart';
 import '../domain/image_engine.dart';
 import '../domain/scan_session.dart';
-import 'adjust/adjust_result.dart';
-import 'adjust/adjust_screen.dart';
+import 'flows/document_capture_flow.dart';
+import 'flows/id_card_capture_flow.dart';
+import 'flows/signature_capture_flow.dart';
 
 abstract final class CameraCaptureHelper {
-  static Future<ScanSessionPage?> captureAndProcess({
+  static Future<List<ScanSessionPage>?> captureAndProcess({
     required BuildContext context,
+    required WidgetRef ref,
     required CameraService camera,
     required ImageEngine engine,
     required String sessionId,
     required VoidCallback onCaptured,
     String pageIndicator = '1/1',
   }) async {
-    final rawPath = await camera.takePicture();
-    final sessionDir = ScanSessionDirHelper.getSessionDir(sessionId)
-      ..createSync(recursive: true);
+    final mode = ref.read(captureModeProvider);
 
-    final ts = DateTime.now().millisecondsSinceEpoch;
-    final importPath = p.join(sessionDir.path, 'cap_$ts.jpg');
-    final previewPath = p.join(sessionDir.path, 'prev_$ts.jpg');
-
-    await engine.importCapture(srcPath: rawPath, dstPath: importPath);
-    await engine.makePreview(srcPath: importPath, dstPath: previewPath);
-    onCaptured();
-
-    if (!context.mounted) return null;
-    final result = await Navigator.of(context).push<AdjustResult>(
-      MaterialPageRoute(
-        builder: (_) => AdjustScreen(
-          previewPath: previewPath,
-          importedPath: importPath,
-          rawCapturePath: rawPath,
-          pageIndicator: pageIndicator,
-        ),
-      ),
-    );
-
-    if (result != null) {
-      return ScanSessionPage(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        capturePath: importPath,
-        previewPath: previewPath,
-        quad: result.quad,
-        rotation: result.rotation,
-        filterId: result.filterId,
+    if (mode == CaptureMode.signature) {
+      return SignatureCaptureFlow.run(
+        context: context,
+        camera: camera,
+        sessionId: sessionId,
+        onCaptured: onCaptured,
       );
     }
-    return null;
+
+    if (mode == CaptureMode.idCard) {
+      return IdCardCaptureFlow.run(
+        context: context,
+        ref: ref,
+        camera: camera,
+        engine: engine,
+        sessionId: sessionId,
+        onCaptured: onCaptured,
+        pageIndicator: pageIndicator,
+      );
+    }
+
+    return DocumentCaptureFlow.run(
+      context: context,
+      ref: ref,
+      camera: camera,
+      engine: engine,
+      sessionId: sessionId,
+      onCaptured: onCaptured,
+      pageIndicator: pageIndicator,
+    );
   }
 }

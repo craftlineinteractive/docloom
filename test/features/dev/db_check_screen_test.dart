@@ -58,7 +58,7 @@ void main() {
 
     expect(find.text('Live Counts'), findsOneWidget);
     expect(find.text('Active Folders'), findsOneWidget);
-    expect(find.text('0'), findsNWidgets(4));
+    expect(find.text('0'), findsNWidgets(5));
 
     // 1. Create folder
     await tester.runAsync(() async {

@@ -18,4 +18,11 @@ abstract final class AppSizes {
   static const int thumbnailSource = 400;
   static const double settingTileIcon = 28;
   static const double settingTileMinTouch = 48;
+  static const double photoCardHeight = 70;
+  static const double idCardOptionHeight = 124;
+  static const double splitLineWidth = 3;
+  static const double checkerSquare = 12;
+  static const double signatureReticleWidth = 320;
+  static const double signatureReticleHeight = 210;
 }
+

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../application/photo_size_providers.dart';
 import '../../data/opencv_image_engine.dart';
+import '../../domain/capture_mode.dart';
 import '../../domain/scan_session.dart';
 import '../adjust/adjust_result.dart';
 import '../adjust/adjust_screen.dart';
@@ -11,7 +13,6 @@ import 'review_bottom_bar.dart';
 import 'review_dialogs.dart';
 import 'review_page_view.dart';
 import 'review_top_bar.dart';
-
 import '../scan_finish_coordinator.dart';
 
 class ReviewScreen extends ConsumerStatefulWidget {
@@ -23,15 +24,14 @@ class ReviewScreen extends ConsumerStatefulWidget {
 }
 
 class _ReviewScreenState extends ConsumerState<ReviewScreen> {
-  late int _currentIndex;
-  late PageController _pageController;
+  late final PageController _pageController;
+  int _currentIndex = 0;
   bool _isColorOpen = false;
 
   @override
   void initState() {
     super.initState();
-    final c = ref.read(scanSessionProvider).pages.length;
-    _currentIndex = (widget.initialIndex ?? (c > 0 ? c - 1 : 0)).clamp(0, c > 0 ? c - 1 : 0);
+    _currentIndex = widget.initialIndex ?? 0;
     _pageController = PageController(initialPage: _currentIndex);
   }
 
@@ -43,6 +43,9 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
 
   Future<void> _onCrop(ScanSession session) async {
     final page = session.pages[_currentIndex];
+    final photoSize = page.photoSizeId != null
+        ? ref.read(photoSizesProvider.notifier).findSize(page.photoSizeId!)
+        : null;
     final res = await Navigator.of(context).push<AdjustResult>(
       MaterialPageRoute(
         builder: (_) => AdjustScreen(
@@ -50,6 +53,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
           rawCapturePath: page.capturePath, initialQuad: page.quad,
           initialRotation: page.rotation, initialFilterId: page.filterId,
           pageIndicator: '${_currentIndex + 1}/${session.pages.length}',
+          mode: page.mode, photoSize: photoSize,
         ),
       ),
     );
@@ -128,6 +132,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
       ),
       bottomNavigationBar: ReviewBottomBar(
         isColorOpen: _isColorOpen,
+        isCropVisible: page.mode != CaptureMode.idCard,
         selectedFilterId: page.filterId,
         onSelectFilter: (fid) => setState(() => ref.read(scanSessionProvider.notifier).setFilter(_currentIndex, fid)),
         onApplyToAll: () => setState(() => ref.read(scanSessionProvider.notifier).setFilterForAll(page.filterId)),

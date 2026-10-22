@@ -12,6 +12,7 @@ class CameraViewfinder extends StatelessWidget {
     required this.onTapPreview,
     required this.onDismissFocus,
     this.settingsPanel,
+    this.modeOverlay,
     this.isOverlayHidden = false,
   });
 
@@ -21,6 +22,7 @@ class CameraViewfinder extends StatelessWidget {
   final void Function(TapDownDetails details, Size size) onTapPreview;
   final VoidCallback onDismissFocus;
   final Widget? settingsPanel;
+  final Widget? modeOverlay;
   final bool isOverlayHidden;
 
   @override
@@ -52,6 +54,7 @@ class CameraViewfinder extends StatelessWidget {
                 if (isGridVisible && !isOverlayHidden) const CameraGrid(),
                 if (focusPos != null && !isOverlayHidden)
                   FocusRing(position: focusPos!, onDismiss: onDismissFocus),
+                if (modeOverlay != null && !isOverlayHidden) modeOverlay!,
                 if (settingsPanel != null) Positioned.fill(child: settingsPanel!),
               ],
             ),

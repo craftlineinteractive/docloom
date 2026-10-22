@@ -40,6 +40,8 @@ abstract interface class ImageEngine {
     required int rotation,
     required String filterId,
     required String dstPath,
+    int? targetWidth,
+    int? targetHeight,
   });
 
   Future<Uint8List> renderPreview({
@@ -48,5 +50,11 @@ abstract interface class ImageEngine {
     required int rotation,
     required String filterId,
     int? maxSide,
+  });
+
+  Future<String> composeCardPage({
+    required String frontPath,
+    String? backPath,
+    required String dstPath,
   });
 }

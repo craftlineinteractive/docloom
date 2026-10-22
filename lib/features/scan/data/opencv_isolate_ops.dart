@@ -78,19 +78,22 @@ class OpencvIsolateOps {
     required String filterId,
     required String dstPath,
     required int quality,
+    int? targetWidth,
+    int? targetHeight,
   }) {
     final cv.Mat src = cv.imread(srcPath, flags: cv.IMREAD_COLOR);
     if (src.isEmpty) {
       src.dispose();
       throw ArgumentError('Failed to read image at $srcPath');
     }
-
     try {
       final processed = OpencvTransformOps.warpRotateAndFilter(
         src: src,
         quad: quad,
         rotation: rotation,
         filterId: filterId,
+        targetWidth: targetWidth,
+        targetHeight: targetHeight,
       );
       try {
         _writeJpeg(dstPath, processed, quality);

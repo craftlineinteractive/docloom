@@ -3,6 +3,8 @@ import '../../features/documents/data/sqlite_document_repository.dart';
 import '../../features/documents/domain/document_repository.dart';
 import '../../features/folders/data/sqlite_folder_repository.dart';
 import '../../features/folders/domain/folder_repository.dart';
+import '../../features/scan/data/sqlite_signature_repository.dart';
+import '../../features/scan/domain/signature_repository.dart';
 import '../../features/trash/application/trash_service.dart';
 import '../../features/trash/data/sqlite_trash_repository.dart';
 import '../../features/trash/domain/trash_repository.dart';
@@ -68,3 +70,9 @@ final trashServiceProvider = Provider<TrashService>((ref) {
     clock: clock,
   );
 });
+
+final signatureRepositoryProvider = Provider<SignatureRepository>((ref) {
+  final db = ref.watch(appDatabaseProvider);
+  return SqliteSignatureRepository(db);
+});
+

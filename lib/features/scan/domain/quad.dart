@@ -85,7 +85,11 @@ class Quad {
 
   Quad rotated90() => QuadGeometry.rotate90(this);
 
-  Map<String, dynamic> toJson() => {
+  static String cropTypeOf(Map<String, dynamic> json) =>
+      (json['type'] as String?) ?? 'quad';
+
+  Map<String, dynamic> toJson({String type = 'quad'}) => {
+        'type': type,
         'tl': [topLeft.dx, topLeft.dy],
         'tr': [topRight.dx, topRight.dy],
         'br': [bottomRight.dx, bottomRight.dy],

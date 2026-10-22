@@ -75,4 +75,16 @@ CREATE TABLE pages (
     'CREATE INDEX idx_pages_document ON pages(document_id, position);',
     'CREATE INDEX idx_folders_deleted ON folders(deleted_at);',
   ];
+
+  static const List<String> v3 = [
+    ...v2,
+    '''
+CREATE TABLE signatures (
+  id TEXT PRIMARY KEY,
+  path TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);''',
+    'CREATE INDEX idx_signatures_created ON signatures(created_at);',
+  ];
 }
+
