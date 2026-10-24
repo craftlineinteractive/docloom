@@ -31,17 +31,26 @@ class AdjustToolsRow extends StatelessWidget {
         children: [
           if (onAutoDetect != null)
             _ToolButton(
-              icon: LucideIcons.scanLine,
+              icon: isDetecting
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.textOnDark,
+                      ),
+                    )
+                  : const Icon(LucideIcons.scanLine, color: AppColors.textOnDark, size: 20),
               label: isDetecting ? 'Detecting...' : 'Auto detect',
               onTap: isDetecting ? () {} : onAutoDetect!,
             ),
           _ToolButton(
-            icon: LucideIcons.rotateCw,
+            icon: const Icon(LucideIcons.rotateCw, color: AppColors.textOnDark, size: 20),
             label: 'Rotate',
             onTap: onRotate,
           ),
           _ToolButton(
-            icon: LucideIcons.rotateCcw,
+            icon: const Icon(LucideIcons.rotateCcw, color: AppColors.textOnDark, size: 20),
             label: 'Reset',
             onTap: onReset,
           ),
@@ -58,7 +67,7 @@ class _ToolButton extends StatelessWidget {
     required this.onTap,
   });
 
-  final IconData icon;
+  final Widget icon;
   final String label;
   final VoidCallback onTap;
 
@@ -75,7 +84,7 @@ class _ToolButton extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: AppColors.textOnDark, size: 20),
+            icon,
             const SizedBox(height: AppSpacing.xs / 2),
             Text(
               label,

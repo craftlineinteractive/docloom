@@ -12,6 +12,8 @@ class PluginCameraService implements CameraService {
   CameraFlash _currentFlash = CameraFlash.off;
   bool _isStreaming = false;
 
+  CameraDescription? _selectedCam;
+
   @override
   bool get isInitialized => _controller?.value.isInitialized ?? false;
 
@@ -54,6 +56,7 @@ class PluginCameraService implements CameraService {
       orElse: () => _cameras.first,
     );
     _currentLens = PluginCameraMappers.mapLensDirection(selectedCam.lensDirection) ?? CameraLens.back;
+    _selectedCam = selectedCam;
 
     final controller = CameraController(
       selectedCam,
@@ -116,7 +119,10 @@ class PluginCameraService implements CameraService {
     await controller.startImageStream((CameraImage image) {
       if (!_isStreaming) return;
       if (image.planes.isNotEmpty) {
-        onFrame(image.planes.first.bytes, image.width, image.height);
+        final p = image.planes.first;
+        onFrame(p.bytes, image.width, image.height,
+            bytesPerRow: p.bytesPerRow,
+            sensorOrientation: _selectedCam?.sensorOrientation ?? 0);
       }
     });
   }

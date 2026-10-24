@@ -10,8 +10,10 @@ enum CameraPreset { low, medium, high, veryHigh, ultraHigh, max }
 typedef CameraFrameCallback = void Function(
   Uint8List yPlane,
   int width,
-  int height,
-);
+  int height, {
+  int bytesPerRow,
+  int sensorOrientation,
+});
 
 abstract interface class CameraService {
   Future<void> initialize({

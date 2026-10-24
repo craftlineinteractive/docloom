@@ -46,7 +46,7 @@ abstract final class CameraQrCoordinator {
   }
 
   static void _startStreaming(CameraService camera, WidgetRef ref) {
-    camera.startImageStream((bytes, width, height) {
+    camera.startImageStream((bytes, width, height, {int? bytesPerRow, int? sensorOrientation}) {
       ref.read(qrScanControllerProvider.notifier).processFrame(bytes, width, height);
     });
   }

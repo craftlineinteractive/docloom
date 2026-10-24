@@ -5,7 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:docloom/features/scan/application/scan_providers.dart';
 import 'package:docloom/features/scan/data/fake_camera_permission_service.dart';
 import 'package:docloom/features/scan/data/fake_camera_service.dart';
+import 'package:docloom/features/scan/data/fake_edge_detector.dart';
 import 'package:docloom/features/scan/data/fake_image_engine.dart';
+import 'package:docloom/features/scan/data/opencv_edge_detector.dart';
 import 'package:docloom/features/scan/data/opencv_image_engine.dart';
 import 'package:docloom/features/scan/domain/image_engine.dart';
 import 'package:docloom/features/scan/domain/scan_gateway.dart';
@@ -22,6 +24,7 @@ Widget _buildApp({
     overrides: [
       cameraServiceProvider.overrideWithValue(camera),
       cameraPermissionServiceProvider.overrideWithValue(permission),
+      edgeDetectorProvider.overrideWithValue(FakeEdgeDetector()),
       if (engine != null) engineProvider.overrideWithValue(engine),
     ],
     child: MaterialApp(

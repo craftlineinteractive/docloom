@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:docloom/features/scan/data/fake_edge_detector.dart';
 import 'package:docloom/features/scan/data/fake_image_engine.dart';
+import 'package:docloom/features/scan/data/opencv_edge_detector.dart';
 import 'package:docloom/features/scan/data/opencv_image_engine.dart';
 import 'package:docloom/features/scan/presentation/adjust/adjust_result.dart';
 import 'package:docloom/features/scan/presentation/adjust/adjust_screen.dart';
@@ -32,7 +34,10 @@ void main() {
 
   Widget buildApp({void Function(AdjustResult? r)? onResult}) {
     return ProviderScope(
-      overrides: [engineProvider.overrideWithValue(fakeEngine)],
+      overrides: [
+        engineProvider.overrideWithValue(fakeEngine),
+        edgeDetectorProvider.overrideWithValue(FakeEdgeDetector()),
+      ],
       child: MaterialApp(
         home: Builder(
           builder: (ctx) => Scaffold(

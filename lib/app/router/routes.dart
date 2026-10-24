@@ -7,4 +7,5 @@ abstract final class Routes {
   static const dbCheck = '/dev/db-check';
   static const scanCamera = '/scan/camera';
   static const devLabeler = '/dev/labeler';
+  static const edgeDebug = '/dev/edge-debug';
 }
