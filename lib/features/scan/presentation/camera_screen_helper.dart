@@ -10,6 +10,7 @@ abstract final class _CameraScreenHelper {
   );
 
   static Widget? buildStateView({
+    required bool isCheckingPerm,
     required CameraPermissionState perm,
     required bool hasErr,
     required VoidCallback onRequestPerm,
@@ -17,6 +18,9 @@ abstract final class _CameraScreenHelper {
     required VoidCallback onRetryInit,
     required VoidCallback onBack,
   }) {
+    if (isCheckingPerm) {
+      return const ColoredBox(color: AppColors.cameraBlack);
+    }
     if (perm != CameraPermissionState.granted) {
       return CameraPermissionView(
         state: perm,

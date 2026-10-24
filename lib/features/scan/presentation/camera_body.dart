@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../application/capture_mode_provider.dart';
 import '../domain/camera_service.dart';
 import '../domain/capture_mode.dart';
+import '../../ocr/presentation/ocr_language_pill.dart';
 import 'camera_bottom_bar.dart';
 import 'camera_mode_row.dart';
 import 'camera_top_bar.dart';
@@ -78,6 +80,13 @@ class CameraBody extends ConsumerWidget {
                 children: [
                   if (mode == CaptureMode.signature) const SignatureReticleOverlay(),
                   if (mode == CaptureMode.qr) const QrCutoutOverlay(),
+                  if (mode == CaptureMode.ocr)
+                    const Positioned(
+                      bottom: AppSpacing.sm,
+                      left: 0,
+                      right: 0,
+                      child: Center(child: OcrLanguagePill()),
+                    ),
                   if (mode == CaptureMode.idCard && idCardFront != null)
                     Positioned(
                       top: 0, left: 0, right: 0,

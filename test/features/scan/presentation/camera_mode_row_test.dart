@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:docloom/features/ocr/presentation/ocr_language_picker_sheet.dart';
 import 'package:docloom/features/scan/application/capture_mode_provider.dart';
 import 'package:docloom/features/scan/domain/capture_mode.dart';
 import 'package:docloom/features/scan/presentation/camera_mode_row.dart';
@@ -22,7 +23,7 @@ Widget _buildModeRow([CaptureMode initialMode = CaptureMode.document]) {
 }
 
 void main() {
-  testWidgets('renders all 5 visible camera modes in order', (tester) async {
+  testWidgets('renders all visible camera modes in order', (tester) async {
     await tester.pumpWidget(_buildModeRow());
     expect(find.text('ID Card'), findsOneWidget);
     expect(find.text('Document'), findsOneWidget);
@@ -30,7 +31,7 @@ void main() {
     expect(find.text('Photo'), findsOneWidget);
     expect(find.text('Signature'), findsOneWidget);
     expect(find.text('QR Scanner'), findsOneWidget);
-    expect(find.text('OCR Text'), findsNothing);
+    expect(find.text('OCR Text'), findsOneWidget);
   });
 
   testWidgets('tapping ID Card tab when active opens IdCardPopupDialog', (tester) async {
@@ -52,5 +53,14 @@ void main() {
     await tester.tap(find.text('Photo'));
     await tester.pumpAndSettle();
     expect(find.byType(PhotoSizePopupDialog), findsOneWidget);
+  });
+
+  testWidgets('tapping OCR Text tab when active opens OcrLanguagePickerSheet', (tester) async {
+    await tester.pumpWidget(_buildModeRow(CaptureMode.ocr));
+    await tester.ensureVisible(find.text('OCR Text'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('OCR Text'));
+    await tester.pumpAndSettle();
+    expect(find.byType(OcrLanguagePickerSheet), findsOneWidget);
   });
 }

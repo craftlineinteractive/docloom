@@ -19,12 +19,13 @@ enum CaptureMode {
         CaptureMode.ocr => 'OCR Text',
       };
 
-  bool get visible => this != CaptureMode.ocr;
+  bool get visible => true;
 
   bool get hasPopup =>
       this == CaptureMode.photo ||
       this == CaptureMode.idCard ||
-      this == CaptureMode.book;
+      this == CaptureMode.book ||
+      this == CaptureMode.ocr;
 
   CropType get cropType =>
       this == CaptureMode.photo ? CropType.rect : CropType.quad;

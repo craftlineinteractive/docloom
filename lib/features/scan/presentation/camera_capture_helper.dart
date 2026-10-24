@@ -7,6 +7,7 @@ import '../domain/image_engine.dart';
 import '../domain/scan_session.dart';
 import 'flows/document_capture_flow.dart';
 import 'flows/id_card_capture_flow.dart';
+import 'flows/ocr_capture_flow.dart';
 import 'flows/signature_capture_flow.dart';
 
 abstract final class CameraCaptureHelper {
@@ -32,6 +33,18 @@ abstract final class CameraCaptureHelper {
 
     if (mode == CaptureMode.idCard) {
       return IdCardCaptureFlow.run(
+        context: context,
+        ref: ref,
+        camera: camera,
+        engine: engine,
+        sessionId: sessionId,
+        onCaptured: onCaptured,
+        pageIndicator: pageIndicator,
+      );
+    }
+
+    if (mode == CaptureMode.ocr) {
+      return OcrCaptureFlow.run(
         context: context,
         ref: ref,
         camera: camera,

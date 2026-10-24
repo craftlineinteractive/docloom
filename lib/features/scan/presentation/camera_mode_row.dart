@@ -5,6 +5,7 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../application/capture_mode_provider.dart';
 import '../domain/capture_mode.dart';
+import '../../ocr/presentation/ocr_language_picker_sheet.dart';
 import 'widgets/book_popup_dialog.dart';
 import 'widgets/id_card_popup_dialog.dart';
 import 'widgets/photo_size_popup_dialog.dart';
@@ -23,6 +24,9 @@ class CameraModeRow extends ConsumerWidget {
         break;
       case CaptureMode.book:
         await BookPopupDialog.show(context);
+        break;
+      case CaptureMode.ocr:
+        await OcrLanguagePickerSheet.show(context);
         break;
       default:
         break;

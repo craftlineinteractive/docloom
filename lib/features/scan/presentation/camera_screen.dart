@@ -28,6 +28,7 @@ class CameraScreen extends ConsumerStatefulWidget {
 
 class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBindingObserver {
   CameraPermissionState _perm = CameraPermissionState.notDetermined;
+  bool _isCheckingPerm = true;
   bool _isInit = false, _hasErr = false, _isCap = false, _grid = false;
   Offset? _focusPos;
   CameraLens _lens = CameraLens.back;
@@ -56,8 +57,11 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     }
   }
 
-  Future<void> _checkPermission() async =>
-      _setPermission(await ref.read(cameraPermissionServiceProvider).checkStatus());
+  Future<void> _checkPermission() async {
+    final status = await ref.read(cameraPermissionServiceProvider).checkStatus();
+    if (mounted) setState(() => _isCheckingPerm = false);
+    _setPermission(status);
+  }
 
   Future<void> _requestPermission() async =>
       _setPermission(await ref.read(cameraPermissionServiceProvider).requestPermission());
@@ -126,6 +130,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   Widget build(BuildContext context) => _CameraScreenHelper.buildRoot(
     state: this,
     stateView: _CameraScreenHelper.buildStateView(
+      isCheckingPerm: _isCheckingPerm,
       perm: _perm,
       hasErr: _hasErr,
       onRequestPerm: _requestPermission,
