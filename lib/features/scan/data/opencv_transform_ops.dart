@@ -1,31 +1,25 @@
-// Read dartcv4/lib/src/imgproc/imgproc.dart and dartcv4/lib/src/core/core.dart
-import 'dart:math' as math;
 import 'dart:ui';
 import 'package:opencv_dart/opencv_dart.dart' as cv;
+import '../domain/perspective_aspect_helper.dart';
 import '../domain/quad.dart';
 import 'filter_recipes.dart';
 
 abstract final class OpencvTransformOps {
   static cv.Mat warpAndRotate(cv.Mat src, Quad quad, int rotation) {
-    final w = src.width;
-    final h = src.height;
-    final tl = Offset(quad.topLeft.dx * w, quad.topLeft.dy * h);
-    final tr = Offset(quad.topRight.dx * w, quad.topRight.dy * h);
-    final br = Offset(quad.bottomRight.dx * w, quad.bottomRight.dy * h);
-    final bl = Offset(quad.bottomLeft.dx * w, quad.bottomLeft.dy * h);
-
-    double dist(Offset a, Offset b) => math.sqrt(
-          (a.dx - b.dx) * (a.dx - b.dx) + (a.dy - b.dy) * (a.dy - b.dy),
-        );
-
-    final outW = math.max(1, math.max(dist(tl, tr), dist(bl, br)).round());
-    final outH = math.max(1, math.max(dist(tl, bl), dist(tr, br)).round());
+    final imageSize = Size(src.width.toDouble(), src.height.toDouble());
+    final pixelQuad = quad.toPixels(imageSize);
+    final outputSize = PerspectiveAspectHelper.recoverOutputDimensions(
+      pixelQuad: pixelQuad,
+      imageSize: imageSize,
+    );
+    final outW = outputSize.width.round();
+    final outH = outputSize.height.round();
 
     final srcPts = cv.VecPoint2f.fromList([
-      cv.Point2f(tl.dx, tl.dy),
-      cv.Point2f(tr.dx, tr.dy),
-      cv.Point2f(br.dx, br.dy),
-      cv.Point2f(bl.dx, bl.dy),
+      cv.Point2f(pixelQuad.topLeft.dx, pixelQuad.topLeft.dy),
+      cv.Point2f(pixelQuad.topRight.dx, pixelQuad.topRight.dy),
+      cv.Point2f(pixelQuad.bottomRight.dx, pixelQuad.bottomRight.dy),
+      cv.Point2f(pixelQuad.bottomLeft.dx, pixelQuad.bottomLeft.dy),
     ]);
     final dstPts = cv.VecPoint2f.fromList([
       cv.Point2f(0, 0),

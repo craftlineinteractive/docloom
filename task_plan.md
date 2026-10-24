@@ -1,154 +1,113 @@
-# Task Plan: docLoom Phase 2A (Database Foundation Only)
+# Task Plan: Block 4N - Scanner Fix Pack
 
-**Goal:** Implement SQLite database foundation, schema v1, core domain models, utilities (clock, id generator, exceptions), and full FFI-based integration & domain unit tests for docLoom.
+## Overview
+Comprehensive 8-stage scanner fix pack addressing crop geometry, auto edge detection, sharpness & filters, adjust screen, camera mode tabs, back dialog, retake flow & filter thumbnails, and empty home state.
 
-## Status Summary
-- **Current Phase:** Phase 2A - Database Foundation Only
-- **Status:** In Progress
+## Stages & Status
 
----
+- [ ] **Stage 1: Crop Geometry ("result is longer than my edges")**
+  - Report first (trace image, paste table: camera photo WxH/EXIF, importCapture, preview file, widget box, letterbox rect, normalized quad, quad in pixels, renderPage output WxH; file renderPage reads; code computing output size).
+  - Fix:
+    - (a) Preview aspect matches importCapture (error < 0.5%), assert in `makePreview` + test.
+    - (b) Output size from edge lengths in PIXELS via `quad.toPixels(imageSize)`, never normalized values.
+    - (c) Widget-to-image mapping subtracts letterbox offset, uses displayed rect after rotation, tests for tall, wide, rotated-90.
+    - (d) `renderPage` reads full-resolution file.
+    - (e) Perspective aspect recovery (Zhang & He) if tilted fixtures have aspect error > 3%.
+  - Tests: OpenCV synthetic page aspect 210:297 warped with known quad at 0, 20, 40 deg: aspect within 2%, corners within 1%. CropEditor drag round trip < 1 px.
+  - Expected files:
+    - `lib/features/scan/domain/image_engine.dart`
+    - `lib/features/scan/data/opencv_isolate_ops.dart`
+    - `lib/features/scan/data/opencv_transform_ops.dart`
+    - `lib/features/scan/presentation/adjust/adjust_screen.dart`
+    - `lib/features/scan/presentation/adjust/crop_editor.dart`
+    - `lib/features/scan/presentation/adjust/crop_editor_painter.dart`
+    - `lib/features/scan/domain/quad.dart`
+    - `test/features/scan/data/opencv_crop_geometry_test.dart`
 
-## Planned File List (Create Only These)
+- [ ] **Stage 2: Auto Edge Detection**
+  - Baseline evaluation on `test/fixtures/documents/` (file, IoU, corner error, NULL).
+  - Debug tooling: `/dev/edge-debug` screen with tabs (gray, blurred, edges, threshold mask, candidates with score/rejection, final quad; export PNGs button).
+  - Verification of EXIF orientation, live frame Y plane rotation & row stride, quad ordering.
+  - Multi-iteration algorithm refinement (Canny median, Otsu/adaptive, background distance, saturation; convex hull / approxPolyDP / minAreaRect; scoring function; isolate execution).
+  - Acceptance: Mean IoU >= 0.90, no fixture < 0.70, runtime < 400 ms.
+  - Expected files:
+    - `lib/features/scan/data/opencv_edge_detector.dart`
+    - `lib/features/scan/presentation/adjust/adjust_screen.dart`
+    - `lib/features/dev/presentation/edge_debug_screen.dart`
+    - `lib/core/routing/app_router.dart`
+    - `test/features/scan/data/opencv_edge_detector_test.dart`
 
-### 1. Packages
-- Direct: `sqflite`, `path_provider`, `path`, `uuid`
-- Dev: `sqflite_common_ffi`
+- [ ] **Stage 3: Sharpness and Filters**
+  - Measurement table on real fixture (photo size, ResolutionPreset, importCapture size, warp output size, re-encodes, jpegQuality, Laplacian variance).
+  - Fixes:
+    - (a) `ResolutionPreset.max` for stills; scanQuality caps long side (2000, 3000, 4000).
+    - (b) Focus settle / wait before capture; skip during motion if accelerometer available.
+    - (c) Single pipeline: normalized capture -> warp (INTER_CUBIC / LANCZOS4) -> rotation -> filter -> single JPEG encode at quality 95.
+    - (d) Output size from quad in source pixels.
+    - (e) Filters: `auto_enhance`, `vivid_light`, `black_white`, `grayscale`, `original`.
+    - (f) Previews/thumbnails use same recipes.
+  - Tests: Laplacian variance >= 1.3x plain warp, background median >= 235, shadow gap shrink >= 70%, text pixel <= 90, vivid_light chroma +10-40%, black_white 0/255. Contact sheet tool in `build/filter_report/`. Runtime < 2s for 12MP page.
+  - Expected files:
+    - `lib/features/scan/domain/camera_service.dart`
+    - `lib/features/scan/data/flutter_camera_service.dart`
+    - `lib/features/scan/domain/scan_quality.dart`
+    - `lib/features/scan/data/filter_recipes.dart`
+    - `lib/features/scan/data/opencv_transform_ops.dart`
+    - `lib/features/scan/data/opencv_isolate_ops.dart`
+    - `test/features/scan/data/filter_recipes_test.dart`
+    - `test/features/scan/data/filter_contact_sheet_test.dart`
 
-### 2. Core Utilities & Errors (`lib/core/`)
-- `lib/core/errors/app_exception.dart`
-  - `class AppException implements Exception { final String message; }`
-  - `class NotFoundException extends AppException`
-  - `class ValidationException extends AppException`
-- `lib/core/time/clock.dart`
-  - `typedef Clock = DateTime Function();`
-  - `DateTime systemClock() => DateTime.now().toUtc();`
-- `lib/core/ids/id_generator.dart`
-  - `typedef IdGenerator = String Function();`
-  - `String newId() => const Uuid().v4();`
+- [ ] **>>> STOP POINT AFTER STAGE 3: Paste results and await "continue" <<<**
 
-### 3. Database & Schema (`lib/core/db/`)
-- `lib/core/db/schema.dart`
-  - Exact SQL statements (3 tables: folders, documents, pages; 4 indexes) as `const List<String> schemaV1`
-- `lib/core/db/app_database.dart`
-  - `class AppDatabase` with `final Database db`, `static const version = 1`
-  - `static Future<AppDatabase> open({required DatabaseFactory factory, required String path})`
-  - `Future<void> close()`
-  - `onConfigure`: PRAGMA foreign_keys = ON
-  - `onCreate`: executes all statements in `schemaV1`
-  - `onUpgrade`: throws `UnsupportedError` with migration explanation
+- [ ] **Stage 4: Adjust Screen**
+  - Show unfiltered original capture; remove live filter preview & row.
+  - Review's Crop tool opens original capture with page's saved quad.
+  - Image box horizontal padding `AppSpacing.xl`, vertical padding token. 48dp hit areas.
+  - Magnifier: 1 circular loupe (120 px, single 2px indigo ring, zoom ~2.5, centered "+" crosshair). Displays opposite to dragged corner side.
+  - Expected files:
+    - `lib/core/theme/app_spacing.dart`
+    - `lib/features/scan/presentation/adjust/adjust_screen.dart`
+    - `lib/features/scan/presentation/adjust/crop_editor.dart`
+    - `lib/features/scan/presentation/adjust/adjust_magnifier.dart`
+    - `lib/features/scan/presentation/review/review_screen.dart`
+    - `test/features/scan/presentation/adjust_screen_test.dart`
 
-### 4. Domain Models (`lib/features/.../domain/`)
-- `lib/features/folders/domain/folder.dart`
-  - Immutable, const constructor, `fromMap`/`toMap`, `copyWith`, `withDeletedAt(DateTime?)`
-- `lib/features/folders/domain/folder_summary.dart`
-  - Immutable, const constructor, `folder`, `itemCount`
-- `lib/features/documents/domain/document.dart`
-  - Immutable, const constructor, `fromMap`/`toMap`, `copyWith`
-  - Explicit mutators: `withDeletedAt(DateTime?)`, `withFolderId(String?)`, `withNote(String?)`
-- `lib/features/documents/domain/scan_page.dart`
-  - Immutable, const constructor, `fromMap`/`toMap`, `copyWith`, `withEditedPath(String?)`
-  - Getter: `displayPath => editedPath ?? originalPath`
-- `lib/features/documents/domain/document_summary.dart`
-  - Immutable, const constructor, `document`, `pageCount`, `coverPath?`
-- `lib/features/documents/domain/new_page.dart`
-  - Immutable, const constructor: `id`, `originalPath`
-- `lib/features/documents/domain/document_sort.dart`
-  - `enum DocumentSort { modifiedDesc, modifiedAsc, nameAsc, nameDesc }`
+- [ ] **Stage 5: Camera Mode Tabs**
+  - Animate row on tab selection to center selected tab (ScrollController.animateTo ~250ms easeOut). Underline stays with selected tab.
+  - Expected files:
+    - `lib/features/scan/presentation/camera_mode_row.dart`
+    - `test/features/scan/presentation/camera_mode_row_test.dart`
 
-### 5. Tests (`test/core/db/` & `test/features/.../domain/`)
-- `test/core/db/app_database_test.dart`
-  - `sqfliteFfiInit()` and `databaseFactoryFfi` with `inMemoryDatabasePath`
-  - Tables & indexes exist check (`sqlite_master`)
-  - `PRAGMA foreign_keys` returns 1
-  - Foreign key constraint failure on non-existent document page insert
-  - Cascade deletion: deleting document deletes related pages
-- `test/features/folders/domain/folder_test.dart`
-  - `toMap`/`fromMap` round-trip
-  - `withDeletedAt(null)` clears value
-- `test/features/documents/domain/document_test.dart`
-  - `toMap`/`fromMap` round-trip (including nulls, `isFavorite` bool to 0/1)
-  - `withDeletedAt(null)`, `withFolderId(null)`, `withNote(null)`
-- `test/features/documents/domain/scan_page_test.dart`
-  - `toMap`/`fromMap` round-trip
-  - `displayPath` getter behavior
-  - `withEditedPath(null)`
-- `test/features/documents/domain/document_summary_test.dart`
-  - Verification of summary objects
+- [ ] **Stage 6: Back Dialog**
+  - Dialog "Exit scanning?", body "N pages scanned.", exactly two buttons: "Save and Exit" (filled indigo) and "Discard" (red).
+  - Save and Exit renders/saves all pages -> Home. Discard deletes session -> Home. Dismiss on outside tap / gesture. Zero pages leaves without dialog.
+  - Expected files:
+    - `lib/features/scan/presentation/review/review_dialogs.dart`
+    - `lib/features/scan/presentation/camera_screen_helper.dart`
+    - `lib/features/scan/presentation/adjust/adjust_screen.dart`
+    - `lib/features/scan/presentation/review/review_screen.dart`
+    - `test/features/scan/presentation/camera_back_dialog_test.dart`
 
----
+- [ ] **Stage 7: Retake Flow and Review Filter Thumbnails**
+  - Retake from Review opens camera -> capture -> Continue returns to camera with session intact and updated thumbnail. Cancel keeps old page.
+  - Review Color tool shows 72px 12px radius filter thumbnails rendered from current crop & rotation with LRU cache.
+  - Expected files:
+    - `lib/features/scan/presentation/camera_screen.dart`
+    - `lib/features/scan/presentation/flows/document_capture_flow.dart`
+    - `lib/features/scan/presentation/review/review_screen.dart`
+    - `lib/features/scan/presentation/review/review_filter_row.dart`
+    - `lib/features/scan/application/scan_session_provider.dart`
+    - `test/features/scan/presentation/review_retake_flow_test.dart`
 
-## Step-by-Step Execution Plan
-- [x] Step 1: Add dependencies via `flutter pub add` <!-- id: 50 -->
-- [x] Step 2: Implement core errors and utilities (`app_exception.dart`, `clock.dart`, `id_generator.dart`) <!-- id: 51 -->
-- [x] Step 3: Implement database schema (`schema.dart`) <!-- id: 52 -->
-- [x] Step 4: Implement domain models (`folder.dart`, `folder_summary.dart`, `document.dart`, `scan_page.dart`, `document_summary.dart`, `new_page.dart`, `document_sort.dart`) <!-- id: 53 -->
-- [x] Step 5: Implement `AppDatabase` (`app_database.dart`) <!-- id: 54 -->
-- [x] Step 6: Implement database FFI tests and model unit tests <!-- id: 55 -->
-- [x] Step 7: Verify all files <= 150 lines, no magic numbers, run `flutter analyze` and `flutter test` <!-- id: 56 -->
+- [ ] **Stage 8: Empty Home**
+  - Matches `mocups/home_empty` exactly when no folders & no documents.
+  - App bar (search, three-dots), centered illustration, title "Scan your first document", subtitle, hint rows, FabPill. No "Folders (0)" or "Documents (0)".
+  - Expected files:
+    - `lib/features/home/presentation/home_screen.dart`
+    - `lib/features/home/presentation/widgets/home_empty_view.dart`
+    - `test/features/home/presentation/home_screen_test.dart`
 
----
-
-## Phase 2C: File Storage + Trash Service + Providers + Startup + Debug Check Screen
-
-### Planned Files
-1. `lib/core/constants/app_config.dart`
-   - `trashRetention = Duration(days: 30)`
-2. `lib/core/storage/document_file_store.dart`
-   - `DocumentFileStore(Directory root)`
-   - `importOriginal`, `writeEdited`, `resolve`, `deletePageFiles`, `deleteDocumentDir`, `documentSizeBytes`, `countFiles`
-3. `lib/features/trash/application/trash_service.dart`
-   - `TrashService(TrashRepository trash, DocumentFileStore files, {Clock clock = systemClock})`
-   - `purgeExpired`, `deleteDocumentForever`, `deleteFolderForever`, `emptyTrash`
-4. `lib/core/providers/app_providers.dart`
-   - Riverpod 3 providers: `appDatabaseProvider`, `fileStoreProvider`, `clockProvider`, `idGeneratorProvider`, `folderRepositoryProvider`, `documentRepositoryProvider`, `trashRepositoryProvider`, `trashServiceProvider`
-5. `lib/app/bootstrap.dart` & `lib/main.dart`
-   - `bootstrap()`: opens DB, configures `DocumentFileStore`, returns overrides
-   - `main.dart`: initializes widgets, awaits `bootstrap()`, runs `DocLoomApp`, runs `trashService.purgeExpired()` post-first-frame inside try/catch
-6. `lib/features/dev/db_check_screen.dart` & widgets
-   - Route `/dev/db-check` (only when `kDebugMode`)
-   - Link button in `ComponentGalleryScreen`
-   - `db_check_screen.dart`, `db_check_action_buttons.dart`, `db_check_stats_card.dart`
-7. Tests
-   - `test/core/storage/document_file_store_test.dart`
-   - `test/integration/storage_lifecycle_test.dart`
-   - `test/core/providers/app_providers_test.dart`
-   - Fix `test/app_smoke_test.dart` with in-memory overrides
-
-### Execution Checklist
-- [x] Task 1: Create `AppConfig` with `trashRetention` <!-- id: 63 -->
-- [x] Task 2: Implement `DocumentFileStore` with path traversal rejection and relative forward-slash paths <!-- id: 64 -->
-- [x] Task 3: Implement `TrashService` calling repository first, then deleting file directories <!-- id: 65 -->
-- [x] Task 4: Implement Riverpod 3 `app_providers.dart` <!-- id: 66 -->
-- [x] Task 5: Implement `bootstrap.dart`, update `main.dart`, and update `app_smoke_test.dart` <!-- id: 67 -->
-- [x] Task 6: Implement `/dev/db-check` screen and link from `ComponentGalleryScreen` (all files <= 150 lines) <!-- id: 68 -->
-- [x] Task 7: Create unit and integration tests (file store, trash service lifecycle with fake clock, provider wiring) <!-- id: 69 -->
-- [x] Task 8: Verify line limits, `flutter analyze`, `flutter test`, and real device verification <!-- id: 70 -->
-
----
-
-## ARCHITECTURAL MEMORY & CORE PRINCIPLES (Phase 4 Scanner & Viewers)
-
-1. **Camera UI & Edge Detection Modes**:
-   - Camera UI matches mockup (black top bar with back, flash popover, grid rule-of-thirds, flip lens, settings; 4:3 viewfinder; single "Document" mode tab; bottom row with 72px shutter).
-   - **Manual Scan**: Shutter triggers capture; after capturing, edges auto-adjust to document boundaries (via image engine / OpenCV edge detection) and move to crop/adjust screen.
-   - **Auto Scan**: Live edge detection overlay directly on the camera preview viewfinder; highlights detected corners/quad live and automatically clicks/triggers capture once stable.
-
-2. **Two Types of Document Viewers**:
-   - **In-between Scanner Viewer (`review_scan`)**: Immediate post-scan viewer with normal/quick workflow tools (page thumbnail strip, reorder/delete/retake page, add page, quick filter, adjust edges, confirm & save).
-   - **Detailed Viewer (`viewer`)**: Full comprehensive viewer for any-time viewing from library/documents (OCR text extraction/view, export to PDF/Images, annotations/signature, share, document info/metadata, full editing suite).
-
----
-
-## Phase 4C: Camera Screen (Single Page Capture)
-
-### Goals
-- Install `camera: ^0.12.1` and `permission_handler: ^13.0.2`
-- Implement `CameraService` interface and `PluginCameraService` + `FakeCameraService`
-- Android setup (permissions + minSdk 24)
-- Screen `/scan/camera` with top bar, 4:3 preview, mode row ("Document"), 72px shutter, flash popover, rule-of-thirds grid, flip lens, tap-to-focus ring
-- Permission handling with `EmptyState` + `AppButton`
-- Lifecycle management (pause/resume, dispose, retry view on failure, double-tap prevention)
-- Capture integration with `OpenCvImageEngine`
-- Tests for all states and fake camera interactions
-
-
+## Final Deliverable Checklist
+- Per-stage git commit: "4N stage X: ..."
+- `flutter analyze` and `flutter test` outputs after each stage
+- Final report with commit list, test counts, stages 1-3 tables, mockup folders opened/missing, NOT VERIFIED items.

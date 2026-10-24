@@ -13,26 +13,20 @@ class OpencvIsolateOps {
   static void _writeJpeg(String dstPath, cv.Mat mat, int quality) {
     final parent = File(dstPath).parent;
     if (!parent.existsSync()) parent.createSync(recursive: true);
-
     final params = cv.VecI32.fromList([cv.IMWRITE_JPEG_QUALITY, quality]);
     try {
-      final ok = cv.imwrite(dstPath, mat, params: params);
-      if (!ok) throw StateError('Failed to write image to $dstPath');
+      if (!cv.imwrite(dstPath, mat, params: params)) throw StateError('Failed to write image to $dstPath');
     } finally {
       params.dispose();
     }
   }
 
   static cv.Mat _downscaleIfNeeded(cv.Mat current, int maxSide) {
-    final w = current.width;
-    final h = current.height;
+    final w = current.width, h = current.height;
     final longest = math.max(w, h);
     if (longest <= maxSide) return current;
-
     final scale = maxSide / longest;
-    final targetW = (w * scale).round();
-    final targetH = (h * scale).round();
-    final resized = cv.resize(current, (targetW, targetH), interpolation: cv.INTER_AREA);
+    final resized = cv.resize(current, ((w * scale).round(), (h * scale).round()), interpolation: cv.INTER_AREA);
     current.dispose();
     return resized;
   }
@@ -61,9 +55,13 @@ class OpencvIsolateOps {
       throw ArgumentError('Failed to read image at $srcPath');
     }
 
+    final srcAspect = src.width / src.height;
     cv.Mat current = src;
     try {
       current = _downscaleIfNeeded(current, maxSide);
+      final prevAspect = current.width / current.height;
+      final aspectDiff = (prevAspect - srcAspect).abs() / srcAspect;
+      assert(aspectDiff < 0.005, 'Preview aspect ratio error exceeds 0.5%: $aspectDiff');
       _writeJpeg(dstPath, current, quality);
       return dstPath;
     } finally {

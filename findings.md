@@ -1,18 +1,18 @@
-# Findings & Context: docLoom Phase 1A
+# Findings & Discovery Log: Block 4N Scanner Fix Pack
 
-## Project Overview
-- App: docLoom (Android document scanner app in Flutter)
-- Target: Phase 1A = Setup + Theme + App Shell Only
-- SDK: Dart ^3.12.2 / Flutter latest
+## Mockups Checked
+- `mocups/MOCKUPS.md`: Read and verified.
+- `mocups/adjust/*`: `adjust_crop_detail`, `adjust_default`, `adjust_filter_sheet` present.
+- `mocups/camera/camera_settings`: Present (`code.html`, `screen.png`).
+- `mocups/review_scan`: Present (`code.html`, `screen.png`).
+- `mocups/home_empty`: Present (`code.html`, `screen.png`).
+- Missing folders: None.
 
-## Discoveries & Existing Assets
-- `assets/fonts/Inter-Regular.ttf`, `Inter-Medium.ttf`, `Inter-SemiBold.ttf` are already present in `assets/fonts/`.
-- Pubspec already has `cupertino_icons` and standard dev_dependencies.
-- Connected test device: Android `KB2005` (Android 14 API 34), Windows desktop, Chrome, Edge.
+## Architecture & Codebase Baseline
+- Riverpod 3 (no code generation).
+- All files must remain < 150 lines.
+- Tokens in `lib/core/theme/` are source of truth.
+- OpenCV via `dartcv4` (`opencv_dart`).
 
-## Rules & Constraints
-1. No hex colors, magic numbers, or inline TextStyles outside `lib/core/theme`.
-2. No file over 150 lines.
-3. Strict API correctness: no invented APIs.
-4. No work on subsequent phases (no camera, no database, no complex screens).
-5. Must run `flutter analyze` and report real output.
+## Stage-specific Findings
+*(To be populated as each stage investigates)*
