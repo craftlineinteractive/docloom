@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import '../../../core/widgets/app_progress_dialog.dart';
 import '../application/camera_settings_provider.dart';
+import '../application/scanner_controller_provider.dart';
 import '../data/opencv_image_engine.dart';
+import '../domain/package_quad_adapter.dart';
 import '../domain/scan_gateway.dart';
 import '../domain/scan_session.dart';
 import '../domain/scanned_page.dart';
@@ -18,6 +20,7 @@ abstract final class ScanFinishCoordinator {
     if (session.pages.isEmpty) return null;
 
     final engine = ref.read(engineProvider);
+    final controller = ref.read(betterScannerControllerProvider);
     final maxSide = ref.read(cameraSettingsProvider).scanQuality.maxOutputLongSide;
     final total = session.pages.length;
     final messageNotifier = ValueNotifier<String>('Preparing page 1 of $total');
@@ -33,6 +36,18 @@ abstract final class ScanFinishCoordinator {
           for (var i = 0; i < total; i++) {
             messageNotifier.value = 'Preparing page ${i + 1} of $total';
             final page = session.pages[i];
+            if (page.packagePage != null) {
+              final orig = controller?.originalPath(page.packagePage!) ?? page.capturePath;
+              final edited = controller?.pagePath(page.packagePage!) ?? orig;
+              result.add(ScannedPage(
+                originalPath: orig,
+                editedPath: edited,
+                filterId: page.packagePage!.enhancement.name,
+                rotation: (page.packagePage!.rotationQuarterTurns * 90) % 360,
+                cropJson: jsonEncode(page.quad.clamp01().toJson(type: page.cropType.name)),
+              ));
+              continue;
+            }
             final outPath = p.join(sessionDir.path, 'rendered_${page.id}.jpg');
             await engine.renderPage(
               srcPath: page.capturePath,

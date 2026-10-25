@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_better_scanner/flutter_better_scanner.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_config.dart';
 import '../../../core/widgets/app_toast.dart';
@@ -15,6 +16,7 @@ abstract final class CameraCaptureCoordinator {
     required int? retakePageIndex,
     required VoidCallback onStart,
     required VoidCallback onEnd,
+    ScannerController? scannerController,
   }) async {
     onStart();
     final session = ref.read(scanSessionProvider);
@@ -30,6 +32,7 @@ abstract final class CameraCaptureCoordinator {
         sessionId: session.id,
         pageIndicator: indicator,
         onCaptured: onEnd,
+        scannerController: scannerController,
       );
       if (pages != null && pages.isNotEmpty && context.mounted) {
         if (retakePageIndex != null) {

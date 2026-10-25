@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../application/photo_size_providers.dart';
 import '../../data/opencv_image_engine.dart';
 import '../../domain/capture_mode.dart';
 import '../../domain/scan_session.dart';
-import '../adjust/adjust_result.dart';
-import '../adjust/adjust_screen.dart';
 import '../camera_screen.dart';
 import 'arrange_screen.dart';
+import 'review_actions_helper.dart';
 import 'review_bottom_bar.dart';
 import 'review_dialogs.dart';
 import 'review_page_view.dart';
@@ -42,34 +40,15 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
   }
 
   Future<void> _onCrop(ScanSession session) async {
-    final page = session.pages[_currentIndex];
-    final photoSize = page.photoSizeId != null
-        ? ref.read(photoSizesProvider.notifier).findSize(page.photoSizeId!)
-        : null;
-    final res = await Navigator.of(context).push<AdjustResult>(
-      MaterialPageRoute(
-        builder: (_) => AdjustScreen(
-          previewPath: page.previewPath, importedPath: page.capturePath,
-          rawCapturePath: page.capturePath, initialQuad: page.quad,
-          initialRotation: page.rotation, initialFilterId: page.filterId,
-          pageIndicator: '${_currentIndex + 1}/${session.pages.length}',
-          mode: page.mode, photoSize: photoSize,
-        ),
-      ),
+    await ReviewActionsHelper.cropPage(
+      context: context, ref: ref, session: session, currentIndex: _currentIndex,
     );
-    if (res != null && mounted) {
-      final n = ref.read(scanSessionProvider.notifier);
-      n.updateCrop(_currentIndex, res.quad);
-      n.setRotation(_currentIndex, res.rotation);
-      n.setFilter(_currentIndex, res.filterId);
-      setState(() {});
-    }
+    if (mounted) setState(() {});
   }
 
-  void _onRotate(ScanSession session) {
-    final p = session.pages[_currentIndex];
-    ref.read(scanSessionProvider.notifier).setRotation(_currentIndex, (p.rotation + 90) % 360);
-    setState(() {});
+  Future<void> _onRotate(ScanSession session) async {
+    await ReviewActionsHelper.rotatePage(ref: ref, session: session, currentIndex: _currentIndex);
+    if (mounted) setState(() {});
   }
 
   Future<void> _onRetake() async {
@@ -83,16 +62,12 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
   }
 
   Future<void> _onDelete(ScanSession session) async {
-    if (session.pages.length > 1) {
-      if (await ReviewDialogs.showDeletePageDialog(context, _currentIndex + 1) && mounted) {
-        ref.read(scanSessionProvider.notifier).removePage(_currentIndex);
-        final len = ref.read(scanSessionProvider).pages.length;
-        setState(() => _currentIndex = _currentIndex.clamp(0, len - 1));
-        if (_pageController.hasClients) _pageController.jumpToPage(_currentIndex);
-      }
-    } else if (await ReviewDialogs.showDiscardScanDialog(context, 1) && mounted) {
-      ref.read(scanSessionProvider.notifier).discard();
-      Navigator.of(context).pop();
+    final nextIdx = await ReviewActionsHelper.deletePage(
+      context: context, ref: ref, session: session, currentIndex: _currentIndex,
+    );
+    if (nextIdx != null && mounted) {
+      setState(() => _currentIndex = nextIdx);
+      if (_pageController.hasClients) _pageController.jumpToPage(_currentIndex);
     }
   }
 
@@ -134,8 +109,14 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
         isColorOpen: _isColorOpen,
         isCropVisible: page.mode != CaptureMode.idCard,
         selectedFilterId: page.filterId,
-        onSelectFilter: (fid) => setState(() => ref.read(scanSessionProvider.notifier).setFilter(_currentIndex, fid)),
-        onApplyToAll: () => setState(() => ref.read(scanSessionProvider.notifier).setFilterForAll(page.filterId)),
+        onSelectFilter: (fid) async {
+          await ReviewActionsHelper.selectFilter(ref: ref, session: session, currentIndex: _currentIndex, filterId: fid);
+          if (mounted) setState(() {});
+        },
+        onApplyToAll: () async {
+          await ReviewActionsHelper.applyFilterToAll(ref: ref, session: session, currentIndex: _currentIndex);
+          if (mounted) setState(() {});
+        },
         onCrop: () => _onCrop(session),
         onColor: () => setState(() => _isColorOpen = !_isColorOpen),
         onRotate: () => _onRotate(session),

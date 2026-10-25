@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_better_scanner/flutter_better_scanner.dart' show ScannerController;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../application/capture_mode_provider.dart';
 import '../domain/camera_service.dart';
@@ -19,6 +20,7 @@ abstract final class CameraCaptureHelper {
     required String sessionId,
     required VoidCallback onCaptured,
     String pageIndicator = '1/1',
+    ScannerController? scannerController,
   }) async {
     final mode = ref.read(captureModeProvider);
 
@@ -28,6 +30,7 @@ abstract final class CameraCaptureHelper {
         camera: camera,
         sessionId: sessionId,
         onCaptured: onCaptured,
+        scannerController: scannerController,
       );
     }
 
@@ -40,6 +43,7 @@ abstract final class CameraCaptureHelper {
         sessionId: sessionId,
         onCaptured: onCaptured,
         pageIndicator: pageIndicator,
+        scannerController: scannerController,
       );
     }
 
@@ -52,6 +56,7 @@ abstract final class CameraCaptureHelper {
         sessionId: sessionId,
         onCaptured: onCaptured,
         pageIndicator: pageIndicator,
+        scannerController: scannerController,
       );
     }
 
@@ -63,6 +68,7 @@ abstract final class CameraCaptureHelper {
       sessionId: sessionId,
       onCaptured: onCaptured,
       pageIndicator: pageIndicator,
+      scannerController: scannerController,
     );
   }
 }

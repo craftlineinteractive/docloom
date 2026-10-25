@@ -1,3 +1,4 @@
+import 'package:flutter_better_scanner/flutter_better_scanner.dart' show ScanPage;
 import 'capture_mode.dart';
 import 'crop_type.dart';
 import 'quad.dart';
@@ -13,6 +14,7 @@ class ScanSessionPage {
     this.mode = CaptureMode.document,
     this.photoSizeId,
     CropType? cropType,
+    this.packagePage,
   }) : cropType = cropType ??
             (mode == CaptureMode.photo ? CropType.rect : CropType.quad);
 
@@ -25,6 +27,7 @@ class ScanSessionPage {
   final CaptureMode mode;
   final String? photoSizeId;
   final CropType cropType;
+  final ScanPage? packagePage;
 
   ScanSessionPage copyWith({
     String? id,
@@ -36,6 +39,7 @@ class ScanSessionPage {
     CaptureMode? mode,
     String? photoSizeId,
     CropType? cropType,
+    ScanPage? packagePage,
   }) =>
       ScanSessionPage(
         id: id ?? this.id,
@@ -47,5 +51,6 @@ class ScanSessionPage {
         mode: mode ?? this.mode,
         photoSizeId: photoSizeId ?? this.photoSizeId,
         cropType: cropType ?? this.cropType,
+        packagePage: packagePage ?? this.packagePage,
       );
 }

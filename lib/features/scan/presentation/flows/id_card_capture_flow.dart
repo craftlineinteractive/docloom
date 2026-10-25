@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_better_scanner/flutter_better_scanner.dart' show ScannerController;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import '../../application/capture_mode_provider.dart';
@@ -20,10 +21,14 @@ abstract final class IdCardCaptureFlow {
     required String sessionId,
     required VoidCallback onCaptured,
     required String pageIndicator,
+    ScannerController? scannerController,
   }) async {
     final scanType = ref.read(idCardScanTypeProvider);
     final sessionDir = ScanSessionDirHelper.getSessionDir(sessionId)..createSync(recursive: true);
-    final rawPath = await camera.takePicture();
+    final rawPath = (scannerController != null && scannerController.isReady)
+        ? await scannerController.captureRaw()
+        : await camera.takePicture();
+    if (rawPath == null) return null;
     final ts = DateTime.now().millisecondsSinceEpoch;
     final importPath = p.join(sessionDir.path, 'id_cap_$ts.jpg');
     final previewPath = p.join(sessionDir.path, 'id_prev_$ts.jpg');

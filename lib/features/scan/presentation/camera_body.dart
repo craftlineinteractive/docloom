@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_better_scanner/flutter_better_scanner.dart' show ScannerController;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -30,6 +31,7 @@ class CameraBody extends ConsumerWidget {
     required this.onTapPreview,
     required this.onDismissFocus,
     required this.onCapture,
+    this.scannerController,
     this.leftSlot,
     this.rightSlot,
     this.isSettingsOpen = false,
@@ -40,6 +42,7 @@ class CameraBody extends ConsumerWidget {
 
   final Widget? leftSlot, rightSlot;
   final CameraService camera;
+  final ScannerController? scannerController;
   final bool isGridVisible;
   final Offset? focusPos;
   final bool isInitializing, isCapturing, isSettingsOpen;
@@ -70,6 +73,7 @@ class CameraBody extends ConsumerWidget {
             ),
             CameraViewfinder(
               camera: camera,
+              scannerController: scannerController,
               isGridVisible: isGridVisible,
               focusPos: focusPos,
               onTapPreview: onTapPreview,

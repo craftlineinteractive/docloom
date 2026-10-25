@@ -59,17 +59,11 @@ abstract final class FilterOpsHelper {
     for (int i = 0; i < 256; i++) {
       cumulative += counts[i];
       if (cumulative >= targetLow && p1 == 0) p1 = i;
-      if (cumulative >= targetHigh) {
-        p99 = i;
-        break;
-      }
+      if (cumulative >= targetHigh) { p99 = i; break; }
     }
 
-    final lutData = Uint8List(256);
     final range = math.max(1, p99 - p1);
-    for (int i = 0; i < 256; i++) {
-      lutData[i] = (((i - p1) * 255) / range).clamp(0, 255).round();
-    }
+    final lutData = Uint8List.fromList(List.generate(256, (i) => (((i - p1) * 255) / range).clamp(0, 255).round()));
     final lutMat = cv.Mat.fromList(1, 256, cv.MatType.CV_8UC1, lutData);
     try {
       return cv.LUT(src, lutMat);
@@ -139,16 +133,13 @@ abstract final class FilterOpsHelper {
     final boostedA = cv.LUT(labChannels[1], lutMatC);
     final boostedB = cv.LUT(labChannels[2], lutMatC);
     lutMatC.dispose();
-    labChannels[1].dispose();
-    labChannels[2].dispose();
+    for (final ch in labChannels) { ch.dispose(); }
     labChannels.dispose();
 
     final mergedLabVec = cv.VecMat.fromList([lMat, boostedA, boostedB]);
     final mergedLab = cv.merge(mergedLabVec);
     mergedLabVec.dispose();
-    lMat.dispose();
-    boostedA.dispose();
-    boostedB.dispose();
+    for (final m in [lMat, boostedA, boostedB]) { m.dispose(); }
 
     final bgr = cv.cvtColor(mergedLab, cv.COLOR_Lab2BGR);
     mergedLab.dispose();

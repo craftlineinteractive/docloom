@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../application/camera_settings_provider.dart';
 import '../application/scan_providers.dart';
+import '../application/scanner_controller_provider.dart';
 import '../domain/camera_permission_service.dart';
 import '../domain/camera_service.dart';
 import '../domain/scan_gateway.dart';
@@ -77,6 +78,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     try {
       final cam = ref.read(cameraServiceProvider);
       await cam.initialize(lens: _lens);
+      final sc = ref.read(betterScannerControllerProvider);
+      try { await sc?.initialize(); } catch (_) {}
       if (mounted) {
         setState(() => _isInit = false);
         CameraQrCoordinator.startIfActive(ref: ref, camera: cam);
@@ -92,17 +95,18 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
       context: context,
       ref: ref,
       camera: ref.read(cameraServiceProvider),
+      scannerController: ref.read(betterScannerControllerProvider),
       retakePageIndex: widget.retakePageIndex,
       onStart: () => mounted ? setState(() => _isCap = true) : null,
       onEnd: () => mounted ? setState(() => _isCap = false) : null,
     );
   }
 
-  void _onTapPreview(TapDownDetails d, Size size) {
+  void _onTapPreview(TapDownDetails d, Size s) {
     setState(() => _focusPos = d.localPosition);
-    final normX = (d.localPosition.dx / size.width).clamp(0.0, 1.0);
-    final normY = (d.localPosition.dy / size.height).clamp(0.0, 1.0);
-    ref.read(cameraServiceProvider).setFocusPoint(Offset(normX, normY));
+    ref.read(cameraServiceProvider).setFocusPoint(
+      Offset((d.localPosition.dx / s.width).clamp(0.0, 1.0), (d.localPosition.dy / s.height).clamp(0.0, 1.0)),
+    );
   }
 
   Future<void> _onBack() => _CameraScreenHelper.handleBack(context, ref, widget.retakePageIndex);
@@ -113,14 +117,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   }
 
   void _flip() {
+    ref.read(betterScannerControllerProvider)?.switchCamera();
     _lens = _lens == CameraLens.back ? CameraLens.front : CameraLens.back;
     _initCamera();
   }
-
-  void _toggleGrid() => setState(() => _grid = !_grid);
+  void _toggleGrid() { ref.read(betterScannerControllerProvider)?.toggleGrid(); setState(() => _grid = !_grid); }
   void _dismissFocus() => setState(() => _focusPos = null);
-
   void _onCycleFlash() {
+    ref.read(betterScannerControllerProvider)?.cycleFlashMode();
     final cam = ref.read(cameraServiceProvider);
     cam.setFlash(_CameraScreenHelper.nextFlash(cam.currentFlash));
     setState(() {});

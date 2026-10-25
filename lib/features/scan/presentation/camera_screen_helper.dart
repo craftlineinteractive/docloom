@@ -77,6 +77,7 @@ abstract final class _CameraScreenHelper {
 
     return CameraBody(
       camera: state.ref.read(cameraServiceProvider),
+      scannerController: state.ref.read(betterScannerControllerProvider),
       isGridVisible: state._grid,
       focusPos: state._focusPos,
       isInitializing: state._isInit,

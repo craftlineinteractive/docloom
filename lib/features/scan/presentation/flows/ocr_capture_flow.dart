@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_better_scanner/flutter_better_scanner.dart' show ScannerController;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import '../../../ocr/presentation/ocr_result_screen.dart';
@@ -18,8 +19,12 @@ abstract final class OcrCaptureFlow {
     required String sessionId,
     required VoidCallback onCaptured,
     required String pageIndicator,
+    ScannerController? scannerController,
   }) async {
-    final rawPath = await camera.takePicture();
+    final rawPath = (scannerController != null && scannerController.isReady)
+        ? await scannerController.captureRaw()
+        : await camera.takePicture();
+    if (rawPath == null) return null;
     final sessionDir = ScanSessionDirHelper.getSessionDir(sessionId)..createSync(recursive: true);
     final ts = DateTime.now().millisecondsSinceEpoch;
     final importPath = p.join(sessionDir.path, 'cap_$ts.jpg');

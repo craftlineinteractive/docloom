@@ -1,7 +1,7 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_radius.dart';
 import '../../domain/image_engine.dart';
 import '../../domain/scan_session_page.dart';
 
@@ -17,22 +17,23 @@ class ReviewPageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          border: Border.all(color: AppColors.divider),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.textPrimary.withValues(alpha: 0.08),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
+    final previewFile = File(page.previewPath);
+    if (page.packagePage != null && previewFile.existsSync()) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Image.file(
+            previewFile,
+            key: ValueKey('${page.id}_${page.rotation}_${page.filterId}_${previewFile.lastModifiedSync().millisecondsSinceEpoch}'),
+            fit: BoxFit.contain,
+          ),
         ),
-        clipBehavior: Clip.antiAlias,
+      );
+    }
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: FutureBuilder<Uint8List>(
           key: ValueKey('${page.id}_${page.rotation}_${page.filterId}_${page.quad.hashCode}'),
           future: engine.renderPreview(
@@ -62,8 +63,6 @@ class ReviewPageCard extends StatelessWidget {
             return Image.memory(
               snapshot.data!,
               fit: BoxFit.contain,
-              width: double.infinity,
-              height: double.infinity,
             );
           },
         ),

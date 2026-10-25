@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_better_scanner/flutter_better_scanner.dart';
 import 'package:path/path.dart' as p;
 import '../../data/signature_processor.dart';
 import '../../domain/camera_service.dart';
@@ -12,8 +13,12 @@ abstract final class SignatureCaptureFlow {
     required CameraService camera,
     required String sessionId,
     required VoidCallback onCaptured,
+    ScannerController? scannerController,
   }) async {
-    final rawPath = await camera.takePicture();
+    final rawPath = (scannerController != null && scannerController.isReady)
+        ? await scannerController.captureRaw()
+        : await camera.takePicture();
+    if (rawPath == null) return null;
     final sessionDir = ScanSessionDirHelper.getSessionDir(sessionId)
       ..createSync(recursive: true);
     final ts = DateTime.now().millisecondsSinceEpoch;
