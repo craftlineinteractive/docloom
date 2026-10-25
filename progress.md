@@ -1,18 +1,16 @@
-# Progress Log: Block 4N Scanner Fix Pack
+# Progress Log
 
-## Session Initialized
-- Date: 2026-10-24
-- Target: 8 Stages of Block 4N
-- Stopping Rule: After Stage 3, STOP and await "continue".
+## Current Status
+- Transitioned to 4-step migration task: replacing hand-written scanner engine with `flutter_better_scanner` (^1.0.2).
+- Currently on: **Step 0: ANALYSE (no code changes)**.
 
-## Stages Status
-| Stage | Status | Tests Passed | Git Commit |
-|---|---|---|---|
-| Stage 1: Crop Geometry | Pending | - | - |
-| Stage 2: Auto Edge Detection | Pending | - | - |
-| Stage 3: Sharpness & Filters | Pending | - | - |
-| Stage 4: Adjust Screen | Pending | - | - |
-| Stage 5: Camera Mode Tabs | Pending | - | - |
-| Stage 6: Back Dialog | Pending | - | - |
-| Stage 7: Retake & Thumbnails | Pending | - | - |
-| Stage 8: Empty Home | Pending | - | - |
+## Completed
+- Completed evaluation of `document_scan` (confirmed unsuitable due to 1s pure-Dart CPU warp, missing camera & UI widgets).
+- Connected phone KB2005 (Android 14) active and verified.
+- Git tree is clean.
+
+## Next Actions
+- Step 0: Find exact `file:line` causes for bugs (a)-(e) in DocLoom codebase.
+- Write `docs/analysis.md`.
+- Commit `Step 0: analysis of scanner bugs`.
+- Proceed to Step 1: Spike & STOP at gate.
