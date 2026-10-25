@@ -5,6 +5,7 @@ import '../../features/dev/component_gallery_screen.dart';
 import '../../features/dev/db_check_screen.dart';
 import '../../features/dev/dev_labeler_screen.dart';
 import '../../features/dev/edge_debug_screen.dart';
+import '../../features/dev/scanner_spike_screen.dart';
 import '../../features/folders/presentation/folder_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/scan/presentation/camera_screen.dart';
@@ -54,6 +55,11 @@ final appRouter = GoRouter(
       GoRoute(
         path: Routes.edgeDebug,
         builder: (context, state) => const EdgeDebugScreen(),
+      ),
+    if (kDebugMode)
+      GoRoute(
+        path: Routes.scannerSpike,
+        builder: (context, state) => const ScannerSpikeScreen(),
       ),
   ],
 );

@@ -8,4 +8,5 @@ abstract final class Routes {
   static const scanCamera = '/scan/camera';
   static const devLabeler = '/dev/labeler';
   static const edgeDebug = '/dev/edge-debug';
+  static const scannerSpike = '/dev/scanner-spike';
 }

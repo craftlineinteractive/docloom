@@ -43,6 +43,7 @@ dependencies:
   permission_handler: ^13.0.2
   zxing2: ^0.2.4
   url_launcher: ^6.3.3
+  flutter_better_scanner: ^1.0.2
   flutter_tesseract_ocr:
     path: packages/flutter_tesseract_ocr
 dev_dependencies:
@@ -73,6 +74,7 @@ flutter:
     - assets/tessdata_config.json
     - assets/tessdata/
     - test/fixtures/ocr/
+    - test/fixtures/documents/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
