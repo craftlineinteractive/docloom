@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:docloom/core/db/app_database.dart';
 import 'package:docloom/core/providers/app_providers.dart';
@@ -51,12 +50,15 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('Empty database shows Folders with create icon, Documents and FabPill', (tester) async {
+  testWidgets('Empty database shows empty state matching mocups/home_empty without section headers', (tester) async {
     await pumpHomeScreen(tester);
 
-    expect(find.textContaining('Folders'), findsOneWidget);
-    expect(find.byIcon(LucideIcons.folderPlus), findsOneWidget);
-    expect(find.textContaining('Documents'), findsOneWidget);
+    expect(find.text('Scan your first document'), findsOneWidget);
+    expect(find.textContaining('Convert paper documents'), findsOneWidget);
+    expect(find.text('Tap camera to scan'), findsOneWidget);
+    expect(find.text('Tap + to import files'), findsOneWidget);
+    expect(find.textContaining('Folders'), findsNothing);
+    expect(find.textContaining('Documents'), findsNothing);
     expect(find.byType(FabPill), findsOneWidget);
   });
 

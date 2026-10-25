@@ -39,7 +39,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('docLoom'), findsOneWidget);
-    expect(find.textContaining('Folders'), findsOneWidget);
-    expect(find.textContaining('Documents'), findsOneWidget);
+    expect(find.text('Scan your first document'), findsOneWidget);
+    expect(find.textContaining('Convert paper documents'), findsOneWidget);
+    expect(find.textContaining('Folders'), findsNothing);
+    expect(find.textContaining('Documents'), findsNothing);
   });
 }

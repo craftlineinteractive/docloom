@@ -86,11 +86,11 @@ void main() {
     await tester.tap(find.byKey(const Key('setting_tile_home_screen')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Discard this scan?'), findsOneWidget);
+    expect(find.text('Save or Discard?'), findsOneWidget);
 
-    await tester.tap(find.text('Keep'));
+    await tester.tapAt(const Offset(10, 10));
     await tester.pumpAndSettle();
-    expect(find.text('Discard this scan?'), findsNothing);
+    expect(find.text('Save or Discard?'), findsNothing);
     expect(container.read(scanSessionProvider).pages.isNotEmpty, isTrue);
 
     await tester.tap(find.byTooltip('Settings'));

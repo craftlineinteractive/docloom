@@ -6,7 +6,6 @@ import '../../../../core/constants/app_config.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../application/scan_providers.dart';
 import '../../data/opencv_edge_detector.dart';
-import '../../data/opencv_image_engine.dart';
 import '../../domain/aspect_crop_helper.dart';
 import '../../domain/capture_mode.dart';
 import '../../domain/photo_size.dart';
@@ -66,7 +65,6 @@ class _AdjustScreenState extends ConsumerState<AdjustScreen> {
     }
     _rotation = widget.initialRotation;
     _filterId = widget.initialFilterId ?? AppConfig.defaultFilterId;
-    _updatePreviewBytes(_filterId);
     if (widget.initialQuad == null && widget.mode.autoDetect) _autoDetect(isInitial: true);
   }
 
@@ -84,21 +82,13 @@ class _AdjustScreenState extends ConsumerState<AdjustScreen> {
   void _rotate() => setState(() { _rotation = (_rotation + 90) % 360; _quad = _quad.rotated90(); });
   void _reset() => setState(() => _quad = Quad.defaultInset());
 
-  Future<void> _updatePreviewBytes(String filterId) async {
-    setState(() => _filterId = filterId);
-    if (filterId == 'original') { if (mounted) setState(() => _previewBytes = null); return; }
-    try {
-      final b = await ref.read(engineProvider).renderPreview(
-            previewPath: widget.previewPath, quad: Quad.unit(), rotation: 0, filterId: filterId);
-      if (mounted) setState(() => _previewBytes = b);
-    } catch (_) {}
-  }
+  void _selectFilter(String filterId) => setState(() => _filterId = filterId);
 
   void _openFilterSheet() => showModalBottomSheet<void>(
         context: context, backgroundColor: Colors.transparent, isScrollControlled: true,
         builder: (_) => FilterBottomSheet(
           previewPath: widget.previewPath, quad: _quad, rotation: _rotation,
-          selectedFilterId: _filterId, onSelectFilter: _updatePreviewBytes,
+          selectedFilterId: _filterId, onSelectFilter: _selectFilter,
         ),
       );
 

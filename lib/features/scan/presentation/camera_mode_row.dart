@@ -10,11 +10,10 @@ import 'widgets/book_popup_dialog.dart';
 import 'widgets/id_card_popup_dialog.dart';
 import 'widgets/photo_size_popup_dialog.dart';
 
-class CameraModeRow extends ConsumerWidget {
+class CameraModeRow extends ConsumerStatefulWidget {
   const CameraModeRow({super.key});
 
-  static Future<void> showModePopup(
-      BuildContext context, CaptureMode mode) async {
+  static Future<void> showModePopup(BuildContext context, CaptureMode mode) async {
     switch (mode) {
       case CaptureMode.photo:
         await PhotoSizePopupDialog.show(context);
@@ -34,30 +33,69 @@ class CameraModeRow extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CameraModeRow> createState() => _CameraModeRowState();
+}
+
+class _CameraModeRowState extends ConsumerState<CameraModeRow> {
+  final _scrollController = ScrollController();
+  final Map<CaptureMode, GlobalKey> _itemKeys = {};
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToCenter(CaptureMode mode) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final itemContext = _itemKeys[mode]?.currentContext;
+      if (itemContext != null && mounted) {
+        Scrollable.ensureVisible(
+          itemContext,
+          alignment: 0.5,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final activeMode = ref.watch(captureModeProvider);
     final visibleModes = CaptureMode.values.where((m) => m.visible).toList();
+
+    for (final mode in visibleModes) {
+      _itemKeys.putIfAbsent(mode, GlobalKey.new);
+    }
+
+    ref.listen<CaptureMode>(captureModeProvider, (_, next) {
+      _scrollToCenter(next);
+    });
 
     return Container(
       height: 48,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
       child: Center(
         child: SingleChildScrollView(
+          controller: _scrollController,
           scrollDirection: Axis.horizontal,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: visibleModes.map((mode) {
               final isSelected = mode == activeMode;
               return Padding(
+                key: _itemKeys[mode],
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                 child: InkWell(
                   onTap: () {
+                    _scrollToCenter(mode);
                     if (isSelected && mode.hasPopup) {
-                      showModePopup(context, mode);
+                      CameraModeRow.showModePopup(context, mode);
                     } else {
                       ref.read(captureModeProvider.notifier).setMode(mode);
                       if (mode.hasPopup) {
-                        showModePopup(context, mode);
+                        CameraModeRow.showModePopup(context, mode);
                       }
                     }
                   },
@@ -81,11 +119,8 @@ class CameraModeRow extends ConsumerWidget {
                       mode.label,
                       style: TextStyle(
                         fontSize: 12,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w500,
-                        color: isSelected
-                            ? AppColors.textOnDark
-                            : AppColors.textOnDarkMuted,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        color: isSelected ? AppColors.textOnDark : AppColors.textOnDarkMuted,
                         letterSpacing: 0.3,
                       ),
                     ),

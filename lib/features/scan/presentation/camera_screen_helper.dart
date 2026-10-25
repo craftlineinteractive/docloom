@@ -49,12 +49,17 @@ abstract final class _CameraScreenHelper {
 
   static Future<void> exitScan(BuildContext context, WidgetRef ref) async {
     final s = ref.read(scanSessionProvider);
-    if (s.pages.isNotEmpty &&
-        await ReviewDialogs.showDiscardScanDialog(context, s.pages.length) &&
-        context.mounted) {
-      ref.read(scanSessionProvider.notifier).discard();
-      Navigator.of(context).pop(const ScanCancelled());
-    } else if (s.pages.isEmpty && context.mounted) {
+    if (s.pages.isNotEmpty) {
+      final act = await ReviewDialogs.showBackScanDialog(context, s.pages.length);
+      if (act == null || !context.mounted) return;
+      if (act == BackScanAction.saveAndExit) {
+        final success = await ScanFinishCoordinator.finish(context: context, ref: ref);
+        if (success != null && context.mounted) Navigator.of(context).pop(success);
+      } else {
+        ref.read(scanSessionProvider.notifier).discard();
+        Navigator.of(context).pop(const ScanCancelled());
+      }
+    } else if (context.mounted) {
       Navigator.of(context).pop(const ScanCancelled());
     }
   }

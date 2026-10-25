@@ -8,6 +8,7 @@ import 'package:docloom/core/db/app_database.dart';
 import 'package:docloom/core/providers/app_providers.dart';
 import 'package:docloom/core/providers/home_providers.dart';
 import 'package:docloom/core/storage/document_file_store.dart';
+import 'package:docloom/core/widgets/widgets.dart';
 import 'package:docloom/features/documents/data/sqlite_document_repository.dart';
 import 'package:docloom/features/documents/domain/new_page.dart';
 import 'package:docloom/features/home/presentation/home_screen.dart';
@@ -116,7 +117,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Failed to load'), findsNothing);
-    expect(find.textContaining('Folders'), findsOneWidget);
-    expect(find.textContaining('Documents'), findsOneWidget);
+    expect(find.text('Scan your first document'), findsOneWidget);
+    expect(find.byType(FabPill), findsOneWidget);
   });
 }

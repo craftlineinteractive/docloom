@@ -67,7 +67,7 @@ void main() {
     expect(find.text('1'), findsOneWidget);
   });
 
-  testWidgets('back confirmation dialog on non-empty session with Keep and Discard', (tester) async {
+  testWidgets('back confirmation dialog on non-empty session with Save and Exit and Discard', (tester) async {
     final camera = FakeCameraService();
     final permission = FakeCameraPermissionService();
     final container = ProviderContainer(
@@ -95,11 +95,11 @@ void main() {
     await tester.tap(find.byTooltip('Cancel'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Discard this scan?'), findsOneWidget);
-    expect(find.text('Keep'), findsOneWidget);
+    expect(find.text('Save or Discard?'), findsOneWidget);
+    expect(find.text('Save and Exit'), findsOneWidget);
     expect(find.text('Discard'), findsOneWidget);
 
-    await tester.tap(find.text('Keep'));
+    await tester.tapAt(const Offset(10, 10));
     await tester.pumpAndSettle();
 
     expect(find.byType(CameraScreen), findsOneWidget);

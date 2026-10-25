@@ -11,6 +11,7 @@ import 'widgets/document_list_sliver.dart';
 import 'widgets/document_move_sheet.dart';
 import 'widgets/folders_section_sliver.dart';
 import 'widgets/home_add_sheet.dart';
+import 'widgets/home_empty_state.dart';
 import 'widgets/home_overflow_menu.dart';
 import 'widgets/select_action_bar.dart';
 
@@ -88,12 +89,17 @@ class HomeScreen extends ConsumerWidget {
                 onCamera: () => ref.read(scanControllerProvider.notifier).startScan(context: context),
                 onAdd: () => HomeAddSheet.show(context),
               ),
-        body: CustomScrollView(
-          slivers: [
-            FoldersSectionSliver(folders: folders),
-            const DocumentListSliver(folderId: null),
-          ],
-        ),
+        body: (folders.isEmpty && docs.isEmpty)
+            ? HomeEmptyState(
+                onCamera: () => ref.read(scanControllerProvider.notifier).startScan(context: context),
+                onImport: () => HomeAddSheet.show(context),
+              )
+            : CustomScrollView(
+                slivers: [
+                  FoldersSectionSliver(folders: folders),
+                  const DocumentListSliver(folderId: null),
+                ],
+              ),
       ),
     );
   }

@@ -22,31 +22,33 @@ class ReviewPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
-        PageView.builder(
-          controller: controller,
-          itemCount: pages.length,
-          onPageChanged: onPageChanged,
-          itemBuilder: (ctx, i) => ReviewPageCard(
-            page: pages[i],
-            engine: engine,
+        Expanded(
+          child: PageView.builder(
+            controller: controller,
+            itemCount: pages.length,
+            onPageChanged: onPageChanged,
+            itemBuilder: (ctx, i) => ReviewPageCard(
+              page: pages[i],
+              engine: engine,
+            ),
           ),
         ),
-        Positioned(
-          bottom: 16,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: Container(
-              height: 28,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              decoration: BoxDecoration(
-                color: AppColors.textPrimary.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Center(
-                child: Text(
+        Padding(
+          padding: const EdgeInsets.only(top: 8, bottom: 12),
+          child: Container(
+            height: 28,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            decoration: BoxDecoration(
+              color: AppColors.textPrimary.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
                   '${currentIndex + 1} / ${pages.length}',
                   style: const TextStyle(
                     fontSize: 12,
@@ -54,7 +56,7 @@ class ReviewPageView extends StatelessWidget {
                     color: AppColors.textOnDark,
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

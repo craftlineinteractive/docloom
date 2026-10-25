@@ -18,9 +18,12 @@ class AdjustCropContainer extends StatelessWidget {
     return Expanded(
       child: ColoredBox(
         color: AppColors.cameraBlack,
-        child: RotatedBox(
-          quarterTurns: (rotation ~/ 90) % 4,
-          child: child,
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: RotatedBox(
+            quarterTurns: (rotation ~/ 90) % 4,
+            child: child,
+          ),
         ),
       ),
     );

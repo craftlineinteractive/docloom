@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/photo_size_providers.dart';
@@ -118,4 +119,26 @@ abstract final class ReviewActionsHelper {
     }
     return null;
   }
+
+  static Future<Map<String, Uint8List>> loadThumbnails({
+    required WidgetRef ref,
+    required ScanSessionPage page,
+  }) async {
+    final pkgPage = page.packagePage;
+    final sc = ref.read(betterScannerControllerProvider);
+    if (pkgPage == null || sc == null) return const {};
+    try {
+      final thumbs = await sc.renderEnhancementThumbnails(pkgPage, size: 220);
+      final map = <String, Uint8List>{};
+      if (thumbs.isNotEmpty) map['original'] = thumbs[0];
+      if (thumbs.length > 1) map['auto_enhance'] = thumbs[1];
+      if (thumbs.length > 2) map['vivid_light'] = thumbs[2];
+      if (thumbs.length > 3) map['black_white'] = thumbs[3];
+      if (thumbs.length > 4) map['grayscale'] = thumbs[4];
+      return map;
+    } catch (_) {
+      return const {};
+    }
+  }
 }
+

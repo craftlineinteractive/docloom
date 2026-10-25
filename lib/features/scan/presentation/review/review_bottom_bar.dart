@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'review_filter_row.dart';
 import 'review_toolbar.dart';
@@ -12,14 +13,19 @@ class ReviewBottomBar extends StatelessWidget {
     required this.onCrop,
     required this.onColor,
     required this.onRotate,
-    required this.onArrange, required this.onRetake, required this.onDelete, required this.onCheck,
+    required this.onArrange,
+    required this.onRetake,
+    required this.onDelete,
+    required this.onCheck,
     this.isCropVisible = true,
+    this.thumbnails = const {},
   });
 
   final bool isColorOpen, isCropVisible;
   final String selectedFilterId;
   final ValueChanged<String> onSelectFilter;
   final VoidCallback onApplyToAll, onCrop, onColor, onRotate, onArrange, onRetake, onDelete, onCheck;
+  final Map<String, Uint8List> thumbnails;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +38,7 @@ class ReviewBottomBar extends StatelessWidget {
               selectedFilterId: selectedFilterId,
               onSelectFilter: onSelectFilter,
               onApplyToAll: onApplyToAll,
+              thumbnails: thumbnails,
             ),
           ReviewToolbar(
             isColorActive: isColorOpen,
