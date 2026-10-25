@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import '../../../../core/widgets/app_progress_dialog.dart';
+import '../../application/camera_settings_provider.dart';
 import '../../application/capture_mode_provider.dart';
 import '../../data/opencv_image_engine.dart';
 import '../../domain/book_split_helper.dart';
@@ -28,6 +29,7 @@ class AdjustRenderHelper {
   }) async {
     final dir = Directory(importedPath).parent.path;
     final engine = ref.read(engineProvider);
+    final maxSide = ref.read(cameraSettingsProvider).scanQuality.maxOutputLongSide;
 
     if (mode == CaptureMode.photo && photoSize != null) {
       final pixels = photoSize.pixelSize;
@@ -64,6 +66,7 @@ class AdjustRenderHelper {
             rotation: rotation,
             filterId: filterId,
             dstPath: dst1,
+            maxSide: maxSide,
           );
           final p2 = await engine.renderPage(
             srcPath: importedPath,
@@ -71,6 +74,7 @@ class AdjustRenderHelper {
             rotation: rotation,
             filterId: filterId,
             dstPath: dst2,
+            maxSide: maxSide,
           );
           return [p1, p2];
         },
@@ -95,6 +99,7 @@ class AdjustRenderHelper {
         rotation: rotation,
         filterId: filterId,
         dstPath: dst,
+        maxSide: maxSide,
       ),
     );
     return AdjustResult(renderedPath: res, quad: quad, rotation: rotation, filterId: filterId);

@@ -37,7 +37,7 @@ Comprehensive 8-stage scanner fix pack addressing crop geometry, auto edge detec
     - `lib/core/routing/app_router.dart`
     - `test/features/scan/data/opencv_edge_detector_test.dart`
 
-- [ ] **Stage 3: Sharpness and Filters**
+- [x] **Stage 3: Sharpness and Filters**
   - Measurement table on real fixture (photo size, ResolutionPreset, importCapture size, warp output size, re-encodes, jpegQuality, Laplacian variance).
   - Fixes:
     - (a) `ResolutionPreset.max` for stills; scanQuality caps long side (2000, 3000, 4000).

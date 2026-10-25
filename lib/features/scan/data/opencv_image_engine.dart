@@ -49,6 +49,7 @@ class OpencvImageEngine implements ImageEngine {
     required int rotation,
     required String filterId,
     required String dstPath,
+    int? maxSide,
     int? targetWidth,
     int? targetHeight,
   }) {
@@ -60,6 +61,7 @@ class OpencvImageEngine implements ImageEngine {
           filterId: filterId,
           dstPath: dstPath,
           quality: AppConfig.jpegQuality,
+          maxSide: maxSide,
           targetWidth: targetWidth,
           targetHeight: targetHeight,
         ));

@@ -40,6 +40,7 @@ abstract interface class ImageEngine {
     required int rotation,
     required String filterId,
     required String dstPath,
+    int? maxSide,
     int? targetWidth,
     int? targetHeight,
   });

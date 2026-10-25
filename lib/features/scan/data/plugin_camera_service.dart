@@ -58,11 +58,7 @@ class PluginCameraService implements CameraService {
     _currentLens = PluginCameraMappers.mapLensDirection(selectedCam.lensDirection) ?? CameraLens.back;
     _selectedCam = selectedCam;
 
-    final controller = CameraController(
-      selectedCam,
-      PluginCameraMappers.mapResolutionPreset(preset),
-      enableAudio: false,
-    );
+    final controller = CameraController(selectedCam, PluginCameraMappers.mapResolutionPreset(preset), enableAudio: false);
     await controller.initialize();
     _controller = controller;
     try {
@@ -89,24 +85,27 @@ class PluginCameraService implements CameraService {
     }
   }
 
+  Offset? _lastFocusPoint;
+
   @override
   Future<void> setFocusPoint(Offset point) async {
+    _lastFocusPoint = Offset(point.dx.clamp(0.0, 1.0), point.dy.clamp(0.0, 1.0));
     final controller = _controller;
     if (controller != null && controller.value.isInitialized) {
-      final p = Offset(point.dx.clamp(0.0, 1.0), point.dy.clamp(0.0, 1.0));
-      await controller.setFocusPoint(p);
-      try {
-        await controller.setExposurePoint(p);
-      } catch (_) {}
+      await controller.setFocusPoint(_lastFocusPoint!);
+      try { await controller.setExposurePoint(_lastFocusPoint!); } catch (_) {}
     }
   }
 
   @override
   Future<String> takePicture() async {
     final controller = _controller;
-    if (controller == null || !controller.value.isInitialized) {
-      throw StateError('Camera is not initialized');
-    }
+    if (controller == null || !controller.value.isInitialized) throw StateError('Camera is not initialized');
+    try {
+      await controller.setFocusMode(FocusMode.auto);
+      await controller.setFocusPoint(_lastFocusPoint ?? const Offset(0.5, 0.5));
+      await Future.delayed(const Duration(milliseconds: 300));
+    } catch (_) {}
     final file = await controller.takePicture();
     return file.path;
   }

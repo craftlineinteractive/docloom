@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:opencv_dart/opencv_dart.dart' as cv;
 import '../domain/perspective_aspect_helper.dart';
@@ -5,15 +6,21 @@ import '../domain/quad.dart';
 import 'filter_recipes.dart';
 
 abstract final class OpencvTransformOps {
-  static cv.Mat warpAndRotate(cv.Mat src, Quad quad, int rotation) {
+  static cv.Mat warpAndRotate(cv.Mat src, Quad quad, int rotation, {int? maxSide}) {
     final imageSize = Size(src.width.toDouble(), src.height.toDouble());
     final pixelQuad = quad.toPixels(imageSize);
     final outputSize = PerspectiveAspectHelper.recoverOutputDimensions(
       pixelQuad: pixelQuad,
       imageSize: imageSize,
     );
-    final outW = outputSize.width.round();
-    final outH = outputSize.height.round();
+    var outW = outputSize.width.round();
+    var outH = outputSize.height.round();
+    final longest = math.max(outW, outH);
+    if (maxSide != null && longest > maxSide) {
+      final scale = maxSide / longest;
+      outW = (outW * scale).round();
+      outH = (outH * scale).round();
+    }
 
     final srcPts = cv.VecPoint2f.fromList([
       cv.Point2f(pixelQuad.topLeft.dx, pixelQuad.topLeft.dy),
@@ -32,7 +39,7 @@ abstract final class OpencvTransformOps {
     cv.Mat? warped;
     try {
       transform = cv.getPerspectiveTransform2f(srcPts, dstPts);
-      warped = cv.warpPerspective(src, transform, (outW, outH), flags: cv.INTER_LINEAR);
+      warped = cv.warpPerspective(src, transform, (outW, outH), flags: cv.INTER_CUBIC);
     } finally {
       srcPts.dispose();
       dstPts.dispose();
@@ -66,10 +73,11 @@ abstract final class OpencvTransformOps {
     required Quad quad,
     required int rotation,
     required String filterId,
+    int? maxSide,
     int? targetWidth,
     int? targetHeight,
   }) {
-    var warpedRotated = warpAndRotate(src, quad, rotation);
+    var warpedRotated = warpAndRotate(src, quad, rotation, maxSide: maxSide);
     if (targetWidth != null &&
         targetHeight != null &&
         (warpedRotated.width != targetWidth ||

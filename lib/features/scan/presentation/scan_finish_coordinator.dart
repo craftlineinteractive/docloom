@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import '../../../core/widgets/app_progress_dialog.dart';
+import '../application/camera_settings_provider.dart';
 import '../data/opencv_image_engine.dart';
 import '../domain/scan_gateway.dart';
 import '../domain/scan_session.dart';
@@ -17,6 +18,7 @@ abstract final class ScanFinishCoordinator {
     if (session.pages.isEmpty) return null;
 
     final engine = ref.read(engineProvider);
+    final maxSide = ref.read(cameraSettingsProvider).scanQuality.maxOutputLongSide;
     final total = session.pages.length;
     final messageNotifier = ValueNotifier<String>('Preparing page 1 of $total');
 
@@ -38,6 +40,7 @@ abstract final class ScanFinishCoordinator {
               rotation: page.rotation,
               filterId: page.filterId,
               dstPath: outPath,
+              maxSide: maxSide,
             );
             result.add(ScannedPage(
               originalPath: page.capturePath,

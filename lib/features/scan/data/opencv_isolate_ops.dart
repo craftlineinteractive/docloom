@@ -76,6 +76,7 @@ class OpencvIsolateOps {
     required String filterId,
     required String dstPath,
     required int quality,
+    int? maxSide,
     int? targetWidth,
     int? targetHeight,
   }) {
@@ -90,6 +91,7 @@ class OpencvIsolateOps {
         quad: quad,
         rotation: rotation,
         filterId: filterId,
+        maxSide: maxSide,
         targetWidth: targetWidth,
         targetHeight: targetHeight,
       );
@@ -119,15 +121,13 @@ class OpencvIsolateOps {
     }
 
     try {
-      cv.Mat current = OpencvTransformOps.warpRotateAndFilter(
+      final current = OpencvTransformOps.warpRotateAndFilter(
         src: src,
         quad: quad,
         rotation: rotation,
         filterId: filterId,
+        maxSide: maxSide,
       );
-      if (maxSide != null) {
-        current = _downscaleIfNeeded(current, maxSide);
-      }
       final params = cv.VecI32.fromList([cv.IMWRITE_JPEG_QUALITY, quality]);
       try {
         final (ok, bytes) = cv.imencode('.jpg', current, params: params);

@@ -1,13 +1,18 @@
 import 'package:flutter/foundation.dart';
 
 enum ScanQuality {
-  standard(label: 'Standard', caption: 'Fastest'),
-  high(label: 'High', caption: 'Recommended'),
-  max(label: 'Max', caption: 'Largest files');
+  standard(label: 'Standard', caption: 'Fastest', maxOutputLongSide: 2000),
+  high(label: 'High', caption: 'Recommended', maxOutputLongSide: 3000),
+  max(label: 'Max', caption: 'Largest files', maxOutputLongSide: 4000);
 
-  const ScanQuality({required this.label, required this.caption});
+  const ScanQuality({
+    required this.label,
+    required this.caption,
+    required this.maxOutputLongSide,
+  });
   final String label;
   final String caption;
+  final int maxOutputLongSide;
 }
 
 @immutable
