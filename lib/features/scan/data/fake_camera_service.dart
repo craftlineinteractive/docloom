@@ -22,9 +22,14 @@ class FakeCameraService implements CameraService {
   bool _isInitialized = false;
   bool _isStreaming = false;
   CameraFrameCallback? _streamCallback;
+  DateTime? _lastFrameTime;
 
   @override
   bool get isInitialized => _isInitialized;
+
+  @override
+  DateTime? get lastFrameTime => _lastFrameTime;
+  set lastFrameTime(DateTime? value) => _lastFrameTime = value;
 
   @override
   CameraLens get currentLens => _currentLens;
@@ -53,6 +58,7 @@ class FakeCameraService implements CameraService {
     }
     _currentLens = lens;
     _isInitialized = true;
+    _lastFrameTime = DateTime.now();
   }
 
   @override
@@ -61,6 +67,7 @@ class FakeCameraService implements CameraService {
     _isStreaming = false;
     _isInitialized = false;
     _streamCallback = null;
+    _lastFrameTime = null;
   }
 
   @override
@@ -97,6 +104,7 @@ class FakeCameraService implements CameraService {
   }
 
   void emitFrame(Uint8List gray, int width, int height) {
+    _lastFrameTime = DateTime.now();
     if (_isStreaming && _streamCallback != null) {
       _streamCallback!(gray, width, height);
     }

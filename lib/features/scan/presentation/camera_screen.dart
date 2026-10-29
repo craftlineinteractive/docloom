@@ -50,15 +50,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     _liveQuad = widget.initialLiveQuad;
     _liveQuadTime = widget.initialLiveQuadTime ?? (widget.initialLiveQuad != null ? DateTime.now() : null);
     if (kDebugMode) debugPrint('[scan] [6] route push');
-    WidgetsBinding.instance.addObserver(this);
-    CameraOrientationHelper.lockPortrait();
+    WidgetsBinding.instance.addObserver(this); CameraOrientationHelper.lockPortrait();
     _checkPermission();
   }
 
   @override
   void dispose() {
     if (kDebugMode) debugPrint('[scan] [6] route pop');
-    _resetFlags();
+    _resetFlags(); CameraInitCoordinator.stopWatchdog();
     CameraInitCoordinator.dispose(camera: _camera);
     WidgetsBinding.instance.removeObserver(this);
     CameraOrientationHelper.restoreOrientations();
@@ -68,24 +67,30 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   void _resetFlags() { _isInit = false; _isCap = false; _hasErr = false; _grid = false; _focusPos = null; }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState s) {
-    if (s == AppLifecycleState.inactive || s == AppLifecycleState.paused) {
-      CameraInitCoordinator.dispose(camera: _camera);
-    } else if (s == AppLifecycleState.resumed) {
-      _checkPermission();
+  void didChangeAppLifecycleState(AppLifecycleState s) async {
+    if (s == AppLifecycleState.resumed) {
+      final p = await ref.read(cameraPermissionServiceProvider).checkStatus();
+      if (!mounted) return;
+      setState(() { _isCheckingPerm = false; _perm = p; });
+      if (p != CameraPermissionState.granted) return;
     }
+    CameraInitCoordinator.handleLifecycle(state: s, camera: _camera, onReinit: _initCamera, onStartWatchdog: _startWatchdog);
   }
+
+  void _startWatchdog({bool resetStall = false}) => CameraInitCoordinator.startWatchdog(
+    camera: _camera, onReinit: _initCamera, resetStall: resetStall,
+    onStallExceeded: () => mounted ? setState(() => _hasErr = true) : null,
+    isEligible: () => mounted && !_isInit && !_hasErr && _perm == CameraPermissionState.granted,
+  );
 
   Future<void> _checkPermission() async {
-    final status = await ref.read(cameraPermissionServiceProvider).checkStatus();
-    if (mounted) setState(() => _isCheckingPerm = false);
-    _setPermission(status);
+    final s = await ref.read(cameraPermissionServiceProvider).checkStatus();
+    if (mounted) setState(() { _isCheckingPerm = false; _perm = s; });
+    if (s == CameraPermissionState.granted) _initCamera();
   }
 
-  Future<void> _requestPermission() async =>
-      _setPermission(await ref.read(cameraPermissionServiceProvider).requestPermission());
-
-  void _setPermission(CameraPermissionState s) {
+  Future<void> _requestPermission() async {
+    final s = await ref.read(cameraPermissionServiceProvider).requestPermission();
     if (mounted) setState(() => _perm = s);
     if (s == CameraPermissionState.granted) _initCamera();
   }
@@ -94,17 +99,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     if (!mounted) return;
     setState(() { _isInit = true; _hasErr = false; });
     try {
-      final cam = ref.read(cameraServiceProvider);
       final sc = ref.read(betterScannerControllerProvider);
       final ok = await CameraInitCoordinator.initialize(
-        camera: cam,
-        lens: _lens,
-        onScannerInit: sc != null ? () => sc.initialize() : null,
-        isMounted: () => mounted,
+        camera: _camera, lens: _lens, onScannerInit: sc != null ? () => sc.initialize() : null, isMounted: () => mounted,
       );
       if (ok && mounted) {
         setState(() => _isInit = false);
-        CameraQrCoordinator.startIfActive(ref: ref, camera: cam);
+        CameraQrCoordinator.startIfActive(ref: ref, camera: _camera);
+        _startWatchdog();
       }
     } catch (_) {
       if (mounted) setState(() { _isInit = false; _hasErr = true; });
@@ -114,11 +116,9 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   Future<void> _onCapture() async {
     if (_isCap || _isInit || _hasErr) return;
     await CameraCaptureCoordinator.performCapture(
-      context: context, ref: ref, camera: ref.read(cameraServiceProvider),
-      scannerController: ref.read(betterScannerControllerProvider),
+      context: context, ref: ref, camera: _camera, scannerController: ref.read(betterScannerControllerProvider),
       retakePageIndex: widget.retakePageIndex, liveQuad: _liveQuad, liveQuadTime: _liveQuadTime,
-      onStart: () => mounted ? setState(() => _isCap = true) : null,
-      onEnd: () => mounted ? setState(() => _isCap = false) : null,
+      onStart: () => mounted ? setState(() => _isCap = true) : null, onEnd: () => mounted ? setState(() => _isCap = false) : null,
     );
   }
 
@@ -135,15 +135,15 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   void _flip() { ref.read(betterScannerControllerProvider)?.switchCamera(); _lens = _lens == CameraLens.back ? CameraLens.front : CameraLens.back; _initCamera(); }
   void _toggleGrid() { ref.read(betterScannerControllerProvider)?.toggleGrid(); setState(() => _grid = !_grid); }
   void _dismissFocus() => setState(() => _focusPos = null);
-  void _onCycleFlash() { ref.read(betterScannerControllerProvider)?.cycleFlashMode(); final cam = ref.read(cameraServiceProvider); cam.setFlash(_CameraScreenHelper.nextFlash(cam.currentFlash)); setState(() {}); }
+  void _onCycleFlash() { ref.read(betterScannerControllerProvider)?.cycleFlashMode(); _camera.setFlash(_CameraScreenHelper.nextFlash(_camera.currentFlash)); setState(() {}); }
 
   @override
   Widget build(BuildContext context) => _CameraScreenHelper.buildRoot(
     state: this,
     stateView: _CameraScreenHelper.buildStateView(
-      isCheckingPerm: _isCheckingPerm, perm: _perm, hasErr: _hasErr,
-      onRequestPerm: _requestPermission, onOpenSettings: () => ref.read(cameraPermissionServiceProvider).openSettings(),
-      onRetryInit: _initCamera, onBack: _onBack,
+      isCheckingPerm: _isCheckingPerm, perm: _perm, hasErr: _hasErr, onRequestPerm: _requestPermission,
+      onOpenSettings: () => ref.read(cameraPermissionServiceProvider).openSettings(),
+      onRetryInit: () { _startWatchdog(resetStall: true); _initCamera(); }, onBack: _onBack,
     ),
   );
 }

@@ -6,27 +6,25 @@ import 'plugin_camera_mappers.dart';
 
 class PluginCameraService implements CameraService {
   PluginCameraService();
-
   CameraController? _controller;
   List<CameraDescription> _cameras = const [];
   CameraLens _currentLens = CameraLens.back;
   CameraFlash _currentFlash = CameraFlash.off;
   bool _isStreaming = false;
-
+  DateTime? _lastFrameTime;
   CameraDescription? _selectedCam;
+  Offset? _lastFocusPoint;
 
   @override
   bool get isInitialized => _controller?.value.isInitialized ?? false;
-
+  @override
+  DateTime? get lastFrameTime => _lastFrameTime;
   @override
   CameraLens get currentLens => _currentLens;
-
   @override
   CameraFlash get currentFlash => _currentFlash;
-
   @override
   double? get aspectRatio => _controller?.value.aspectRatio;
-
   @override
   bool get isStreamingImages => _isStreaming;
 
@@ -62,6 +60,7 @@ class PluginCameraService implements CameraService {
     final controller = CameraController(selectedCam, PluginCameraMappers.mapResolutionPreset(preset), enableAudio: false);
     await controller.initialize();
     _controller = controller;
+    _lastFrameTime = DateTime.now();
     try {
       await controller.setFocusMode(FocusMode.auto);
       await controller.setExposureMode(ExposureMode.auto);
@@ -74,6 +73,7 @@ class PluginCameraService implements CameraService {
     await stopImageStream();
     final controller = _controller;
     _controller = null;
+    _lastFrameTime = null;
     if (controller != null) await controller.dispose();
   }
 
@@ -85,8 +85,6 @@ class PluginCameraService implements CameraService {
       await controller.setFlashMode(PluginCameraMappers.mapFlashMode(flash));
     }
   }
-
-  Offset? _lastFocusPoint;
 
   @override
   Future<void> setFocusPoint(Offset point) async {
@@ -118,6 +116,7 @@ class PluginCameraService implements CameraService {
     _isStreaming = true; if (kDebugMode) debugPrint('[scan] [4] image stream start');
     await controller.startImageStream((CameraImage image) {
       if (!_isStreaming) return;
+      _lastFrameTime = DateTime.now();
       if (image.planes.isNotEmpty) {
         final p = image.planes.first;
         onFrame(p.bytes, image.width, image.height,

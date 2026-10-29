@@ -42,6 +42,7 @@ abstract interface class CameraService {
   CameraFlash get currentFlash;
 
   bool get isInitialized;
+  DateTime? get lastFrameTime;
 
   double? get aspectRatio;
 
