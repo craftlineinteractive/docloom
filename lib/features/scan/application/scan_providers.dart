@@ -11,6 +11,7 @@ import '../data/plugin_camera_service.dart';
 import '../domain/camera_permission_service.dart';
 import '../domain/camera_service.dart';
 import '../domain/scan_gateway.dart';
+import '../domain/scan_session.dart';
 import 'scan_save_service.dart';
 
 enum ScanState { idle, scanning, saving }
@@ -48,6 +49,7 @@ class ScanController extends Notifier<ScanState> {
     void Function(String message)? onToast,
   }) async {
     if (state != ScanState.idle) return;
+    ref.read(scanSessionProvider.notifier).discard();
     state = ScanState.scanning;
 
     try {
@@ -75,9 +77,11 @@ class ScanController extends Notifier<ScanState> {
                 name: suggestedName,
               );
             }
+            ref.read(scanSessionProvider.notifier).discard();
             ref.refreshLibrary();
             _showToast('Saved ${pages.length} pages', onToast);
-          } catch (_) {
+          } catch (e, st) {
+            debugPrint('[scan] Failed to save document: $e\n$st');
             _showToast('Failed to save document. Please try again.', onToast);
           }
         case ScanCancelled():
@@ -85,7 +89,8 @@ class ScanController extends Notifier<ScanState> {
         case ScanFailure(:final message):
           _showToast(message, onToast);
       }
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('[scan] Scanner unavailable: $e\n$st');
       _showToast('Scanner unavailable. Please try again.', onToast);
     } finally {
       state = ScanState.idle;
