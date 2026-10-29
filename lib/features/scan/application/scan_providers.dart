@@ -85,6 +85,7 @@ class ScanController extends Notifier<ScanState> {
             _showToast('Failed to save document. Please try again.', onToast);
           }
         case ScanCancelled():
+          ref.read(scanSessionProvider.notifier).discard();
           break;
         case ScanFailure(:final message):
           _showToast(message, onToast);
