@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_better_scanner/flutter_better_scanner.dart' show ScannerController;
+import '../data/plugin_camera_service.dart';
 import '../domain/camera_service.dart';
 
 abstract final class CameraInitCoordinator {
@@ -23,6 +25,7 @@ abstract final class CameraInitCoordinator {
     required CameraLens lens,
     Future<void> Function()? onScannerInit,
     required bool Function() isMounted,
+    ScannerController? scannerController,
   }) async {
     final gen = ++_globalGen;
     if (kDebugMode) debugPrint('[scan] [1] camera initialize start gen=$gen');
@@ -35,14 +38,13 @@ abstract final class CameraInitCoordinator {
       }
       if (!isMounted() || gen != _globalGen) return false;
 
-      await camera.initialize(lens: lens);
-      if (!isMounted() || gen != _globalGen) {
-        await camera.dispose();
-        return false;
-      }
-
       if (onScannerInit != null) {
-        try { await onScannerInit(); } catch (_) {}
+        await onScannerInit();
+        if (camera is PluginCameraService && scannerController != null) {
+          camera.attachTo(scannerController.cameraController);
+        }
+      } else {
+        await camera.initialize(lens: lens);
       }
       if (!isMounted() || gen != _globalGen) {
         await camera.dispose();
@@ -60,7 +62,7 @@ abstract final class CameraInitCoordinator {
     }
   }
 
-  static Future<void> dispose({required CameraService camera}) async {
+  static Future<void> dispose({required CameraService camera, ScannerController? scannerController}) async {
     stopWatchdog();
     final gen = ++_globalGen;
     if (kDebugMode) debugPrint('[scan] [3] camera dispose gen=$gen');
@@ -73,6 +75,9 @@ abstract final class CameraInitCoordinator {
       }
       try { await camera.stopImageStream(); } catch (_) {}
       await camera.dispose();
+      if (scannerController != null) {
+        try { scannerController.dispose(); } catch (_) {}
+      }
     } catch (e, st) {
       if (kDebugMode) debugPrint('[scan] camera dispose error gen=$gen: $e\n$st');
     } finally {
@@ -86,12 +91,13 @@ abstract final class CameraInitCoordinator {
     required CameraService camera,
     required Future<void> Function() onReinit,
     required VoidCallback onStartWatchdog,
+    ScannerController? scannerController,
   }) {
     if (kDebugMode) debugPrint('[scan] lifecycle state: $state');
     if (state == AppLifecycleState.inactive) return;
     if (state == AppLifecycleState.paused || state == AppLifecycleState.hidden) {
       stopWatchdog();
-      dispose(camera: camera);
+      dispose(camera: camera, scannerController: scannerController);
     } else if (state == AppLifecycleState.resumed) {
       final last = camera.lastFrameTime;
       if (!camera.isInitialized || (last != null && DateTime.now().difference(last) > const Duration(seconds: 2))) {

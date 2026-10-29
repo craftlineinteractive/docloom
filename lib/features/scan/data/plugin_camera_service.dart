@@ -29,13 +29,15 @@ class PluginCameraService implements CameraService {
   bool get isStreamingImages => _isStreaming;
 
   @override
-  List<CameraLens> get availableLenses {
-    final lenses = <CameraLens>{};
-    for (final cam in _cameras) {
-      final lens = PluginCameraMappers.mapLensDirection(cam.lensDirection);
-      if (lens != null) lenses.add(lens);
-    }
-    return lenses.toList();
+  List<CameraLens> get availableLenses => _cameras
+      .map((c) => PluginCameraMappers.mapLensDirection(c.lensDirection))
+      .whereType<CameraLens>()
+      .toSet()
+      .toList();
+
+  void attachTo(CameraController? controller) {
+    _controller = controller;
+    _lastFrameTime = DateTime.now();
   }
 
   @override
