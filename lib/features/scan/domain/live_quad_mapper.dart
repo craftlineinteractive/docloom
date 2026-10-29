@@ -57,9 +57,11 @@ abstract final class LiveQuadMapper {
     required double captureHeight,
     required String previewPath,
     required Future<Quad?> Function(String path) detectFromFile,
+    DateTime? shutterTime,
   }) async {
     if (liveQuad != null && liveQuadTime != null) {
-      final age = DateTime.now().difference(liveQuadTime);
+      final refTime = shutterTime ?? DateTime.now();
+      final age = refTime.difference(liveQuadTime);
       if (age >= Duration.zero && age <= const Duration(milliseconds: 1500)) {
         return map(
           liveQuad: liveQuad,

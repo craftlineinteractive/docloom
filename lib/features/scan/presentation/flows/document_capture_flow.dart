@@ -35,18 +35,21 @@ abstract final class DocumentCaptureFlow {
     final edgeDet = ref.read(edgeDetectorProvider);
 
     if (scannerController != null && scannerController.isReady) {
+      final shutterTime = DateTime.now();
       final lQuad = liveQuad ?? (scannerController.detection.value.quad != null
           ? QuadPackageAdapter.fromPackageQuad(scannerController.detection.value.quad!) : null);
-      final lTime = liveQuadTime ?? (lQuad != null ? DateTime.now() : null);
+      final lTime = liveQuadTime ?? (lQuad != null ? shutterTime : null);
       final page = await scannerController.capture();
       onCaptured();
       if (page == null) return null;
       final origPath = scannerController.originalPath(page) ?? '';
-      final quad = await LiveQuadMapper.resolveInitialQuad(
-        liveQuad: lQuad, liveQuadTime: lTime, previewAspect: 3 / 4,
-        captureWidth: 3000, captureHeight: 4000, previewPath: origPath,
-        detectFromFile: edgeDet.detectFromFile,
-      );
+      final quad = (lQuad != null)
+          ? await LiveQuadMapper.resolveInitialQuad(
+              liveQuad: lQuad, liveQuadTime: lTime, previewAspect: 3 / 4,
+              captureWidth: 3000, captureHeight: 4000, previewPath: origPath,
+              detectFromFile: edgeDet.detectFromFile, shutterTime: shutterTime,
+            )
+          : QuadPackageAdapter.fromPackageQuad(page.cropCorners);
       if (!context.mounted) return null;
       final res = await Navigator.of(context).push<AdjustResult>(
         MaterialPageRoute(
@@ -74,6 +77,7 @@ abstract final class DocumentCaptureFlow {
       ];
     }
 
+    final shutterInstant = DateTime.now();
     final rawPath = await camera.takePicture();
     final sessionDir = ScanSessionDirHelper.getSessionDir(sessionId)..createSync(recursive: true);
     final ts = DateTime.now().millisecondsSinceEpoch;
@@ -90,6 +94,7 @@ abstract final class DocumentCaptureFlow {
       liveQuad: liveQuad, liveQuadTime: liveQuadTime, previewAspect: previewAspect,
       captureWidth: imgSize.width.toDouble(), captureHeight: imgSize.height.toDouble(),
       previewPath: previewPath, detectFromFile: edgeDet.detectFromFile,
+      shutterTime: shutterInstant,
     );
 
     if (!context.mounted) return null;

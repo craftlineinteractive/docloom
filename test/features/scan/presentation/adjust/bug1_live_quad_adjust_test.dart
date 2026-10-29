@@ -69,7 +69,25 @@ void main() {
       expect(error, lessThan(0.02));
     });
 
-    test('resolveInitialQuad falls back to detection if live quad expired (>1.5s)', () async {
+    test('resolveInitialQuad uses live quad if within 1.5s of shutterTime even if capture delayed', () async {
+      final shutter = DateTime.now().subtract(const Duration(milliseconds: 2500));
+      final liveTime = shutter.subtract(const Duration(milliseconds: 200));
+      final quad = await LiveQuadMapper.resolveInitialQuad(
+        liveQuad: fakeLive,
+        liveQuadTime: liveTime,
+        shutterTime: shutter,
+        previewAspect: 3 / 4,
+        captureWidth: 3000,
+        captureHeight: 4000,
+        previewPath: 'dummy.jpg',
+        detectFromFile: (_) async => null,
+      );
+      final error = LiveQuadMapper.maxCornerErrorNormalized(fakeLive, quad);
+      expect(error, lessThan(0.02));
+    });
+
+    test('resolveInitialQuad falls back to detection if live quad expired (>1.5s before shutter)', () async {
+      final shutter = DateTime.now();
       const detectedQuad = Quad(
         topLeft: Offset(0.2, 0.2),
         topRight: Offset(0.8, 0.2),
@@ -78,7 +96,8 @@ void main() {
       );
       final quad = await LiveQuadMapper.resolveInitialQuad(
         liveQuad: fakeLive,
-        liveQuadTime: DateTime.now().subtract(const Duration(milliseconds: 2000)),
+        liveQuadTime: shutter.subtract(const Duration(milliseconds: 2000)),
+        shutterTime: shutter,
         previewAspect: 3 / 4,
         captureWidth: 3000,
         captureHeight: 4000,
