@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import '../domain/camera_service.dart';
 import 'plugin_camera_mappers.dart';
@@ -114,7 +115,7 @@ class PluginCameraService implements CameraService {
   Future<void> startImageStream(CameraFrameCallback onFrame) async {
     final controller = _controller;
     if (controller == null || !controller.value.isInitialized || _isStreaming) return;
-    _isStreaming = true;
+    _isStreaming = true; if (kDebugMode) debugPrint('[scan] [4] image stream start');
     await controller.startImageStream((CameraImage image) {
       if (!_isStreaming) return;
       if (image.planes.isNotEmpty) {
@@ -129,7 +130,7 @@ class PluginCameraService implements CameraService {
   @override
   Future<void> stopImageStream() async {
     if (!_isStreaming) return;
-    _isStreaming = false;
+    _isStreaming = false; if (kDebugMode) debugPrint('[scan] [5] image stream stop');
     final controller = _controller;
     if (controller != null && controller.value.isInitialized) {
       try {

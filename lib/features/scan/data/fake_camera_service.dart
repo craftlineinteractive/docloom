@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../domain/camera_service.dart';
 
@@ -85,12 +85,14 @@ class FakeCameraService implements CameraService {
   @override
   Future<void> startImageStream(CameraFrameCallback onFrame) async {
     _isStreaming = true;
+    if (kDebugMode) debugPrint('[scan] [4] image stream start');
     _streamCallback = onFrame;
   }
 
   @override
   Future<void> stopImageStream() async {
     _isStreaming = false;
+    if (kDebugMode) debugPrint('[scan] [5] image stream stop');
     _streamCallback = null;
   }
 
