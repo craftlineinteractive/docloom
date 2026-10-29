@@ -11,6 +11,8 @@ import 'flows/id_card_capture_flow.dart';
 import 'flows/ocr_capture_flow.dart';
 import 'flows/signature_capture_flow.dart';
 
+import '../domain/quad.dart';
+
 abstract final class CameraCaptureHelper {
   static Future<List<ScanSessionPage>?> captureAndProcess({
     required BuildContext context,
@@ -21,6 +23,8 @@ abstract final class CameraCaptureHelper {
     required VoidCallback onCaptured,
     String pageIndicator = '1/1',
     ScannerController? scannerController,
+    Quad? liveQuad,
+    DateTime? liveQuadTime,
   }) async {
     final mode = ref.read(captureModeProvider);
 
@@ -69,6 +73,8 @@ abstract final class CameraCaptureHelper {
       onCaptured: onCaptured,
       pageIndicator: pageIndicator,
       scannerController: scannerController,
+      liveQuad: liveQuad,
+      liveQuadTime: liveQuadTime,
     );
   }
 }

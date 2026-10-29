@@ -7,6 +7,7 @@ import '../application/scan_providers.dart';
 import '../application/scanner_controller_provider.dart';
 import '../domain/camera_permission_service.dart';
 import '../domain/camera_service.dart';
+import '../domain/quad.dart';
 import '../domain/scan_gateway.dart';
 import '../domain/scan_session.dart';
 import 'camera_body.dart';
@@ -21,8 +22,10 @@ import 'widgets/camera_session_slots.dart';
 part 'camera_screen_helper.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
-  const CameraScreen({super.key, this.retakePageIndex});
+  const CameraScreen({super.key, this.retakePageIndex, this.initialLiveQuad, this.initialLiveQuadTime});
   final int? retakePageIndex;
+  final Quad? initialLiveQuad;
+  final DateTime? initialLiveQuadTime;
   @override
   ConsumerState<CameraScreen> createState() => _CameraScreenState();
 }
@@ -33,10 +36,14 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   bool _isInit = false, _hasErr = false, _isCap = false, _grid = false;
   Offset? _focusPos;
   CameraLens _lens = CameraLens.back;
+  Quad? _liveQuad;
+  DateTime? _liveQuadTime;
 
   @override
   void initState() {
     super.initState();
+    _liveQuad = widget.initialLiveQuad;
+    _liveQuadTime = widget.initialLiveQuadTime ?? (widget.initialLiveQuad != null ? DateTime.now() : null);
     WidgetsBinding.instance.addObserver(this);
     CameraOrientationHelper.lockPortrait();
     _checkPermission();
@@ -97,6 +104,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
       camera: ref.read(cameraServiceProvider),
       scannerController: ref.read(betterScannerControllerProvider),
       retakePageIndex: widget.retakePageIndex,
+      liveQuad: _liveQuad,
+      liveQuadTime: _liveQuadTime,
       onStart: () => mounted ? setState(() => _isCap = true) : null,
       onEnd: () => mounted ? setState(() => _isCap = false) : null,
     );
@@ -116,19 +125,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     if (s != null && mounted) Navigator.of(context).pop(s);
   }
 
-  void _flip() {
-    ref.read(betterScannerControllerProvider)?.switchCamera();
-    _lens = _lens == CameraLens.back ? CameraLens.front : CameraLens.back;
-    _initCamera();
-  }
+  void _flip() { ref.read(betterScannerControllerProvider)?.switchCamera(); _lens = _lens == CameraLens.back ? CameraLens.front : CameraLens.back; _initCamera(); }
   void _toggleGrid() { ref.read(betterScannerControllerProvider)?.toggleGrid(); setState(() => _grid = !_grid); }
   void _dismissFocus() => setState(() => _focusPos = null);
-  void _onCycleFlash() {
-    ref.read(betterScannerControllerProvider)?.cycleFlashMode();
-    final cam = ref.read(cameraServiceProvider);
-    cam.setFlash(_CameraScreenHelper.nextFlash(cam.currentFlash));
-    setState(() {});
-  }
+  void _onCycleFlash() { ref.read(betterScannerControllerProvider)?.cycleFlashMode(); final cam = ref.read(cameraServiceProvider); cam.setFlash(_CameraScreenHelper.nextFlash(cam.currentFlash)); setState(() {}); }
 
   @override
   Widget build(BuildContext context) => _CameraScreenHelper.buildRoot(

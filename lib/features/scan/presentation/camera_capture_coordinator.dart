@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_better_scanner/flutter_better_scanner.dart';
+import 'package:flutter_better_scanner/flutter_better_scanner.dart' hide Quad, CaptureMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_config.dart';
 import '../../../core/widgets/app_toast.dart';
 import '../data/opencv_image_engine.dart';
 import '../domain/camera_service.dart';
+import '../domain/quad.dart';
 import '../domain/scan_session.dart';
 import 'camera_capture_helper.dart';
 
@@ -17,6 +18,8 @@ abstract final class CameraCaptureCoordinator {
     required VoidCallback onStart,
     required VoidCallback onEnd,
     ScannerController? scannerController,
+    Quad? liveQuad,
+    DateTime? liveQuadTime,
   }) async {
     onStart();
     final session = ref.read(scanSessionProvider);
@@ -33,6 +36,8 @@ abstract final class CameraCaptureCoordinator {
         pageIndicator: indicator,
         onCaptured: onEnd,
         scannerController: scannerController,
+        liveQuad: liveQuad,
+        liveQuadTime: liveQuadTime,
       );
       if (pages != null && pages.isNotEmpty && context.mounted) {
         if (retakePageIndex != null) {
