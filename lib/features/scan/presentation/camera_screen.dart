@@ -48,13 +48,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     _resetFlags();
     _liveQuad = widget.initialLiveQuad;
     _liveQuadTime = widget.initialLiveQuadTime ?? (widget.initialLiveQuad != null ? DateTime.now() : null);
-    if (kDebugMode) debugPrint('[scan] [6] route push');
+    if (kDebugMode) debugPrint('[cam] [6] route push');
     WidgetsBinding.instance.addObserver(this); CameraOrientationHelper.lockPortrait(); _checkPermission();
   }
 
   @override
   void dispose() {
-    if (kDebugMode) debugPrint('[scan] [6] route pop');
+    if (kDebugMode) debugPrint('[cam] [6] route pop');
     _sc?.detection.removeListener(_onDetection);
     _resetFlags(); CameraInitCoordinator.stopWatchdog();
     CameraInitCoordinator.dispose(camera: _camera, scannerController: _sc);
@@ -98,11 +98,13 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     if (!mounted) return;
     setState(() { _isInit = true; _hasErr = false; });
     try {
+      if (kDebugMode) debugPrint('[cam] _initCamera start, lens=$_lens');
       final sc = ref.read(betterScannerControllerProvider);
       final ok = await CameraInitCoordinator.initialize(
         camera: _camera, lens: _lens, onScannerInit: sc != null ? () => sc.initialize() : null,
         scannerController: sc, isMounted: () => mounted,
       );
+      if (kDebugMode) debugPrint('[cam] _initCamera finish ok=$ok, mounted=$mounted');
       if (ok && mounted) {
         setState(() => _isInit = false);
         sc?.detection.removeListener(_onDetection);
@@ -111,7 +113,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
         _startWatchdog();
       }
     } catch (e, st) {
-      if (kDebugMode) debugPrint('[scan] camera init error: $e\n$st');
+      if (kDebugMode) debugPrint('[cam] camera init error: $e\n$st');
       if (mounted) setState(() { _isInit = false; _hasErr = true; });
     }
   }

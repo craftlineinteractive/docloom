@@ -46,26 +46,23 @@ class PluginCameraService implements CameraService {
   }) async {
     await dispose();
     _cameras = await availableCameras();
-    if (_cameras.isEmpty) {
-      throw CameraException('no_cameras', 'No cameras available on this device');
-    }
+    if (_cameras.isEmpty) throw CameraException('no_cameras', 'No cameras available on this device');
 
     final targetDirection = PluginCameraMappers.mapToCameraLensDirection(lens);
-    final selectedCam = _cameras.firstWhere(
-      (cam) => cam.lensDirection == targetDirection,
-      orElse: () => _cameras.first,
-    );
+    final selectedCam = _cameras.firstWhere((c) => c.lensDirection == targetDirection, orElse: () => _cameras.first);
     _currentLens = PluginCameraMappers.mapLensDirection(selectedCam.lensDirection) ?? CameraLens.back;
     _selectedCam = selectedCam;
 
     final controller = CameraController(selectedCam, PluginCameraMappers.mapResolutionPreset(preset), enableAudio: false);
-    await controller.initialize();
-    _controller = controller;
-    _lastFrameTime = DateTime.now();
+    if (kDebugMode) debugPrint('[cam] PluginCameraService init ${selectedCam.name} preset=$preset');
     try {
-      await controller.setFocusMode(FocusMode.auto);
-      await controller.setExposureMode(ExposureMode.auto);
-    } catch (_) {}
+      await controller.initialize();
+    } catch (e, st) {
+      if (kDebugMode) debugPrint('[cam] PluginCameraService controller.initialize failed: $e\n$st');
+      rethrow;
+    }
+    _controller = controller; _lastFrameTime = DateTime.now();
+    try { await controller.setFocusMode(FocusMode.auto); await controller.setExposureMode(ExposureMode.auto); } catch (_) {}
     await setFlash(_currentFlash);
   }
 
@@ -114,7 +111,7 @@ class PluginCameraService implements CameraService {
   Future<void> startImageStream(CameraFrameCallback onFrame) async {
     final controller = _controller;
     if (controller == null || !controller.value.isInitialized || _isStreaming) return;
-    _isStreaming = true; if (kDebugMode) debugPrint('[scan] [4] image stream start');
+    _isStreaming = true; if (kDebugMode) debugPrint('[cam] [4] image stream start');
     await controller.startImageStream((CameraImage image) {
       if (!_isStreaming) return;
       _lastFrameTime = DateTime.now();
@@ -130,7 +127,7 @@ class PluginCameraService implements CameraService {
   @override
   Future<void> stopImageStream() async {
     if (!_isStreaming) return;
-    _isStreaming = false; if (kDebugMode) debugPrint('[scan] [5] image stream stop');
+    _isStreaming = false; if (kDebugMode) debugPrint('[cam] [5] image stream stop');
     final controller = _controller;
     if (controller != null && controller.value.isInitialized) {
       try {
