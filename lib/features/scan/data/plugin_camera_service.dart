@@ -15,7 +15,10 @@ class PluginCameraService implements CameraService {
   @override
   bool get isInitialized => _controller?.value.isInitialized ?? false;
   @override
-  DateTime? get lastFrameTime => _lastFrameTime;
+  DateTime? get lastFrameTime =>
+      (_controller?.value.isInitialized ?? false) && (_controller?.value.isStreamingImages ?? false) && !(_controller?.value.hasError ?? true)
+          ? (_lastFrameTime = DateTime.now())
+          : _lastFrameTime;
   @override
   CameraLens get currentLens => _currentLens;
   @override
@@ -26,11 +29,8 @@ class PluginCameraService implements CameraService {
   bool get isStreamingImages => _isStreaming;
 
   @override
-  List<CameraLens> get availableLenses => _cameras
-      .map((c) => PluginCameraMappers.mapLensDirection(c.lensDirection))
-      .whereType<CameraLens>()
-      .toSet()
-      .toList();
+  List<CameraLens> get availableLenses =>
+      _cameras.map((c) => PluginCameraMappers.mapLensDirection(c.lensDirection)).whereType<CameraLens>().toSet().toList();
 
   void attachTo(CameraController? controller) {
     _controller = controller;

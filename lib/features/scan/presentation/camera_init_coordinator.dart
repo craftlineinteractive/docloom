@@ -76,6 +76,7 @@ abstract final class CameraInitCoordinator {
       try { await camera.stopImageStream(); } catch (_) {}
       await camera.dispose();
       if (scannerController != null) {
+        try { await scannerController.suspend(); } catch (_) {}
         try { scannerController.dispose(); } catch (_) {}
       }
     } catch (e, st) {

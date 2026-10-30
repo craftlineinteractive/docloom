@@ -110,7 +110,8 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
         CameraQrCoordinator.startIfActive(ref: ref, camera: _camera);
         _startWatchdog();
       }
-    } catch (_) {
+    } catch (e, st) {
+      if (kDebugMode) debugPrint('[scan] camera init error: $e\n$st');
       if (mounted) setState(() { _isInit = false; _hasErr = true; });
     }
   }
@@ -135,6 +136,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
       isCheckingPerm: _isCheckingPerm, perm: _perm, hasErr: _hasErr, onRequestPerm: _requestPermission,
       onOpenSettings: () => ref.read(cameraPermissionServiceProvider).openSettings(),
       onRetryInit: () {
+        ref.invalidate(betterScannerControllerProvider);
         _startWatchdog(resetStall: true);
         _initCamera();
       },
