@@ -105,17 +105,29 @@ abstract final class _CameraScreenHelper {
             : null,
       ),
       rightSlot: CameraSlotsHelper.buildRight(
-        context: state.context,
-        session: session,
-        isRetake: isRetake,
-        onCheck: state._onFinishScan,
+        context: state.context, session: session, isRetake: isRetake,
+        onCheck: () async {
+          final s = await ScanFinishCoordinator.finish(context: state.context, ref: state.ref);
+          if (s != null && state.mounted) Navigator.of(state.context).pop(s);
+        },
       ),
       onBack: state._onBack,
-      onToggleFlash: state._onCycleFlash,
-      onToggleGrid: state._toggleGrid,
-      onFlipCamera: state._flip,
-      onTapPreview: state._onTapPreview,
-      onDismissFocus: state._dismissFocus,
+      onToggleFlash: () {
+        state.ref.read(betterScannerControllerProvider)?.cycleFlashMode();
+        state._camera.setFlash(nextFlash(state._camera.currentFlash));
+        state._update();
+      },
+      onToggleGrid: () => state._update(() => state._grid = !state._grid),
+      onFlipCamera: () {
+        state.ref.read(betterScannerControllerProvider)?.switchCamera();
+        state._lens = state._lens == CameraLens.back ? CameraLens.front : CameraLens.back;
+        state._initCamera();
+      },
+      onTapPreview: (d, s) {
+        state._update(() => state._focusPos = d.localPosition);
+        state._camera.setFocusPoint(Offset((d.localPosition.dx / s.width).clamp(0.0, 1.0), (d.localPosition.dy / s.height).clamp(0.0, 1.0)));
+      },
+      onDismissFocus: () => state._update(() => state._focusPos = null),
       onCapture: state._onCapture,
     );
   }

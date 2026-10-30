@@ -43,6 +43,7 @@ abstract interface class CameraService {
 
   bool get isInitialized;
   DateTime? get lastFrameTime;
+  void recordFrame();
 
   double? get aspectRatio;
 

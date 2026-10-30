@@ -8,12 +8,9 @@ class PluginCameraService implements CameraService {
   PluginCameraService();
   CameraController? _controller;
   List<CameraDescription> _cameras = const [];
-  CameraLens _currentLens = CameraLens.back;
-  CameraFlash _currentFlash = CameraFlash.off;
-  bool _isStreaming = false;
-  DateTime? _lastFrameTime;
-  CameraDescription? _selectedCam;
-  Offset? _lastFocusPoint;
+  CameraLens _currentLens = CameraLens.back; CameraFlash _currentFlash = CameraFlash.off;
+  bool _isStreaming = false; DateTime? _lastFrameTime;
+  CameraDescription? _selectedCam; Offset? _lastFocusPoint;
 
   @override
   bool get isInitialized => _controller?.value.isInitialized ?? false;
@@ -39,6 +36,8 @@ class PluginCameraService implements CameraService {
     _controller = controller;
     _lastFrameTime = DateTime.now();
   }
+  @override
+  void recordFrame() => _lastFrameTime = DateTime.now();
 
   @override
   Future<void> initialize({

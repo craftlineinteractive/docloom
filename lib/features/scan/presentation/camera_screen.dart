@@ -55,6 +55,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   @override
   void dispose() {
     if (kDebugMode) debugPrint('[scan] [6] route pop');
+    _sc?.detection.removeListener(_onDetection);
     _resetFlags(); CameraInitCoordinator.stopWatchdog();
     CameraInitCoordinator.dispose(camera: _camera, scannerController: _sc);
     WidgetsBinding.instance.removeObserver(this); CameraOrientationHelper.restoreOrientations();
@@ -62,6 +63,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   }
 
   void _resetFlags() { _isInit = false; _isCap = false; _hasErr = false; _grid = false; _focusPos = null; }
+  void _update([VoidCallback? fn]) => setState(fn ?? () {});
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState s) async {
@@ -85,6 +87,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
     if (mounted) setState(() { _isCheckingPerm = false; _perm = s; });
     if (s == CameraPermissionState.granted) _initCamera();
   }
+
   Future<void> _requestPermission() async {
     final s = await ref.read(cameraPermissionServiceProvider).requestPermission();
     if (mounted) setState(() => _perm = s);
@@ -102,6 +105,7 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
       );
       if (ok && mounted) {
         setState(() => _isInit = false);
+        sc?.detection.removeListener(_onDetection);
         sc?.detection.addListener(_onDetection);
         CameraQrCoordinator.startIfActive(ref: ref, camera: _camera);
         _startWatchdog();
@@ -112,10 +116,10 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
   }
 
   void _onDetection() {
-    final q = ref.read(betterScannerControllerProvider)?.detection.value.quad;
+    _camera.recordFrame();
+    final q = _sc?.detection.value.quad;
     if (q != null) { _liveQuad = QuadPackageAdapter.fromPackageQuad(q); _liveQuadTime = DateTime.now(); }
   }
-
   Future<void> _onCapture() async {
     if (_isCap || _isInit || _hasErr) return;
     await CameraCaptureCoordinator.performCapture(
@@ -124,26 +128,17 @@ class _CameraScreenState extends ConsumerState<CameraScreen> with WidgetsBinding
       onStart: () => mounted ? setState(() => _isCap = true) : null, onEnd: () => mounted ? setState(() => _isCap = false) : null,
     );
   }
-
-  void _onTapPreview(TapDownDetails d, Size s) {
-    setState(() => _focusPos = d.localPosition);
-    _camera.setFocusPoint(Offset((d.localPosition.dx / s.width).clamp(0.0, 1.0), (d.localPosition.dy / s.height).clamp(0.0, 1.0)));
-  }
   Future<void> _onBack() => _CameraScreenHelper.handleBack(context, ref, widget.retakePageIndex);
-  Future<void> _onFinishScan() async {
-    final s = await ScanFinishCoordinator.finish(context: context, ref: ref);
-    if (s != null && mounted) Navigator.of(context).pop(s);
-  }
-  void _flip() { ref.read(betterScannerControllerProvider)?.switchCamera(); _lens = _lens == CameraLens.back ? CameraLens.front : CameraLens.back; _initCamera(); }
-  void _toggleGrid() { ref.read(betterScannerControllerProvider)?.toggleGrid(); setState(() => _grid = !_grid); }
-  void _dismissFocus() => setState(() => _focusPos = null);
-  void _onCycleFlash() { ref.read(betterScannerControllerProvider)?.cycleFlashMode(); _camera.setFlash(_CameraScreenHelper.nextFlash(_camera.currentFlash)); setState(() {}); }
   @override
   Widget build(BuildContext context) => _CameraScreenHelper.buildRoot(
     state: this, stateView: _CameraScreenHelper.buildStateView(
       isCheckingPerm: _isCheckingPerm, perm: _perm, hasErr: _hasErr, onRequestPerm: _requestPermission,
       onOpenSettings: () => ref.read(cameraPermissionServiceProvider).openSettings(),
-      onRetryInit: () { _startWatchdog(resetStall: true); _initCamera(); }, onBack: _onBack,
+      onRetryInit: () {
+        _startWatchdog(resetStall: true);
+        _initCamera();
+      },
+      onBack: _onBack,
     ),
   );
 }

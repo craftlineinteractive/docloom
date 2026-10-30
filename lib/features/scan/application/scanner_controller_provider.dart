@@ -53,7 +53,7 @@ ScannerConfig buildScannerConfig(CameraSettings s, {bool grid = false}) {
   );
 }
 
-final betterScannerControllerProvider = Provider<ScannerController?>((ref) {
+final betterScannerControllerProvider = Provider.autoDispose<ScannerController?>((ref) {
   final cam = ref.watch(cameraServiceProvider);
   if (cam is! PluginCameraService) return null;
 

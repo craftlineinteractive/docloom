@@ -30,6 +30,8 @@ class FakeCameraService implements CameraService {
   @override
   DateTime? get lastFrameTime => _lastFrameTime;
   set lastFrameTime(DateTime? value) => _lastFrameTime = value;
+  @override
+  void recordFrame() => _lastFrameTime = DateTime.now();
 
   @override
   CameraLens get currentLens => _currentLens;
